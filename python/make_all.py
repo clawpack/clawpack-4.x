@@ -71,14 +71,14 @@ def make_all(rootdir, cleanup=True):
             fout.flush()
             ferr.flush()
 
-            print "Running 'source make_all.sh' in ",rootdirpath
+            print "Executing commands in make_all.sh in ",rootdirpath
     
             try:
                 os.system('make clobber')
             except:
                 pass
-            return_code = os.system('source make_all.sh')
-            if return_code == 0:
+            all_ok = run_make_all(ferr)
+            if all_ok:
                 print "   Successful completion"
                 goodlist.append(dirpath)
             else:
@@ -137,6 +137,25 @@ def make_all(rootdir, cleanup=True):
     ferr.close()
     print 'For all output see ', fname_output
     print 'For all errors see ', fname_errors
+
+
+def run_make_all(ferr):
+    lines = open('make_all.sh','r').readlines()
+    all_ok = True
+    for line in lines:
+        line = line.strip()
+        if (len(line)==0) or (line[0]=='#'):
+            pass  # ignore blank lines or comments
+        else:
+            print 'Executing: ',line
+            return_code = os.system(line)
+            if return_code != 0:
+                errmsg = "return_code = %s from executing '%s'" \
+                           % (return_code,line)
+                print errmsg
+                ferr.write(errmsg)
+                all_ok = False
+    return all_ok
 
 if __name__=='__main__':
     make_all(sys.argv[1:])
