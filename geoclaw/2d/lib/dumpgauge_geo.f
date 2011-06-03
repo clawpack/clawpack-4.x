@@ -97,9 +97,6 @@ c         ## straightforward linear interp
 
         eta = topo + var(1)
 
-        do i=1,3
-            if (abs(var(i)) .lt. 1.d-90) var(i) = 0.d0
-            enddo
         write(OUTGAUGEUNIT,100)igauge(i),level,tgrid,(var(j),j=1,3),eta
 100     format(2i5,15e15.7)
 
