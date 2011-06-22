@@ -65,7 +65,7 @@ c integration to get accurate boundary gradients
 c
       if (tolsp .gt. 0.) then
          locamrflags = igetsp(mitot*mjtot)
-	    do 20 i = 1, mitot*mjtot
+            do 20 i = 1, mitot*mjtot
  20         alloc(locamrflags+i-1) = goodpt
 
 c        # call user-supplied routine to flag any points where 
@@ -109,8 +109,8 @@ c      # precision alloc array but is used as an integer*1 to save storage.
 
        integer*1  iflags (0:isize+1,0:jsize+1)
 
-       do i = 1, isize
          do j = 1, jsize
+         do i = 1, isize
            iflags(i,j) = 0
            enddo
          enddo

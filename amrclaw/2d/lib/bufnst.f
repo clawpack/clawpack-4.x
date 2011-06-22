@@ -32,8 +32,8 @@ c
 c     negative tol means richardson not done      
       if (tol .gt. 0) then    
             loctmp = node(store2, mptr)
-         call setflags(iflags,isize,jsize,
-     .        alloc(loctmp),nvar,mitot,mjtot,mptr)
+            call setflags(iflags,isize,jsize,
+     .           alloc(loctmp),nvar,mitot,mjtot,mptr)
       endif 
 c     still need to reclaim error est space from spest.f which was saved for possible errest reuse
       locbig = node(tempptr,mptr)
@@ -82,14 +82,17 @@ c ## but iflags is index above
 c      ibytesPerDP = 8
 c      ldom3 = igetsp((isize+2)*(jsize+2)/ibytesPerDP+1)
 c
-      do 55 inum = 1, ibuff
+      call shiftset(iflags, alloc(ldom3),isize,jsize)
 
-          call shiftset(iflags,alloc(ldom3),+1,0,isize,jsize)
-          call shiftset(iflags,alloc(ldom3),-1,0,isize,jsize)
-          call shiftset(iflags,alloc(ldom3),0,+1,isize,jsize)
-          call shiftset(iflags,alloc(ldom3),0,-1,isize,jsize)
+c     do 55 inum = 1, ibuff
 
- 55   continue
+c          call shiftset(iflags,alloc(ldom3),+1,0,isize,jsize)
+c          call shiftset(iflags,alloc(ldom3),-1,0,isize,jsize)
+c          call shiftset(iflags,alloc(ldom3),0,+1,isize,jsize)
+c          call shiftset(iflags,alloc(ldom3),0,-1,isize,jsize)
+c          call shiftset(iflags, alloc(ldom3),isize,jsize)
+
+c55   continue
 
       if (eprint) then
          write(outunit,*)" flagged points after buffering on level", 
@@ -103,8 +106,8 @@ c
 c   count up
 c
        numbad = 0 
-       do 82 i = 1, isize
        do 82 j = 1, jsize
+       do 82 i = 1, isize
          if (iflags(i,j) .ne. goodpt) numbad = numbad + 1
  82    continue
        write(outunit,116) numbad, lcheck

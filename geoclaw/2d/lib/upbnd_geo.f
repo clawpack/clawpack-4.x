@@ -2,7 +2,8 @@ c
 c ------------------------------------------------------------
 c
        subroutine upbnd(listbc,val,nvar,mitot,mjtot,
-     1                  maxsp,iused,mptr)
+     1                  maxsp,mptr)
+c     1                  maxsp,iused,mptr)
  
       use geoclaw_module
  

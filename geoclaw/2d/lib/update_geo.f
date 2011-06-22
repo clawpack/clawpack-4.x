@@ -1,3 +1,4 @@
+
 c
 c -----------------------------------------------------------
 c
@@ -38,8 +39,22 @@ c  grid loop for each level
 c
       dt     = possk(lget)
 
-      mptr = lstart(lget)
- 20   if (mptr .eq. 0) go to 85
+c      mptr = lstart(lget)
+c 20   if (mptr .eq. 0) go to 85
+
+!$OMP PARALLEL DO PRIVATE(ng,mptr,loc,loccaux,nx,ny,mitot,mjtot,
+!$OMP&                    ilo,jlo,ihi,jhi,locuse,mkid,iclo,ichi,
+!$OMP&                    jclo,jchi,mi,mj,locf,locfaux,iplo,iphi,
+!$OMP&                    jplo,jphi,iff,jff,totrat,i,j,ivar,capac,
+!$OMP&                    capa,bc,etasum,hsum,husum,hvsum,drytol,
+!$OMP&                    newt,ico, jco,hf,bf,huf,hvf,
+!$OMP&                    etaf,etaav,hav,nwet,hc,huc,hvc),
+!$OMP&            SHARED(lget,level,intratx,intraty,nghost,uprint,
+!$OMP&                   nvar,mcapa,node,listsp,alloc,numgrids,lstart,
+!$OMP&                   drytolerance),
+!$OMP&            DEFAULT(none)
+      do ng = 1, numgrids(lget)
+         mptr    = mget(ng, level)
          loc     = node(store1,mptr)
          loccaux = node(storeaux,mptr)
          nx      = node(ndihi,mptr) - node(ndilo,mptr) + 1
@@ -52,10 +67,11 @@ c
          jhi     = node(ndjhi,mptr)
 c
          if (node(cfluxptr,mptr) .eq. 0) go to 25
-         locuse = igetsp(mitot*mjtot)
+c         locuse = igetsp(mitot*mjtot)
          call upbnd(alloc(node(cfluxptr,mptr)),alloc(loc),nvar,
-     1              mitot,mjtot,listsp(lget),alloc(locuse),mptr)
-         call reclam(locuse,mitot*mjtot)
+     1              mitot,mjtot,listsp(lget),mptr) ! took out next to last arg
+c     1              mitot,mjtot,listsp(lget),alloc(locuse),mptr)
+c         call reclam(locuse,mitot*mjtot)
 c
 c  loop through all intersecting fine grids as source updaters.
 c
@@ -189,10 +205,14 @@ c
  75   mkid = node(levelptr,mkid)
       go to 30
 c
- 80   mptr = node(levelptr, mptr)
-      go to 20
+ 80   continue
+      end do
+!$OMP END PARALLEL DO
 c
- 85   continue
+c 80   mptr = node(levelptr, mptr)
+c      go to 20
+c
+c 85   continue
 c
  99   return
       end

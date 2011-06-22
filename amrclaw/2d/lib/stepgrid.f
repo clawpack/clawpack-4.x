@@ -123,8 +123,10 @@ c
  1001   format(' Courant # of grid', i4,
      &        ' on level', i3, ' is  ', e10.3)
 c
+!$OMP  CRITICAL (cflm)
         cflmax = dmax1(cflmax,cflgrid)
         cfl_level = dmax1(cfl_level,cflgrid)
+!$OMP END CRITICAL (cflm)
 c
 c       # update q
         dtdx = dt/dx
