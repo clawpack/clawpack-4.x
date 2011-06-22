@@ -86,7 +86,7 @@ c
       dimension          tout(maxout)
       dimension          tchk(maxout)
 
-      integer oldmode
+      integer oldmode,omp_get_max_threads
 c
 c
 c  you may want to turn this on for SUN workstation, or replace
@@ -512,6 +512,10 @@ c        # first timestep looks at the gauge array but it is not yet built
       write(parmunit,*) '   rest = ', rest, '   (restart?)'
       write(parmunit,*) '   tstart = ',tstart
       write(parmunit,*) ' '
+
+      write(outunit,*)" max threads set to ",omp_get_max_threads()
+      write(*,*)" max threads set to ",omp_get_max_threads()
+      write(*,*)" this run has variable time refinement = ",varRefTime
 c
 c  print out program parameters for this run
 c

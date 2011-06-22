@@ -17,10 +17,13 @@ CLAWMAKE = $(CLAW)/util/Makefile.common
 # an f90 compiler such as gfortran.
 
 # Environment variable FC should be set to fortran compiler, e.g. gfortran
-FC ?= gfortran   # default if not set as environment variable
+FC ?= gfortran44   # default if not set as environment variable
+
 # Add any desired compiler flags such as -g here:
-#FFLAGS ?= -O2 -fbounds-check -ffpe-trap=invalid,overflow,zero
-FFLAGS ?= -O2 -fbounds-check -ffpe-trap=invalid,overflow,zero
+FFLAGS ?=  -fopenmp -W -Wall -fbounds-check -pedantic-errors -std=f2003  -O
+-ffp e-trap=zero,overflow,invalid -g
+#FFLAGS ?= -O2 -fopenmp -fbounds-check -ffpe-trap=invalid,overflow,zero
+#FFLAGS ?= -g -fbounds-check -ffpe-trap=invalid,overflow,zero
 
 GEOCLAW_LIB = $(shell pwd)
 CLAW_LIB = $(CLAW)/amrclaw/2d/lib/

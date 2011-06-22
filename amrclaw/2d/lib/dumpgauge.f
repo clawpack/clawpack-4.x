@@ -18,7 +18,7 @@ c
 c  # array is sorted according to indices in mbestorder array
 c  # so do binary search to find start. Could have many same source grids
 c
-      write(34,*) 'in dumpgauge with mgauges, mptr = ',mgauges,mptr
+c     write(34,*) 'in dumpgauge with mgauges, mptr = ',mgauges,mptr
       if (mgauges.eq.0) then
          return
          endif
@@ -34,7 +34,7 @@ c     # this stuff the same for all gauges on this grid
 
       do 10 ii = istart, mgauges
         i = mbestorder(ii)   ! gauge number
-        write(34,*) 'istart,ii,i:',istart,ii,i
+c       write(34,*) 'istart,ii,i:',istart,ii,i
         if (mptr .ne. mbestsrc(i)) go to 99  ! all done
         if (tgrid.lt.t1gauge(i) .or. tgrid.gt.t2gauge(i)) then
 c          # don't output at this time for gauge i
@@ -67,8 +67,10 @@ c       ## bilinear interpolation
         end do
 
 c       # output values at gauge, along with gauge no, level, time:
+!$OMP CRITICAL (gaugeio)
         write(OUTGAUGEUNIT,100)igauge(i),level,
      .                         tgrid,(var(j),j=1,nvar)
+!$OMP END CRITICAL (gaugeio)
 
 100     format(2i5,15e15.7)
 
@@ -93,7 +95,7 @@ c
       include "gauges.i"
       include "call.i"
 c
-c ##  set source grid for each loc from coarsest level to finest.
+c ##  set source grid for each loc fromcoarsest level to finest.
 c ##  that way finest src grid left and old ones overwritten
 c ##  this code uses fact that grids do not overlap
 
