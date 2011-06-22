@@ -31,6 +31,7 @@ c global
 c    mstart  = start of very coarsest grids.
 c :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c
+      verbosity_regrid = method(4)
       lcheck    = min0(lfine,mxnest-1)
       lfnew     = lbase
       do 10 i   = 1, mxnest
@@ -69,7 +70,6 @@ c  reset numgrids per level, needed for omp parallelization.
 c  note that grids may have disappeared, so next loop resets to 0
 c  if there are no grids from lfine+1 to mxnest
 c
-     verbosity_regrid = method(4)
       do 72 levnew = lbase+1, mxnest
         mptr = lstart(levnew)
         ngrids = 0
@@ -84,6 +84,7 @@ c
          numcells(levnew) = ncells
          if (verbosity_regrid .ge. levnew) then
            write(*,100) ngrids,ncells,levnew
+           write(outunit,100) ngrids,ncells,levnew
  100       format("there are ",i4," grids with ",i8,
      &            " cells at level ", i3)
          endif

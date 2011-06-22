@@ -42,7 +42,7 @@ c     # need to allocate for dynamic memory:
      1       ibuf,mstart,ndfree,lfine,iorder,mxnold,
      2       intrtx,intrty,intrtt,iregsz,jregsz,
      2       iregst,jregst,iregend,jregend,
-     3       kcheck1,nsteps,time,
+     3       numgrids,kcheck1,nsteps,time,
      3       matlabu
       read(rstunit) evol,rvol,rvoll,lentot,tmass0,cflmax
 
