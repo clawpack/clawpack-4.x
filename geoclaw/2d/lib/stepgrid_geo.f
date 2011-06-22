@@ -157,7 +157,6 @@ c               # test if arrival times should be output
         endif
       enddo
 c::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
        call b4step2(mx,my,mbc,mx,my,nvar,q,
      &             xlowmbc,ylowmbc,dx,dy,time,dt,maux,aux)
 
@@ -218,8 +217,10 @@ c
         write(outunit,811) mptr, mptr_level, cflgrid
  811    format(" Courant # of grid ",i5," level",i3," is ",d12.4)
 c
+!$OMP  CRITICAL (cflm)
         cflmax = dmax1(cflmax,cflgrid)
         cfl_level = dmax1(cfl_level,cflgrid)
+!$OMP END CRITICAL (cflm)
 c
 c       # update q
         dtdx = dt/dx
