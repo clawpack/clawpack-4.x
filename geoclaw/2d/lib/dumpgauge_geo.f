@@ -55,10 +55,10 @@ c
         ycent  = ylow + (jindex-.5)*hy
         xoff   = (xgauge(i)-xcent)/hx
         yoff   = (ygauge(i)-ycent)/hy
-	if (xoff .lt. 0. .or. xoff .gt. 1. or. 
+        if (xoff .lt. 0. .or. xoff .gt. 1. or. 
      .	    yoff .lt. 0. .or. yoff .gt. 1.) then
 	       write(6,*)" BIG PROBLEM in DUMPGAUGE", i
-	endif
+        endif
 
 c ## Modified by RJL 12/31/09 to interpolate only where all four cells are
 c ## wet, otherwise just take this cell value:
@@ -97,7 +97,9 @@ c         ## straightforward linear interp
 
         eta = topo + var(1)
 
+!$OMP CRITICAL (gaugeio)
         write(OUTGAUGEUNIT,100)igauge(i),level,tgrid,(var(j),j=1,3),eta
+!$OMP END CRITICAL (gaugeio)
 100     format(2i5,15e15.7)
 
  10     continue
@@ -172,7 +174,6 @@ c
 
  5    if (indexhi .lt. indexlo) go to 99
       mid = (indexlo + indexhi)/2
-      mbomid = mbestorder(mid)
 
       if (mptr .gt. mbestsrc(mbestorder(mid))) then
 	   indexlo = mid+1
