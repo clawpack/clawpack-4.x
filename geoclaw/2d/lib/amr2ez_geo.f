@@ -513,8 +513,8 @@ c        # first timestep looks at the gauge array but it is not yet built
       write(parmunit,*) '   tstart = ',tstart
       write(parmunit,*) ' '
 
-      write(outunit,*)" max threads set to ",omp_get_max_threads()
-      write(*,*)" max threads set to ",omp_get_max_threads()
+!$    write(outunit,*)" max threads set to ",omp_get_max_threads()
+!$    write(*,*)" max threads set to ",omp_get_max_threads()
       write(*,*)" this run has variable time refinement = ",varRefTime
 c
 c  print out program parameters for this run
