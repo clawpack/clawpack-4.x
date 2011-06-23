@@ -8,7 +8,8 @@ c
       include  "call.i"
 
       logical    vtime
-      integer omp_get_thread_num, omp_get_max_threads, maxthreads
+      integer omp_get_thread_num, omp_get_max_threads
+      integer mythread/0/, maxthreads/1/
       integer listgrids(numgrids(level))
 
 c     maxgr is maximum number of grids  many things are
@@ -33,7 +34,8 @@ c
       delt = possk(level)
 c     this is linear alg.
       call prepgrids(listgrids,numgrids(level),level)
-      maxthreads = omp_get_max_threads()
+c     maxthreads initialized to 1 above in case no openmp
+!$    maxthreads = omp_get_max_threads()
 
 !$OMP PARALLEL DO PRIVATE(j,locnew, locaux, mptr,nx,ny,mitot
 !$OMP&                    ,mjtot,time),
@@ -122,7 +124,7 @@ c next way so dont call igetsp so much, less parallel bottleneck in critical sec
 !--           locgp = igetsp(2*mitot*mjtot*nvar)
 !--           locgm = locgp + mitot*mjtot*nvar
 c next way for dynamic memory enlargement safety
-           mythread = omp_get_thread_num()
+!$         mythread = omp_get_thread_num()
            locfp = locfp_save(mythread+1)
            locfm = locfp + mitot*mjtot*nvar
            locgp = locgp_save(mythread+1)
