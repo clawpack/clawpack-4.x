@@ -141,8 +141,8 @@ c
              sp_over_h = get_max_speed(alloc(loc),mitot,mjtot,nvar,
      &                         alloc(locaux),naux,nghost,
      &                         hxposs(level),hyposs(level))
-             write(*,*)"max wave speed for level ",level," grid, ",mptr,
-     .        " is", sp_over_h
+c            write(*,*)"max wave speed for level ",level," grid, ",mptr,
+c    .        " is", sp_over_h
              spoh(level) = max(spoh(level),sp_over_h)
            mptr = node(levelptr,mptr)
            if (mptr .ne. 0) go to 75
@@ -182,8 +182,8 @@ c
             kratio(level-1) = ceiling(dtc/dtf)
             possk(level)    = possk(level-1)/kratio(level-1)
         endif
-        write(6,*)" setting ref. ratio in time for level ",level," to ",
-     .            kratio(level-1)
+c       write(6,*)" setting ref. ratio in time for level ",level," to ",
+c    .            kratio(level-1)
       end do
 c
  99   continue

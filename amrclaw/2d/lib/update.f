@@ -7,6 +7,8 @@ c
 
       include  "call.i"
 
+      integer listgrids(numgrids(level))
+
       iadd(i,j,ivar)  = loc     + i - 1 + mitot*((ivar-1)*mjtot+j-1)
       iaddf(i,j,ivar) = locf    + i - 1 + mi*((ivar-1)*mj  +j-1)
       iaddfaux(i,j)   = locfaux + i - 1 + mi*((mcapa-1)*mj + (j-1))
@@ -24,13 +26,29 @@ c
       lget = level
       if (uprint) write(outunit,100) lget
 100   format(19h    updating level ,i5)
+c     need to set up data structure for parallel distrib of grids
+      call prepgrids(listgrids,numgrids(level),level)
+
 c
 c  grid loop for each level
 c
       dt     = possk(lget)
 
-      mptr = lstart(lget)
- 20   if (mptr .eq. 0) go to 85
+c      mptr = lstart(lget)
+c 20   if (mptr .eq. 0) go to 85
+
+!$OMP PARALLEL DO PRIVATE(ng,mptr,loc,loccaux,nx,ny,mitot,mjtot,
+!$OMP&                    ilo,jlo,ihi,jhi,mkid,iclo,jclo,
+!$OMP&                    ichi,jchi,mi,mj,locf,locfaux,
+!$OMP&                    iplo,jplo,iphi,jphi,iff,jff,totrat,i,j,
+!$OMP&                    ivar,ico,jco,capa),
+!$OMP&         SHARED(lget,numgrids,listgrids,listsp,alloc,nvar,
+!$OMP&                   intratx,intraty,nghost,uprint,mcapa,node,
+!$OMP&                   lstart,level),
+!$OMP&         DEFAULT(none)
+       do ng = 1, numgrids(lget)
+c         mptr = mget(ng,level)
+         mptr    = listgrids(ng)
          loc     = node(store1,mptr)
          loccaux = node(storeaux,mptr)
          nx      = node(ndihi,mptr) - node(ndilo,mptr) + 1
@@ -43,10 +61,11 @@ c
          jhi     = node(ndjhi,mptr)
 c
          if (node(cfluxptr,mptr) .eq. 0) go to 25
-         locuse = igetsp(mitot*mjtot)
+c         locuse = igetsp(mitot*mjtot)
          call upbnd(alloc(node(cfluxptr,mptr)),alloc(loc),nvar,
-     1              mitot,mjtot,listsp(lget),alloc(locuse),mptr)
-         call reclam(locuse,mitot*mjtot)
+     1              mitot,mjtot,listsp(lget),mptr)
+c     1              mitot,mjtot,listsp(lget),alloc(locuse),mptr)
+c         call reclam(locuse,mitot*mjtot)
 c
 c  loop through all intersecting fine grids as source updaters.
 c
@@ -132,10 +151,14 @@ c
  75         mkid = node(levelptr,mkid)
             go to 30
 c
- 80         mptr = node(levelptr, mptr)
-            go to 20
+ 80         continue
+            end do
+!$OMP END PARALLEL DO
 c
- 85       continue
+c 80         mptr = node(levelptr, mptr)
+c            go to 20
+c
+c 85       continue
 c
  99   return
       end

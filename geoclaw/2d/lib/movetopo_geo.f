@@ -21,7 +21,8 @@ c
       logical topoaltered
 
       include "call.i"
-      dimension auxorig(-1:max1d+2,-1:max1d+2, maxaux)
+      dimension auxorig(-1:mx+mbc,-1:my+mbc, maux)
+c      dimension auxorig(-1:max1d+mbc,-1:max1d+mbc, maxaux)
 
         t0=t  !# start of coming timestep
         tf=t+dt !# end of coming timestep
@@ -76,8 +77,10 @@ c       write(26,*) 'MOVETOPO: setting dtopo at time = ',t
 
 
 c     # recreate original topography:
-      call setaux(max1d,max1d,mbc,mx,my,xlow,ylow,dx,dy,
+      call setaux(mx,my,mbc,mx,my,xlow,ylow,dx,dy,
      &                  maux,auxorig)
+c      call setaux(max1d,max1d,mbc,mx,my,xlow,ylow,dx,dy,
+c     &                  maxaux,auxorig)
 
 c=======loop through the computational grid row by row====================
         do j=1-mbc,my+mbc
