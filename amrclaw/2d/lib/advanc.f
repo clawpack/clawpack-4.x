@@ -216,7 +216,8 @@ c
       end do
 !$OMP END PARALLEL DO
 c
-      write(*,*)" from advanc: level ",level," dtlevnew ",dtlevnew
+c     debug statement:
+c     write(*,*)" from advanc: level ",level," dtlevnew ",dtlevnew
 
 c new way to reclaim for safety with dynamic memory and openmp
       do j = 1, maxthreads

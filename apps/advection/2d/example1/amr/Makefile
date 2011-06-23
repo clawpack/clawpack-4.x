@@ -134,8 +134,8 @@ CLAW_LIBSOURCES = \
   $(CLAW_LIB)/opendatafile.f \
   $(CLAW_LIB)/init_alloc.f90 \
   $(CLAW_LIB)/restrt_alloc.f90 \
-  $(CLAW_LIB)/resize_alloc_static.f90 \
-# $(CLAW_LIB)/resize_alloc.f90 \
+  $(CLAW_LIB)/resize_alloc.f90 \
+# $(CLAW_LIB)/resize_alloc_static.f90 \
 
 #-------------------------------------------------------------------
 # Include Makefile containing standard definitions and make options:
