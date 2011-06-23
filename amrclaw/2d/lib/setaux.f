@@ -8,7 +8,7 @@ c     # dummy routine when no auxiliary arrays
 c
 c     
       implicit double precision (a-h,o-z)
-c     dimension aux(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, maux)
+c     dimension aux(maux,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
 c
        return
        end

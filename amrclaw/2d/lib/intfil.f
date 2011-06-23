@@ -30,9 +30,14 @@ c
       dimension   val(mi,mj,nvar)
       logical     tinterp
 c
-      iadd(i,j,ivar)   = loc    + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-      iadnew(i,j,ivar) = locnew + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-      iadold(i,j,ivar) = locold + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c      iadd(i,j,ivar)   = loc    + i - 1 + mitot*((ivar-1)*mjtot+j-1) OLD INDEXING
+c      iadnew(i,j,ivar) = locnew + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c      iadold(i,j,ivar) = locold + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+
+c   NEW INDEXING, ORDER SWITCHED
+      iadd(ivar,i,j)   = loc    + ivar-1 + nvar*((j-1)*mitot+i-1)
+      iadnew(ivar,i,j) = locnew + ivar-1 + nvar*((j-1)*mitot+i-1)
+      iadold(ivar,i,j) = locold + ivar-1 + nvar*((j-1)*mitot+i-1)
       dimension flaguse(ilo:ihi, jlo:jhi)
 c
       dt     = possk(level)
@@ -129,8 +134,8 @@ c     ::: no time interp. copy the solution values
          do 45 ivar = 1, nvar
          do 35 j = jxlo, jxhi
          do 20 i = ixlo, ixhi
-             val(i-ilo+nrowst,j-jlo+ncolst,ivar) =
-     1            alloc(iadd(i-imlo+nghost+1,j-jmlo+nghost+1, ivar))
+             val(ivar,i-ilo+nrowst,j-jlo+ncolst) =
+     1            alloc(iadd(ivar,i-imlo+nghost+1,j-jmlo+nghost+1))
              flaguse(i,j) = 1.d0
  20      continue
  35      continue
@@ -140,9 +145,9 @@ c     ::: linear interpolation in time
          do 85 ivar = 1, nvar
          do 75 j = jxlo, jxhi
          do 65 i = ixlo, ixhi
-           val(i-ilo+nrowst,j-jlo+ncolst,ivar) =
-     1      alloc(iadnew(i-imlo+nghost+1,j-jmlo+nghost+1,ivar))*alphai +
-     2      alloc(iadold(i-imlo+nghost+1,j-jmlo+nghost+1,ivar))*alphac
+           val(ivar,i-ilo+nrowst,j-jlo+ncolst) =
+     1      alloc(iadnew(ivar,i-imlo+nghost+1,j-jmlo+nghost+1))*alphai +
+     2      alloc(iadold(ivar,i-imlo+nghost+1,j-jmlo+nghost+1))*alphac
             flaguse(i,j) = 1.d0
  65      continue
  75      continue

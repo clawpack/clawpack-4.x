@@ -26,7 +26,7 @@ c     # of wave.
 c
       implicit double precision (a-h,o-z)
       dimension mthlim(mwaves)
-      dimension wave(1-mbc:maxm+mbc, meqn, mwaves)
+      dimension wave(meqn, 1-mbc:maxm+mbc, mwaves)
       dimension    s(1-mbc:maxm+mbc, mwaves)
 c
 c
@@ -38,8 +38,8 @@ c
             dotl = dotr
             dotr = 0.d0
             do 20 m=1,meqn
-               wnorm2 = wnorm2 + wave(i,m,mw)**2
-               dotr = dotr + wave(i,m,mw)*wave(i+1,m,mw)
+               wnorm2 = wnorm2 + wave(m,i,mw)**2
+               dotr = dotr + wave(m,i,mw)*wave(m,i+1,mw)
    20          continue
             if (i.eq.0) go to 40
             if (wnorm2.eq.0.d0) go to 40
@@ -51,7 +51,7 @@ c
               endif
 c
             do 30 m=1,meqn
-               wave(i,m,mw) = wlimitr * wave(i,m,mw)
+               wave(m,i,mw) = wlimitr * wave(m,i,mw)
    30          continue
    40       continue
    50    continue

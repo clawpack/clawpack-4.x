@@ -9,8 +9,8 @@ c
       include "call.i"
 
       integer bsearch
-      dimension q(mitot,mjtot,nvar), var(maxvar)
-      dimension aux(mitot,mjtot,1)
+      dimension q(nvar,mitot,mjtot), var(maxvar)
+      dimension aux(naux,mitot,mjtot)
 
 c  # see if this grid contains any gauges so data can be output
 c  # may turn out this should be sorted, but for now do linear search
@@ -60,10 +60,10 @@ c
 
 c       ## bilinear interpolation
         do ivar = 1, nvar
-           var(ivar) = (1.d0-xoff)*(1.d0-yoff)*q(iindex,jindex,ivar) 
-     .             + xoff*(1.d0-yoff)*q(iindex+1,jindex,ivar)
-     .             + (1.d0-xoff)*yoff*q(iindex,jindex+1,ivar) 
-     .             + xoff*yoff*q(iindex+1,jindex+1,ivar)
+           var(ivar) = (1.d0-xoff)*(1.d0-yoff)*q(ivar,iindex,jindex) 
+     .             + xoff*(1.d0-yoff)*q(ivar,iindex+1,jinder)
+     .             + (1.d0-xoff)*yoff*q(ivar,iindex,jindex+1) 
+     .             + xoff*yoff*q(ivar,iindex+1,jindex+1)
         end do
 
 c       # output values at gauge, along with gauge no, level, time:

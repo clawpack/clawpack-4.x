@@ -11,14 +11,17 @@ c
 
       include  "call.i"
 
-      dimension valbig(mitot,mjtot,nvar), aux(mitot,mjtot,naux)
+      dimension valbig(nvar,mitot,mjtot), aux(naux,mitot,mjtot)
       dimension ist(3), iend(3), jst(3), jend(3), ishift(3), jshift(3)
 
       dimension scratch(max(mitot,mjtot)*nghost*nvar)
       dimension scratchaux(max(mitot,mjtot)*nghost*naux)
-      iadd(i,j,ivar)  = locflip + i - 1 + nr*((ivar-1)*nc+j-1)
-      iaddscratch(i,j,ivar)  = i  + nr*((ivar-1)*nc+j-1)
+c      iadd(i,j,ivar)  = locflip + i - 1 + nr*((ivar-1)*nc+j-1)  OLD INDEXING
+c      iaddscratch(i,j,ivar)  = i  + nr*((ivar-1)*nc+j-1)
 
+
+       iadd(ivar,i,j) = locflip + ivar-1 + nvar*((j-1)*nr+i-1)
+       iaddscratch(ivar,i,j) = ivar + nvar*((j-1)*nr+i-1)
 
 c
 c  :::::::::::::: PREFILRECUR :::::::::::::::::::::::::::::::::::::::::::
@@ -145,11 +148,11 @@ c     1                            nc-jj+j1
  100          format(" filling loc ",2i5," with ",2i5)
 
               do 14 ivar = 1, nvar
-                 valbig(nrowst+(ii-ilo),ncolst+(jj-jlo),ivar) = 
-     1                 scratch(iaddscratch(nr-(ii-i1),nc-(jj-j1),ivar))
+                 valbig(ivar,nrowst+(ii-ilo),ncolst+(jj-jlo)) = 
+     1                 scratch(iaddscratch(ivar,nr-(ii-i1),nc-(jj-j1)))
  14           continue
-c              write(dbugunit,103)(valbig(nrowst+(ii-ilo),ncolst+(jj-jlo),
-c     &                                  ivar),ivar=1,nvar)
+c             write(dbugunit,103)(valbig(ivar,nrowst+(ii-ilo),
+c     &                           ncolst+(jj-jlo)),ivar=1,nvar)
  103          format(" new val is ",4e15.7)
  15           continue
              

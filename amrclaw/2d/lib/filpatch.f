@@ -24,7 +24,7 @@ c :::::::::::::::::::::::::::::::::::::::;:::::::::::::::::::::::;
       include  "call.i"
 
       logical   set, sticksout
-      dimension valbig(mitot,mjtot,nvar), aux(mitot,mjtot,naux)
+      dimension valbig(nvar,mitot,mjtot), aux(naux,mitot,mjtot)
 
 c  use stack-based scratch arrays instead of alloc, since dont really
 c  need to save beyond these routines, and to allow dynamic memory resizing
@@ -44,9 +44,13 @@ c
       dimension flaguse(ihi-ilo+1,jhi-jlo+1)
 
 c      iadflag(i,j) =  locuse + i-1+(j-1)*nrowp  ! no longer used
+
 c      ivalc(i,j,ivar) = loccrse + (i - 1) + nrowc*(j - 1)
-      ivalc(i,j,ivar) = i + nrowc*(j - 1)
-     &                    + nrowc*ncolc*(ivar-1)
+c      ivalc(i,j,ivar) = i + nrowc*(j - 1)  OLD INDEXING
+c     &                    + nrowc*ncolc*(ivar-1)
+
+      ivalc (ivar,i,j) = ivar + nvar*(i-1)*nvar*nrowc*j-1)
+
       sticksout(iplo,iphi,jplo,jphi)  =
      &            (iplo .lt. 0 .or. jplo .lt. 0 .or.
      &             iphi .ge. iregsz(levc) .or. jphi .ge. jregsz(levc))
@@ -196,18 +200,19 @@ c               eta1 = (xif - xc)/hxc
 c               eta2 = (yjf - yc)/hyc
 
                 do 101 ivar = 1,nvar
-!--
-!--                   valp10 = alloc(ivalc(ic+1,jc,ivar))
+!--                   
+!--                   old way AND old indexing
+!--                   valp10 = alloc(ivalc(ic+1,jc,ivar)) 
 !--                   valm10 = alloc(ivalc(ic-1,jc,ivar))
 !--                   valc   = alloc(ivalc(ic  ,jc,ivar))
 !--                   valp01 = alloc(ivalc(ic  ,jc+1,ivar))
 !--                   valm01 = alloc(ivalc(ic  ,jc-1,ivar))
 
-                   valp10 = valcrse(ivalc(ic+1,jc,ivar))
-                   valm10 = valcrse(ivalc(ic-1,jc,ivar))
-                   valc   = valcrse(ivalc(ic  ,jc,ivar))
-                   valp01 = valcrse(ivalc(ic  ,jc+1,ivar))
-                   valm01 = valcrse(ivalc(ic  ,jc-1,ivar))
+                   valp10 = valcrse(ivalc(ivar,ic+1,jc))
+                   valm10 = valcrse(ivalc(ivar,ic-1,jc))
+                   valc   = valcrse(ivalc(ivar,ic  ,jc))
+                   valp01 = valcrse(ivalc(ivar,ic  ,jc+1))
+                   valm01 = valcrse(ivalc(ivar,ic  ,jc-1))
 
                    dupc = valp10 - valc
                    dumc = valc   - valm10
@@ -234,7 +239,7 @@ c                  valint = (1. - eta2)*
 c    &               ((1. - eta1)*valc00 + eta1*valc10)
 c    &               + eta2*((1. - eta1)*valc01 + eta1*valc11)
 
-                   valbig(iff+nrowst-1,jf+ncolst-1,ivar) = valint
+                   valbig(ivar,iff+nrowst-1,jf+ncolst-1) = valint
 
 101             continue
 

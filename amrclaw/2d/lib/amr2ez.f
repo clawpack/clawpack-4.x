@@ -464,8 +464,8 @@ c        ## initial time step was too large. reset to dt from setgrd
       write(parmunit,*) '   start time = ',time
       write(parmunit,*) ' '
 
-      write(outunit,*)" max threads set to ",omp_get_max_threads()
-      write(*,*)" max threads set to ",omp_get_max_threads()
+!$    write(outunit,*)" max threads set to ",omp_get_max_threads()
+!$    write(*,*)" max threads set to ",omp_get_max_threads()
 c
 c  print out program parameters for this run
 c
@@ -508,7 +508,7 @@ c
 
       call outtre (mstart,printout,nvar,naux)
       write(outunit,*) "  original total mass ..."
-      call conck(1,nvar,time,rest)
+      call conck(1,nvar,naux,time,rest)
       call valout(1,lfine,time,nvar,naux)
 c
 c     --------------------------------------------------------

@@ -31,10 +31,10 @@ c :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       parameter (msize=max1d+4)
       parameter (mwork=msize*(maxvar*maxvar + 13*maxvar + 3*maxaux +2))
 
-      dimension q(mitot,mjtot,nvar)
-      dimension fp(mitot,mjtot,nvar),gp(mitot,mjtot,nvar)
-      dimension fm(mitot,mjtot,nvar),gm(mitot,mjtot,nvar)
-      dimension aux(mitot,mjtot,maux)
+      dimension q(nvar,mitot,mjtot)
+      dimension fp(nvar,mitot,mjtot),gp(nvar,mitot,mjtot)
+      dimension fm(nvar,mitot,mjtot),gm(nvar,mitot,mjtot)
+      dimension aux(maux,mitot,mjtot)
       dimension work(mwork)
 
       logical    debug,  dump
@@ -47,9 +47,9 @@ c     # needed there.
       tcom = time
 
       if (dump) then
-         do i = 1, mitot
          do j = 1, mjtot
-            write(outunit,545) i,j,(q(i,j,ivar),ivar=1,nvar)
+         do i = 1, mitot
+            write(outunit,545) i,j,(q(ivar,i,j),ivar=1,nvar)
  545        format(2i4,4e15.7)
          end do
          end do
@@ -131,21 +131,21 @@ c
 c       # update q
         dtdx = dt/dx
         dtdy = dt/dy
-        do 50 m=1,nvar
-        do 50 i=mbc+1,mitot-mbc
         do 50 j=mbc+1,mjtot-mbc
+        do 50 i=mbc+1,mitot-mbc
+        do 50 m=1,nvar
          if (mcapa.eq.0) then
 c
 c            # no capa array.  Standard flux differencing:
 
-           q(i,j,m) = q(i,j,m) 
-     &           - dtdx * (fm(i+1,j,m) - fp(i,j,m)) 
-     &           - dtdy * (gm(i,j+1,m) - gp(i,j,m)) 
+           q(m,i,j) = q(m,i,j) 
+     &           - dtdx * (fm(m,i+1,j) - fp(m,i,j)) 
+     &           - dtdy * (gm(m,i,j+1) - gp(m,i,j)) 
          else
 c            # with capa array.
-           q(i,j,m) = q(i,j,m) 
-     &           - (dtdx * (fm(i+1,j,m) - fp(i,j,m))
-     &           + dtdy * (gm(i,j+1,m) - gp(i,j,m))) / aux(i,j,mcapa)
+           q(m,i,j) = q(m,i,j) 
+     &          - (dtdx * (fm(m,i+1,j) - fp(m,i,j))
+     &          +  dtdy * (gm(m,i,j+1) - gp(m,i,j))) / aux(mcapa,i,j)
          endif
 
  50      continue
@@ -162,13 +162,13 @@ c
 c     # output fluxes for debugging purposes:
       if (debug) then
          write(dbugunit,*)" fluxes for grid ",mptr
-         do 830 i = mbc+1, mitot-1
-            do 830 j = mbc+1, mjtot-1
-               write(dbugunit,831) i,j,fm(i,j,1),fp(i,j,1),
-     .                             gm(i,j,1),gp(i,j,1)
+         do 830 j = mbc+1, mjtot-1
+            do 830 i = mbc+1, mitot-1
+               write(dbugunit,831) i,j,fm(1,i,j),fp(1,i,j),
+     .                             gm(1,i,j),gp(1,i,j)
                do 830 m = 2, meqn
-                  write(dbugunit,832) fm(i,j,m),fp(i,j,m),
-     .            gm(i,j,m),gp(i,j,m)
+                  write(dbugunit,832) fm(m,i,j),fp(m,i,j),
+     .            gm(m,i,j),gp(m,i,j)
   831          format(2i4,4d16.6)
   832          format(8x,4d16.6)
   830    continue

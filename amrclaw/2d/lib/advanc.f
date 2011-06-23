@@ -7,7 +7,7 @@ c
 
       include  "call.i"
 
-      logical    vtime
+      logical vtime
       integer omp_get_thread_num, omp_get_max_threads
       integer mythread/0/, maxthreads/1/
       integer listgrids(numgrids(level))
@@ -227,30 +227,6 @@ c new way to reclaim for safety with dynamic memory and openmp
         call reclam(locgp_save(j),2*max1d*max1d*nvar)
       end do      
 c
-      return
-      end
-c
-c -------------------------------------------------------------
-c
-      integer function mget(j,level)
-
-      implicit double precision (a-h,o-z)
-      include "call.i"
-      integer this_j
-
-      mptr = lstart(level)
-      this_j = 1
-
-      do while (this_j < j)
-        mptr = node(levelptr, mptr)
-        this_j = this_j + 1
-        if (this_j > numgrids(level)) then
-           write(*,*)" *** ERROR: exceeded number of grids in mget *** "
-           stop
-        endif
-      end do
-      mget = mptr
-
       return
       end
 c
