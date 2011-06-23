@@ -14,6 +14,8 @@ c
 
       include  "call.i"
 
+      integer listgrids(numgrids(level))
+
       iadd(i,j,ivar)  = loc     + i - 1 + mitot*((ivar-1)*mjtot+j-1)
       iaddf(i,j,ivar) = locf    + i - 1 + mi*((ivar-1)*mj  +j-1)
       iaddfaux(i,j)   = locfaux + i - 1 + mi*((mcapa-1)*mj + (j-1))
@@ -34,6 +36,8 @@ c
       lget = level
       if (uprint) write(outunit,100) lget
 100   format(19h    updating level ,i5)
+c     need to set up data structure for parallel distrib of grids
+      call prepgrids(listgrids,numgrids(level),level)
 c
 c  grid loop for each level
 c
@@ -49,12 +53,13 @@ c 20   if (mptr .eq. 0) go to 85
 !$OMP&                    capa,bc,etasum,hsum,husum,hvsum,drytol,
 !$OMP&                    newt,ico, jco,hf,bf,huf,hvf,
 !$OMP&                    etaf,etaav,hav,nwet,hc,huc,hvc),
-!$OMP&            SHARED(lget,level,intratx,intraty,nghost,uprint,
-!$OMP&                   nvar,mcapa,node,listsp,alloc,numgrids,lstart,
-!$OMP&                   drytolerance),
+!$OMP&            SHARED(lget,numgrids,listgrids,level,intratx,intraty,
+!$OMP&                   nghost,uprint,nvar,mcapa,node,listsp,
+!$OMP&                   alloc,lstart,drytolerance),
 !$OMP&            DEFAULT(none)
       do ng = 1, numgrids(lget)
-         mptr    = mget(ng, level)
+c        mptr    = mget(ng, level)
+         mptr    = listgrids(ng)
          loc     = node(store1,mptr)
          loccaux = node(storeaux,mptr)
          nx      = node(ndihi,mptr) - node(ndilo,mptr) + 1

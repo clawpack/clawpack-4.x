@@ -48,7 +48,7 @@ c 20   if (mptr .eq. 0) go to 85
 !$OMP&         DEFAULT(none)
        do ng = 1, numgrids(lget)
 c         mptr = mget(ng,level)
-         mptr = listgrids(j)
+         mptr    = listgrids(ng)
          loc     = node(store1,mptr)
          loccaux = node(storeaux,mptr)
          nx      = node(ndihi,mptr) - node(ndilo,mptr) + 1
