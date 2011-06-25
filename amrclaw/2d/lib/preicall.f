@@ -8,13 +8,18 @@ c
 
       include  "call.i"
 
-      dimension val(nrow,ncol,nvar)
-      dimension aux(nrow,ncol,naux)
+      dimension val(nvar,nrow,ncol)
+      dimension aux(naux,nrow,ncol)
 
       dimension ist(3), iend(3), jst(3), jend(3), ishift(3), jshift(3)
+c
+c OLD INDEXING
+c      iadd   (i,j,ivar)  = locflip    + i - 1 + nr*((ivar-1)*nc+j-1)
+c      iaddaux(i,j,iaux)  = locflipaux + i - 1 + nr*((iaux-1)*nc+j-1)
 
-      iadd   (i,j,ivar)  = locflip    + i - 1 + nr*((ivar-1)*nc+j-1)
-      iaddaux(i,j,iaux)  = locflipaux + i - 1 + nr*((iaux-1)*nc+j-1)
+c NEW INDEXING - ORDER SWITCHED
+      iadd   (ivar,i,j)  = locflip    + ivar-1 + nvar*((j-1)*nc+i-1)
+      iaddaux(iaux,i,j)  = locflipaux + iaux-1 + naux*((j-1)*nc+i-1)
 
 c
 c  :::::::::::::: PREICALL :::::::::::::::::::::::::::::::::::::::::::
@@ -128,13 +133,13 @@ c    1                            nc-jj+j1
  100          format(" filling loc ",2i5," with ",2i5)
 
                 do 17 ivar = 1, nvar
-                   val(nrowst+(ii-ilo),ncolst+(jj-jlo),ivar) = 
-     1                    alloc(iadd(nr-(ii-i1),nc-(jj-j1),ivar))
+                   val(ivar,nrowst+(ii-ilo),ncolst+(jj-jlo)) = 
+     1                    alloc(iadd(ivar,nr-(ii-i1),nc-(jj-j1)))
  17             continue
 
                 do 16 iaux = 1, naux
-                   aux(nrowst+(ii-ilo),ncolst+(jj-jlo),iaux) = 
-     1                    alloc(iaddaux(nr-(ii-i1),nc-(jj-j1),iaux))
+                   aux(iaux,nrowst+(ii-ilo),ncolst+(jj-jlo)) = 
+     1                    alloc(iaddaux(iaux,nr-(ii-i1),nc-(jj-j1)))
  16             continue
  15           continue
              

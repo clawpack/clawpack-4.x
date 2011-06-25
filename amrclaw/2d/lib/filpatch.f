@@ -45,11 +45,11 @@ c
 
 c      iadflag(i,j) =  locuse + i-1+(j-1)*nrowp  ! no longer used
 
-c      ivalc(i,j,ivar) = loccrse + (i - 1) + nrowc*(j - 1)
+c      ivalc(i,j,ivar) = loccrse + (i - 1) + nrowc*(j - 1)OLDER INDEXING
 c      ivalc(i,j,ivar) = i + nrowc*(j - 1)  OLD INDEXING
 c     &                    + nrowc*ncolc*(ivar-1)
 
-      ivalc (ivar,i,j) = ivar + nvar*(i-1)*nvar*nrowc*j-1)
+      ivalc (ivar,i,j) = ivar + nvar*(i-1)+nvar*nrowc*(j-1)
 
       sticksout(iplo,iphi,jplo,jphi)  =
      &            (iplo .lt. 0 .or. jplo .lt. 0 .or.

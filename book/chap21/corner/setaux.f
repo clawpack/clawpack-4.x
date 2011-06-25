@@ -5,8 +5,8 @@ c     ============================================
 c
 c     # set auxiliary arrays 
 c     # variable coefficient acoustics
-c     #  aux(i,j,1) = impedance Z in (i,j) cell
-c     #  aux(i,j,2) = sound speed c in (i,j) cell
+c     #  aux(1,i,j) = impedance Z in (i,j) cell
+c     #  aux(2,i,j) = sound speed c in (i,j) cell
 c
 c     # Piecewise constant medium with single interface at x=0.5
 c     # Density and sound speed to left and right are set in setprob.f
@@ -14,7 +14,8 @@ c     # Density and sound speed to left and right are set in setprob.f
 c
 c     
       implicit double precision (a-h,o-z)
-      dimension aux(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, 2)
+c     dimension aux(2,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
+      dimension aux(maux,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
       common /comaux/ zl,cl,zr,cr
 c
 c     # density and bulk moduli:
@@ -40,10 +41,10 @@ c         # harmonic average bulk modulus:
 	  bulk = 1.d0 / (wl/bulkl + wr/bulkr)
 
 c         # average sound speed:
-	  aux(i,j,2) = dsqrt(bulk/rho)
+	  aux(2,i,j) = dsqrt(bulk/rho)
 
 c         # average impedance:
-	  aux(i,j,1) = rho*aux(i,j,2)
+	  aux(1,i,j) = rho*aux(2,i,j)
 
    20     continue
    30    continue

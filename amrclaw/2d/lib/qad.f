@@ -11,11 +11,11 @@ c
 
        logical qprint
 
-       dimension valbig(mitot,mjtot,nvar)
-       dimension qc1d(lenbc,nvar)
+       dimension valbig(nvar,mitot,mjtot)
+       dimension qc1d(nvar,lenbc)
        dimension svdflx(nvar,lenbc)
-       dimension aux(mitot,mjtot,maux)
-       dimension auxc1d(lenbc,maux)
+       dimension aux(maux,mitot,mjtot)
+       dimension auxc1d(maux,lenbc)
 
 c
 c ::::::::::::::::::::::::::: QAD ::::::::::::::::::::::::::::::::::
@@ -39,10 +39,16 @@ c      # and for other arrays it is only the last parameter that is wrong
 c      #  ok as long as meqn, mwaves < maxvar
 
        parameter (max1dp1 = max1d+1)
-       dimension ql(max1dp1,maxvar),    qr(max1dp1,maxvar)
-       dimension wave(max1dp1,maxvar,maxvar),  s(max1dp1,maxvar)
-       dimension amdq(max1dp1,maxvar),  apdq(max1dp1,maxvar)
-       dimension auxl(max1dp1,maxaux),  auxr(max1dp1,maxaux)
+       dimension ql(nvar,max1dp1),    qr(nvar,max1dp1)
+       dimension wave(nvar,max1dp1,maxvar), s(max1dp1,nvar)
+       dimension amdq(nvar,max1dp1),  apdq(nvar,max1dp1)
+       dimension auxl(maxaux*max1dp1),  auxr(maxaux*max1dp1)
+c
+c  WARNING: auxl,auxr dimensioned at max possible, but used as if
+c  they were dimensioned as the real maux by max1dp1. Would be better
+c  of course to dimension by maux by max1dp1 but this wont work if maux=0
+c  So need to access using your own indexing into auxl,auxr.
+       iaddaux(iaux,i) = iaux + maux*(i-1)
 
        data qprint/.false./
 c
@@ -70,16 +76,16 @@ c
              if (auxtype(ma).eq."xleft") then
 c                # Assuming velocity at left-face, this fix
 c                # preserves conservation in incompressible flow:
-                 auxl(j-nghost+1,ma) = aux(nghost+1,j,ma)
+                 auxl(iaddaux(ma,j-nghost+1)) = aux(ma,nghost+1,j)
                else
 c                # Normal case -- we set the aux arrays 
 c                # from the cell corresponding  to q
-                 auxl(j-nghost+1,ma) = aux(nghost,j,ma)
+                 auxl(iaddaux(ma,j-nghost+1)) = aux(ma,nghost,j)
                endif
   5          continue
           endif
        do 10 ivar = 1, nvar
-         ql(j-nghost+1,ivar) = valbig(nghost,j,ivar)
+         ql(ivar,j-nghost+1) = valbig(ivar,nghost,j)
  10    continue
 
        lind = 0
@@ -90,27 +96,27 @@ c                # from the cell corresponding  to q
          lind = lind + 1
          if (maux.gt.0) then
             do 24 ma=1,maux
-               auxr(lind,ma) = auxc1d(index,ma)
+               auxr(iaddaux(ma,lind)) = auxc1d(ma,index)
    24          continue
             endif
          do 25 ivar = 1, nvar
- 25         qr(lind,ivar) = qc1d(index,ivar)
+ 25         qr(ivar,lind) = qc1d(ivar,index)
  20    continue
     
        if (qprint) then
          write(dbugunit,*) 'side 1, ql and qr:'
          do i=2,nc
-            write(dbugunit,4101) i,qr(i-1,1),ql(i,1)
+            write(dbugunit,4101) i,qr(1,i-1),ql(1,i)
           enddo
  4101      format(i3,4e16.6)
          if (maux .gt. 0) then
              write(dbugunit,*) 'side 1, auxr:'
              do i=2,nc
-                write(dbugunit,4101) i,(auxr(i-1,ma),ma=1,maux)
+                write(dbugunit,4101) i,(auxr(iaddaux(ma,i-1)),ma=1,maux)
                 enddo
              write(dbugunit,*) 'side 1, auxl:'
              do i=2,nc
-                write(dbugunit,4101) i,(auxl(i,ma),ma=1,maux)
+                write(dbugunit,4101) i,(auxl(iaddaux(ma,i)),ma=1,maux)
                 enddo
          endif
        endif
@@ -127,8 +133,8 @@ c
           do 40 ivar = 1, nvar
             do 50 l = 1, lratioy
               svdflx(ivar,influx) = svdflx(ivar,influx) 
-     .                     + amdq(jfine+l+1,ivar) * hy * delt
-     .                     + apdq(jfine+l+1,ivar) * hy * delt
+     .                     + amdq(ivar,jfine+l+1) * hy * delt
+     .                     + apdq(ivar,jfine+l+1) * hy * delt
  50         continue
  40       continue
  30    continue
@@ -148,11 +154,11 @@ c          # skip over sides 2 and 4 in this case
        do 210 i = nghost+1, mitot-nghost
         if (maux.gt.0) then
           do 205 ma = 1,maux
-             auxr(i-nghost,ma) = aux(i,mjtot-nghost+1,ma)
+             auxr(iaddaux(ma,i-nghost)) = aux(ma,i,mjtot-nghost+1)
  205         continue
           endif
         do 210 ivar = 1, nvar
-            qr(i-nghost,ivar) = valbig(i,mjtot-nghost+1,ivar)
+            qr(ivar,i-nghost) = valbig(ivar,i,mjtot-nghost+1)
  210    continue
 
        lind = 0
@@ -167,29 +173,29 @@ c          # skip over sides 2 and 4 in this case
 c                # Assuming velocity at bottom-face, this fix
 c                # preserves conservation in incompressible flow:
                  ifine = (ic-1)*lratiox + nghost + l
-                 auxl(lind+1,ma) = aux(ifine,mjtot-nghost+1,ma)
+                 auxl(iaddaux(ma,lind+1)) = aux(ma,ifine,mjtot-nghost+1)
                else
-                 auxl(lind+1,ma) = auxc1d(index,ma)
+                 auxl(iaddaux(ma,lind+1)) = auxc1d(ma,index)
                endif
   224          continue
             endif
          do 225 ivar = 1, nvar
- 225         ql(lind+1,ivar) = qc1d(index,ivar)
+ 225         ql(ivar,lind+1) = qc1d(ivar,index)
  220    continue
     
        if (qprint) then
          write(dbugunit,*) 'side 2, ql and qr:'
          do i=1,nr
-            write(dbugunit,4101) i,ql(i+1,1),qr(i,1)
+            write(dbugunit,4101) i,ql(1,i+1),qr(1,i)
             enddo
          if (maux .gt. 0) then
              write(dbugunit,*) 'side 2, auxr:'
              do i = 1, nr
-                write(dbugunit,4101) i, (auxr(i,ma),ma=1,maux)
+                write(dbugunit,4101) i, (auxr(iaddaux(ma,i)),ma=1,maux)
                 enddo
              write(dbugunit,*) 'side 2, auxl:'
              do i = 1, nr
-                write(dbugunit,4101) i, (auxl(i,ma),ma=1,maux)
+                write(dbugunit,4101) i, (auxl(iaddaux(ma,i)),ma=1,maux)
                 enddo
          endif
        endif
@@ -204,8 +210,8 @@ c
           do 240 ivar = 1, nvar
             do 250 l = 1, lratiox
               svdflx(ivar,influx) = svdflx(ivar,influx) 
-     .                     - amdq(ifine+l+1,ivar) * hx * delt
-     .                     - apdq(ifine+l+1,ivar) * hx * delt
+     .                     - amdq(ivar,ifine+l+1) * hx * delt
+     .                     - apdq(ivar,ifine+l+1) * hx * delt
  250         continue
  240       continue
  230    continue
@@ -219,11 +225,11 @@ c
        do 310 j = nghost+1, mjtot-nghost
         if (maux.gt.0) then
           do 305 ma = 1,maux
-             auxr(j-nghost,ma) = aux(mitot-nghost+1,j,ma)
+             auxr(iaddaux(ma,j-nghost)) = aux(ma,mitot-nghost+1,j)
  305         continue
           endif
         do 310 ivar = 1, nvar
-          qr(j-nghost,ivar) = valbig(mitot-nghost+1,j,ivar)
+          qr(ivar,j-nghost) = valbig(ivar,mitot-nghost+1,j)
  310      continue
 
        lind = 0
@@ -238,20 +244,20 @@ c
 c                # Assuming velocity at left-face, this fix
 c                # preserves conservation in incompressible flow:
                  jfine = (jc-1)*lratioy + nghost + l
-                 auxl(lind+1,ma) = aux(mitot-nghost+1,jfine,ma)
+                 auxl(iaddaux(ma,lind+1)) = aux(ma,mitot-nghost+1,jfine)
                else
-                 auxl(lind+1,ma) = auxc1d(index,ma)
+                 auxl(iaddaux(ma,lind+1)) = auxc1d(ma,index)
                endif
   324          continue
             endif
          do 325 ivar = 1, nvar
- 325         ql(lind+1,ivar) = qc1d(index,ivar)
+ 325         ql(ivar,lind+1) = qc1d(ivar,index)
  320    continue
     
        if (qprint) then
          write(dbugunit,*) 'side 3, ql and qr:'
          do i=1,nc
-            write(dbugunit,4101) i,ql(i,1),qr(i,1)
+            write(dbugunit,4101) i,ql(1,i),qr(1,i)
             enddo
        endif
        call rpn2(1,max1dp1-2*nghost,nvar,mwaves,nghost,nc+1-2*nghost,
@@ -265,8 +271,8 @@ C
           do 340 ivar = 1, nvar
             do 350 l = 1, lratioy
               svdflx(ivar,influx) = svdflx(ivar,influx) 
-     .                     - amdq(jfine+l+1,ivar) * hy * delt
-     .                     - apdq(jfine+l+1,ivar) * hy * delt
+     .                     - amdq(ivar,jfine+l+1) * hy * delt
+     .                     - apdq(ivar,jfine+l+1) * hy * delt
  350         continue
  340       continue
  330    continue
@@ -289,14 +295,14 @@ c
              if (auxtype(ma).eq."yleft") then
 c                # Assuming velocity at bottom-face, this fix
 c                # preserves conservation in incompressible flow:
-                 auxl(i-nghost+1,ma) = aux(i,nghost+1,ma)
+                 auxl(iaddaux(ma,i-nghost+1)) = aux(ma,i,nghost+1)
                else
-                 auxl(i-nghost+1,ma) = aux(i,nghost,ma)
+                 auxl(iaddaux(ma,i-nghost+1)) = aux(ma,i,nghost)
                endif
  405         continue
           endif
         do 410 ivar = 1, nvar
-          ql(i-nghost+1,ivar) = valbig(i,nghost,ivar)
+          ql(ivar,i-nghost+1) = valbig(ivar,i,nghost)
  410      continue
 
        lind = 0
@@ -307,17 +313,17 @@ c                # preserves conservation in incompressible flow:
          lind = lind + 1
          if (maux.gt.0) then
             do 424 ma=1,maux
-               auxr(lind,ma) = auxc1d(index,ma)
+               auxr(iaddaux(ma,lind)) = auxc1d(ma,index)
   424          continue
             endif
          do 425 ivar = 1, nvar
- 425         qr(lind,ivar) = qc1d(index,ivar)
+ 425         qr(ivar,lind) = qc1d(ivar,index)
  420    continue
     
        if (qprint) then
          write(dbugunit,*) 'side 4, ql and qr:'
          do i=1,nr
-            write(dbugunit,4101) i, ql(i,1),qr(i,1)
+            write(dbugunit,4101) i, ql(1,i),qr(1,i)
             enddo
        endif
        call rpn2(2,max1dp1-2*nghost,nvar,mwaves,nghost,nr+1-2*nghost,
@@ -331,8 +337,8 @@ c
           do 440 ivar = 1, nvar
             do 450 l = 1, lratiox
               svdflx(ivar,influx) = svdflx(ivar,influx) 
-     .                     + amdq(ifine+l+1,ivar) * hx * delt
-     .                     + apdq(ifine+l+1,ivar) * hx * delt
+     .                     + amdq(ivar,ifine+l+1) * hx * delt
+     .                     + apdq(ivar,ifine+l+1) * hx * delt
  450         continue
  440       continue
  430    continue
@@ -344,6 +350,6 @@ c      # for source terms:
            call src1d(nvar,nghost,lenbc,qc1d,maux,auxc1d,tgrid,delt)
 c      # how can this be right - where is the integrated src term used?
            endif
-
+           
        return
        end

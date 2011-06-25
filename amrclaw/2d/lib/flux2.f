@@ -139,7 +139,7 @@ c        # modified in Version 4.3 to use average only in cqxx, not transverse
 
 c
          do 120 m=1,meqn
-            cqxx(i,m) = 0.d0
+            cqxx(m,i) = 0.d0
             do 119 mw=1,mwaves
 c
 c              # second order corrections:

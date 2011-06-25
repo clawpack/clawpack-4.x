@@ -202,7 +202,7 @@ c
                fm(m,i,j) = fm(m,i,j) + gaddm(m,j,1)
                fp(m,i,j) = fp(m,i,j) + gaddp(m,j,1)
                fm(m,i+1,j) = fm(m,i+1,j) + gaddm(m,j,2)
-               fp(m,i+1,j) = fp(m,i+1,j) + gaddp(m,j,,2)
+               fp(m,i+1,j) = fp(m,i+1,j) + gaddp(m,j,2)
    75          continue
   100    continue
 c

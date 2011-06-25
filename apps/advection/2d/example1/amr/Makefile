@@ -24,7 +24,7 @@ FC ?= gfortran   # default if not set as environment variable
 # Add any desired compiler flags such as -g here:
 #FFLAGS ?=  -fopenmp -W -Wall -fbounds-check -pedantic-errors -std=f2003 -ffpe-trap=zero,overflow,invalid -g
 #FFLAGS ?=  -fopenmp -fbounds-check -W -ffpe-trap=zero,overflow,invalid -g
-FFLAGS ?=   -fbounds-check -W -ffpe-trap=zero,overflow,invalid -g
+FFLAGS ?=   -fbounds-check -W -ffpe-trap=zero,overflow,invalid -g -W
 
 
 

@@ -12,8 +12,8 @@ c  to conserve kappa*q, not q. calculate the discrepancy
 c  in kappa*q using this q, and modify q to account for it.
 c ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-      dimension   val(mitot,mjtot,nvar), valc(mic,mjc,nvar)
-      dimension   aux(mitot,mjtot,naux), auxc(mic,mjc,naux)
+      dimension   val(nvar,mitot,mjtot), valc(nvar,mic,mjc)
+      dimension   aux(naux,mitot,mjtot), auxc(naux,mic,mjc)
 
       dcapamax = 0.d0
       lratiox  = intratx(levc)
@@ -31,11 +31,11 @@ c ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
        ifine = (ic-2)*lratiox + nghost + ico
        do 20 jco = 1, lratioy
          jfine = (jc-2)*lratioy + nghost + jco
-         capaqfine = capaqfine + aux(ifine,jfine,mcapa)*
-     &                           val(ifine,jfine,ivar)
+         capaqfine = capaqfine + aux(mcapa,ifine,jfine)*
+     &                           val(ivar,ifine,jfine)
 20     continue
 
-       dcapaq = auxc(ic,jc,mcapa)*valc(ic,jc,ivar)-
+       dcapaq = auxc(mcapa,ic,jc)*valc(ivar,ic,jc)-
      &          capaqfine/(lratiox*lratioy)
        dcapamax = dmax1(dcapamax,dabs(dcapaq))
       
@@ -43,8 +43,8 @@ c ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
        ifine = (ic-2)*lratiox + nghost + ico
        do 30 jco = 1, lratioy
          jfine = (jc-2)*lratioy + nghost + jco
-         val(ifine,jfine,ivar) = val(ifine,jfine,ivar) +
-     &                           dcapaq/aux(ifine,jfine,mcapa)
+         val(ivar,ifine,jfine) = val(ivar,ifine,jfine) +
+     &                           dcapaq/aux(mcapa,ifine,jfine)
 30     continue
 
 15     continue

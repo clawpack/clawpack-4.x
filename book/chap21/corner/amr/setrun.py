@@ -112,7 +112,7 @@ def setrun(claw_pkg='amrclaw'):
     elif clawdata.outstyle == 3:
         # Output every iout timesteps with a total of ntot time steps:
         iout = 1
-        ntot = 5
+        ntot = 1
         clawdata.iout = [iout, ntot]
     
 
@@ -204,7 +204,7 @@ def setrun(claw_pkg='amrclaw'):
 
 
     # max number of refinement levels:
-    mxnest = 1
+    mxnest = 3
 
     clawdata.mxnest = -mxnest   # negative ==> anisotropic refinement in x,y,t
 

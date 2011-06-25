@@ -6,7 +6,7 @@
 
 80                        =: mx           (cells in x direction)
 80                        =: my           (cells in y direction)
--1                        =: mxnest       (max number of grid levels)
+-3                        =: mxnest       (max number of grid levels)
 2 2 2                     =: inratx       (refinement ratios)
 2 2 2                     =: inraty       (refinement ratios)
 2 2 2                     =: inratt       (refinement ratios)

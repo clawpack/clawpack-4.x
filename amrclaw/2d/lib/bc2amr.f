@@ -112,8 +112,8 @@ c     # user-specified boundary conditions go here in place of error output
 c
   110 continue
 c     # zero-order extrapolation:
-      do 115 i=1,nxl
-         do 115 j = 1,ncol
+      do 115 j = 1,ncol
+         do 115 i=1,nxl
             do 115 m=1,meqn
                val(m,i,j) = val(m,nxl+1,j)
   115       continue
@@ -125,14 +125,14 @@ c     # periodic:   handled elsewhere in amr
 
   130 continue
 c     # solid wall (assumes 2'nd component is velocity or momentum in x):
-      do 135 i=1,nxl
-         do 135 j = 1,ncol
+      do 135 j = 1,ncol
+         do 135 i=1,nxl
             do 135 m=1,meqn
                val(m,i,j) = val(m,2*nxl+1-i,j)
   135       continue
 c     # negate the normal velocity:
-      do 136 i=1,nxl
-         do 136 j = 1,ncol
+      do 136 j = 1,ncol
+         do 136 i=1,nxl
             val(2,i,j) = -val(2,i,j)
   136    continue
       go to 199
@@ -164,31 +164,31 @@ c     # user-specified boundary conditions go here in place of error output
 
   210 continue
 c     # zero-order extrapolation:
-      do 215 i=ibeg,nrow
-         do 215 j = 1,ncol
+      do 215 j = 1,ncol
+         do 215 i=ibeg,nrow
             do 215 m=1,meqn
                val(m,i,j) = val(m,ibeg-1,j)
   215       continue
       go to 299
-
+  
   220 continue
 c     # periodic:   handled elsewhere in amr
       go to 299
 
   230 continue
 c     # solid wall (assumes 2'nd component is velocity or momentum in x):
-      do 235 i=ibeg,nrow
-         do 235 j = 1,ncol
+      do 235 j = 1,ncol
+         do 235 i=ibeg,nrow
             do 235 m=1,meqn
                val(m,i,j) = val(m,2*ibeg-1-i,j)
   235       continue
 c     # negate the normal velocity:
-      do 236 i=ibeg,nrow
-         do 236 j = 1,ncol
+      do 236 j = 1,ncol
+         do 236 i=ibeg,nrow
             val(2,i,j) = -val(2,i,j)
   236    continue
       go to 299
-
+   
   299 continue
 c
 c-------------------------------------------------------

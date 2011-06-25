@@ -47,8 +47,9 @@ c     # needed there.
       tcom = time
 
       if (dump) then
-         do j = 1, mjtot
          do i = 1, mitot
+         do j = 1, mjtot
+c        do i = 1, mitot
             write(outunit,545) i,j,(q(ivar,i,j),ivar=1,nvar)
  545        format(2i4,4e15.7)
          end do
@@ -162,8 +163,9 @@ c
 c     # output fluxes for debugging purposes:
       if (debug) then
          write(dbugunit,*)" fluxes for grid ",mptr
-         do 830 j = mbc+1, mjtot-1
+c        do 830 j = mbc+1, mjtot-1
             do 830 i = mbc+1, mitot-1
+         do 830 j = mbc+1, mjtot-1
                write(dbugunit,831) i,j,fm(1,i,j),fp(1,i,j),
      .                             gm(1,i,j),gp(1,i,j)
                do 830 m = 2, meqn

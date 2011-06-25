@@ -27,7 +27,7 @@ c
 
       include  "call.i"
 c
-      dimension   val(mi,mj,nvar)
+      dimension   val(nvar,mi,mj)
       logical     tinterp
 c
 c      iadd(i,j,ivar)   = loc    + i - 1 + mitot*((ivar-1)*mjtot+j-1) OLD INDEXING

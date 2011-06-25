@@ -1,7 +1,7 @@
 c
 c -------------------------------------------------------------------------
 c
-      subroutine dumpgauge(q,aux,xlow,ylow,nvar,mitot,mjtot,mptr)
+      subroutine dumpgauge(q,aux,xlow,ylow,nvar,mitot,mjtot,naux,mptr)
 c
       implicit double precision (a-h,o-z)
 
@@ -61,7 +61,7 @@ c
 c       ## bilinear interpolation
         do ivar = 1, nvar
            var(ivar) = (1.d0-xoff)*(1.d0-yoff)*q(ivar,iindex,jindex) 
-     .             + xoff*(1.d0-yoff)*q(ivar,iindex+1,jinder)
+     .             + xoff*(1.d0-yoff)*q(ivar,iindex+1,jindex)
      .             + (1.d0-xoff)*yoff*q(ivar,iindex,jindex+1) 
      .             + xoff*yoff*q(ivar,iindex+1,jindex+1)
         end do

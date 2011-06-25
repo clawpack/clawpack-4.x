@@ -18,8 +18,8 @@ c  left edge of fine grid, it is the minus xfluxes that modify the
 c  coarse cell.
 c :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-      dimension xfluxm(mitot,mjtot,nvar), yfluxm(mitot,mjtot,nvar)
-      dimension xfluxp(mitot,mjtot,nvar), yfluxp(mitot,mjtot,nvar)
+      dimension xfluxm(nvar,mitot,mjtot), yfluxm(nvar,mitot,mjtot)
+      dimension xfluxp(nvar,mitot,mjtot), yfluxp(nvar,mitot,mjtot)
       dimension svdflx(nvar,lenbc)
  
       nx  = mitot-2*ng
@@ -36,9 +36,9 @@ c ::::: left side saved first
          do 110 ivar = 1, nvar
             do 120 l=1,lratioy
                svdflx(ivar,lind) = svdflx(ivar,lind) +
-     1                             xfluxm(ng+1,jfine+l,ivar)*dtf*dy
-c              write(dbugunit,900)lind,xfluxm(1,jfine+l,ivar),
-c     .                           xfluxp(1,jfine+l,ivar)
+     1                             xfluxm(ivar,ng+1,jfine+l)*dtf*dy
+c              write(dbugunit,900)lind,xfluxm(ivar,1,jfine+l),
+c     .                           xfluxp(ivar,1,jfine+l)
  900           format(' lind ', i4,' m & p ',2e15.7,' svd ',e15.7)
 120         continue
 110      continue
@@ -52,9 +52,9 @@ c      write(dbugunit,*)" saving top side "
          do 210 ivar = 1, nvar
             do 220 l=1,lratiox
                svdflx(ivar,lind) = svdflx(ivar,lind) + 
-     1                     yfluxp(ifine+l,mjtot-ng+1,ivar)*dtf*dx
-c              write(dbugunit,900)lind,yfluxm(ifine+l,mjtot-ng+1,
-c     .                           ivar),yfluxp(ifine+l,mjtot-ng+1,ivar),
+     1                     yfluxp(ivar,ifine+l,mjtot-ng+1)*dtf*dx
+c              write(dbugunit,900)lind,yfluxm(ivar,ifine+l,mjtot-ng+1,
+c     .                           ),yfluxp(ivar,ifine+l,mjtot-ng+1),
 c     .                           svdflx(ivar,lind)
 220         continue
 210      continue
@@ -67,9 +67,9 @@ c ::::: right side
          do 310 ivar = 1, nvar
             do 320 l=1,lratioy
                svdflx(ivar,lind) = svdflx(ivar,lind) + 
-     1                     xfluxp(mitot-ng+1,jfine+l,ivar)*dtf*dy
-c              write(dbugunit,900)lind,xfluxm(mitot-ng+1,jfine+l,
-c                                 ivar),xfluxp(mitot-ng+1,jfine+l,ivar)
+     1                     xfluxp(ivar,mitot-ng+1,jfine+l)*dtf*dy
+c              write(dbugunit,900)lind,xfluxm(ivar,mitot-ng+1,jfine+l,
+c                                 ),xfluxp(ivar,mitot-ng+1,jfine+l)
 320         continue
 310      continue
 300   continue
@@ -82,9 +82,9 @@ c      write(dbugunit,*)" saving bottom side "
          do 410 ivar = 1, nvar
             do 420 l=1,lratiox
                svdflx(ivar,lind) = svdflx(ivar,lind) +
-     1                             yfluxm(ifine+l,ng+1,ivar)*dtf*dx
-c              write(dbugunit,900)lind,yfluxm(ifine+l,ng+1,ivar),
-c     .                      yfluxp(ifine+l,ng+1,ivar),svdflx(ivar,lind)
+     1                             yfluxm(ivar,ifine+l,ng+1)*dtf*dx
+c              write(dbugunit,900)lind,yfluxm(ivar,ifine+l,ng+1),
+c     .                      yfluxp(ivar,ifine+l,ng+1),svdflx(ivar,lind)
 420         continue
 410      continue
 400   continue

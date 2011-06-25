@@ -177,7 +177,7 @@ c        # nothing will be output.
 
 c    should change the way  dumpguage does io - right now is critical section
            call dumpgauge(alloc(locnew),alloc(locaux),xlow,ylow,
-     .                    nvar,mitot,mjtot,mptr)
+     .                    nvar,mitot,mjtot,naux,mptr)
 
 c
       call stepgrid(alloc(locnew),alloc(locfm),alloc(locfp),

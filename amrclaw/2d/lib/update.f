@@ -1,7 +1,7 @@
 c
 c -----------------------------------------------------------
 c
-      subroutine update (level, nvar)
+      subroutine update (level, nvar, naux)
 c
       implicit double precision (a-h,o-z)
 
@@ -9,10 +9,18 @@ c
 
       integer listgrids(numgrids(level))
 
-      iadd(i,j,ivar)  = loc     + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-      iaddf(i,j,ivar) = locf    + i - 1 + mi*((ivar-1)*mj  +j-1)
-      iaddfaux(i,j)   = locfaux + i - 1 + mi*((mcapa-1)*mj + (j-1))
-      iaddcaux(i,j)   = loccaux + i - 1 + mitot*((mcapa-1)*mjtot+(j-1))
+c$$$  OLD INDEXING
+c$$$      iadd(i,j,ivar)  = loc     + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c$$$      iaddf(i,j,ivar) = locf    + i - 1 + mi*((ivar-1)*mj  +j-1)
+c$$$      iaddfaux(i,j)   = locfaux + i - 1 + mi*((mcapa-1)*mj + (j-1))
+c$$$      iaddcaux(i,j)   = loccaux + i - 1 + mitot*((mcapa-1)*mjtot+(j-1))
+
+c   NEW INDEXING, ORDER SWITCHED
+      iadd(ivar,i,j)  = loc    + ivar-1 + nvar*((j-1)*mitot+i-1)
+      iaddf(ivar,i,j) = locf   + ivar-1 + nvar*((j-1)*mi+i-1)
+      iaddfaux(i,j)   = locfaux + mcapa-1 + naux*((j-1)*mi + (j-1))
+      iaddcaux(i,j)   = loccaux + mcapa-1 + naux*((j-1)*mitot+(j-1))
+c
 c
 c :::::::::::::::::::::::::: UPDATE :::::::::::::::::::::::::::::::::
 c update - update all grids at level 'level'.
@@ -42,7 +50,7 @@ c 20   if (mptr .eq. 0) go to 85
 !$OMP&                    ichi,jchi,mi,mj,locf,locfaux,
 !$OMP&                    iplo,jplo,iphi,jphi,iff,jff,totrat,i,j,
 !$OMP&                    ivar,ico,jco,capa),
-!$OMP&         SHARED(lget,numgrids,listgrids,listsp,alloc,nvar,
+!$OMP&         SHARED(lget,numgrids,listgrids,listsp,alloc,nvar,naux,
 !$OMP&                   intratx,intraty,nghost,uprint,mcapa,node,
 !$OMP&                   lstart,level),
 !$OMP&         DEFAULT(none)
@@ -63,7 +71,7 @@ c
          if (node(cfluxptr,mptr) .eq. 0) go to 25
 c         locuse = igetsp(mitot*mjtot)
          call upbnd(alloc(node(cfluxptr,mptr)),alloc(loc),nvar,
-     1              mitot,mjtot,listsp(lget),mptr)
+     1              naux,mitot,mjtot,listsp(lget),mptr)
 c     1              mitot,mjtot,listsp(lget),alloc(locuse),mptr)
 c         call reclam(locuse,mitot*mjtot)
 c
@@ -102,7 +110,7 @@ c
               write(outunit,101) i,j,mptr,iff,jff,mkid
  101          format(' updating pt. ',2i4,' of grid ',i3,' using ',2i4,
      1               ' of grid ',i4)
-              write(outunit,102)(alloc(iadd(i,j,ivar)),ivar=1,nvar)
+              write(outunit,102)(alloc(iadd(ivar,i,j)),ivar=1,nvar)
  102          format(' old vals: ',4e12.4)
            endif
 c
@@ -110,18 +118,18 @@ c
 c  update using intrat fine points in each direction
 c
            do 35 ivar = 1, nvar
- 35           alloc(iadd(i,j,ivar)) = 0.d0
+ 35           alloc(iadd(ivar,i,j)) = 0.d0
 c
            if (mcapa .eq. 0) then
                do 50 jco  = 1, intraty(lget)
                do 50 ico  = 1, intratx(lget)
                do 40 ivar = 1, nvar
-                 alloc(iadd(i,j,ivar))= alloc(iadd(i,j,ivar)) + 
-     1                        alloc(iaddf(iff+ico-1,jff+jco-1,ivar))
+                 alloc(iadd(ivar,i,j))= alloc(iadd(ivar,i,j)) + 
+     1                        alloc(iaddf(ivar,iff+ico-1,jff+jco-1))
  40              continue
  50            continue
             do 60 ivar = 1, nvar
- 60          alloc(iadd(i,j,ivar)) = alloc(iadd(i,j,ivar))/totrat
+ 60          alloc(iadd(ivar,i,j)) = alloc(iadd(ivar,i,j))/totrat
                
            else
 
@@ -129,16 +137,16 @@ c
                do 51 ico  = 1, intratx(lget)
                capa = alloc(iaddfaux(iff+ico-1,jff+jco-1))
                do 41 ivar = 1, nvar
-                 alloc(iadd(i,j,ivar))= alloc(iadd(i,j,ivar)) + 
-     1                       alloc(iaddf(iff+ico-1,jff+jco-1,ivar))*capa
+                 alloc(iadd(ivar,i,j))= alloc(iadd(ivar,i,j)) + 
+     1                  alloc(iaddf(ivar,iff+ico-1,jff+jco-1))*capa
  41              continue
  51            continue
             do 61 ivar = 1, nvar
- 61          alloc(iadd(i,j,ivar)) = alloc(iadd(i,j,ivar))/
+ 61          alloc(iadd(ivar,i,j)) = alloc(iadd(ivar,i,j))/
      1                               (totrat*alloc(iaddcaux(i,j)))
            endif
 c
-            if (uprint) write(outunit,103)(alloc(iadd(i,j,ivar)),
+            if (uprint) write(outunit,103)(alloc(iadd(ivar,i,j)),
      .                                     ivar=1,nvar)
  103        format(' new vals: ',4e12.4)
 c

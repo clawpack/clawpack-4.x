@@ -5,10 +5,10 @@ c
 
        implicit double precision (a-h, o-z)
 
-       dimension qc(nrow,ncol,nvar)
-       dimension qc1d(lenbc,nvar)
-       dimension auxc(nrow,ncol,naux)
-       dimension auxc1d(lenbc,naux)
+       dimension qc(nvar,nrow,ncol)
+       dimension qc1d(nvar,lenbc)
+       dimension auxc(naux,nrow,ncol)
+       dimension auxc1d(naux,lenbc)
 c
 c      store coarse perimeter worth of solution into 1d array.
 c      go around fine grid in following order
@@ -27,36 +27,36 @@ c      side 1
        do 10 j = 2, ncol-1
          index = index + 1
          do 5 ivar = 1, nvar
- 5         qc1d(index,ivar) = qc(1,j,ivar)
+ 5         qc1d(ivar,index) = qc(ivar,1,j)
          do 6 iaux = 1, naux
- 6         auxc1d(index,iaux) = auxc(1,j,iaux)
+ 6         auxc1d(iaux,index) = auxc(iaux,1,j)
  10    continue
 
 c      side 2
        do 20 i = 2, nrow-1
          index = index + 1
          do 15 ivar = 1, nvar
- 15        qc1d(index,ivar) = qc(i,ncol,ivar)
+ 15        qc1d(ivar,index) = qc(ivar,i,ncol)
          do 16 iaux = 1, naux
- 16        auxc1d(index,iaux) = auxc(i,ncol,iaux)
+ 16        auxc1d(iaux,index) = auxc(iaux,i,ncol)
  20    continue
 
 c      side 3
        do 30 j = 2, ncol-1
          index = index + 1
          do 25 ivar = 1, nvar
- 25        qc1d(index,ivar) = qc(nrow,j,ivar)
+ 25        qc1d(ivar,index) = qc(ivar,nrow,j)
          do 26 iaux = 1, naux
- 26        auxc1d(index,iaux) = auxc(nrow,j,iaux)
+ 26        auxc1d(iaux,index) = auxc(iaux,nrow,j)
  30    continue
 
 c      side 4
        do 40 i = 2, nrow-1
          index = index + 1
          do 35 ivar = 1, nvar
- 35        qc1d(index,ivar) = qc(i,1,ivar)
+ 35        qc1d(ivar,index) = qc(ivar,i,1)
          do 36 iaux = 1, naux
- 36        auxc1d(index,iaux) = auxc(i,1,iaux)
+ 36        auxc1d(iaux,index) = auxc(iaux,i,1)
  40    continue
 
        return

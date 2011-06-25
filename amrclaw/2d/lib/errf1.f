@@ -7,9 +7,9 @@ c
 
       include  "call.i"
  
-      dimension  rctfine(mitot,mjtot,nvar)
-      dimension  rctcrse(mi2tot,mj2tot,nvar)
-      dimension  rctflg(mitot,mjtot,nvar)
+      dimension  rctfine(nvar,mitot,mjtot)
+      dimension  rctcrse(nvar,mi2tot,mj2tot)
+      dimension  rctflg(nvar,mitot,mjtot)
       logical    allowflag
       external   allowflag
 c
@@ -44,14 +44,14 @@ c
  107     format(//,' coarsened grid values for grid ',i4)
          do 10 jj = nghost+1, mj2tot-nghost
             j = mj2tot + 1 - jj
-            write(outunit,101) (rctcrse(i,j,1),
+            write(outunit,101) (rctcrse(1,i,j),
      .                          i = nghost+1, mi2tot-nghost)
 10       continue
          write(outunit,108) mptr
  108     format(//, ' fine grid values for grid ',i4)
          do 15 jj = nghost+1, mjtot-nghost
             j = mjtot + 1 - jj
-            write(outunit,101) (rctfine(i,j,1),i=nghost+1,mitot-nghost)
+            write(outunit,101) (rctfine(1,i,j),i=nghost+1,mitot-nghost)
 15       continue
 101      format(' ',13f6.3)
 c
@@ -66,10 +66,10 @@ c
       do 30  i  = nghost+1, mi2tot-nghost
           rflag = goodpt
           xofi  = xleft + (dble(ifine) - .5d0)*hx
-          term1 = rctfine(ifine,jfine,1)
-          term2 = rctfine(ifine+1,jfine,1)
-          term3 = rctfine(ifine+1,jfine+1,1)
-          term4 = rctfine(ifine,jfine+1,1)
+          term1 = rctfine(1,ifine,jfine)
+          term2 = rctfine(1,ifine+1,jfine)
+          term3 = rctfine(1,ifine+1,jfine+1)
+          term4 = rctfine(1,ifine,jfine+1)
 c         # divide by (aval*order) for relative error
           aval  = (term1+term2+term3+term4)/4.d0
           est   =  dabs((aval-rctcrse(i,j,1))/ order)
@@ -82,7 +82,7 @@ c
           if (est .ge. tol .and. allowflag(xofi,yofj,time,levm)) then
              rflag  = badpt
           endif 
-      rctcrse(i,j,1) = rflag
+      rctcrse(1,i,j) = rflag
       ifine = ifine + 2
  30   continue
       jfine = jfine + 2
@@ -95,7 +95,7 @@ c  initialize rctflg to 0.0 (no flags)  before flagging
 c
       do 40 j = 1, mjtot
       do 40 i = 1, mitot
- 40      rctflg(i,j,1) = goodpt
+ 40      rctflg(1,i,j) = goodpt
 c
 c  print out intermediate flagged rctcrse (for debugging)
 c
@@ -109,7 +109,7 @@ c
      .                      'for grid ',mptr
            do 45 jj = nghost+1, mj2tot-nghost
               j = mj2tot + 1 - jj
-              write(outunit,106) (nint(rctcrse(i,j,1)),
+              write(outunit,106) (nint(rctcrse(1,i,j)),
      .                            i=nghost+1,mi2tot-nghost)
 106           format(1h ,80i1)
 45         continue
@@ -121,10 +121,10 @@ c
       ifine   = nghost+1
       do 60 i = nghost+1, mi2tot-nghost
          if (rctcrse(i,j,1) .eq. goodpt) go to 55
-            rctflg(ifine,jfine,1)    = badpt
-            rctflg(ifine+1,jfine,1)  = badpt
-            rctflg(ifine,jfine+1,1)  = badpt
-            rctflg(ifine+1,jfine+1,1)= badpt
+            rctflg(1,ifine,jfine)    = badpt
+            rctflg(1,ifine+1,jfine)  = badpt
+            rctflg(1,ifine,jfine+1)  = badpt
+            rctflg(1,ifine+1,jfine+1)= badpt
  55       ifine   = ifine + 2
  60     continue
         jfine   = jfine + 2
@@ -148,9 +148,9 @@ c      do 80 ifine = nghost+1, mitot-nghost
 c        xofi  = xleft + (dble(ifine) - nghost - .5d0)*hx
 c        if (sperr(ifine,jfine) .gt. tolsp .and. allowflag(xofi,yofj,levm))
 c     &     then
-c               rflag = rctflg(ifine,jfine,1)
+c               rflag = rctflg(1,ifine,jfine)
 c               if (rflag .ne. badpt) then
-c                 rctflg(ifine,jfine,1) = badpt
+c                 rctflg(1,ifine,jfine) = badpt
 c                 numsp = numsp + 1
 c               endif
 c          endif
@@ -163,7 +163,7 @@ c        if (edebug) then
 c          do 56 jj = nghost+1, mjtot-nghost
 c           j = mjtot + 1 - jj
 c           write(outunit,106)
-c     &      (nint(rctflg(i,j,1)),i=nghost+1,mitot-nghost)
+c     &      (nint(rctflg(1,i,j)),i=nghost+1,mitot-nghost)
 c 56       continue
 c        endif
 c      endif

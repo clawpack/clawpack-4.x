@@ -7,7 +7,7 @@ c
       implicit double precision (a-h,o-z)
 
 c      integer*1  iflags (0:isize+1,0:jsize+1)
-            include  "call.i"
+       include  "call.i"
 
  
 c :::::::::::::::::::::::::: SPEST :::::::::::::::::::::::::::::::::::

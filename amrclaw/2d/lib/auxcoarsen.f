@@ -6,8 +6,8 @@ c
       
        implicit double precision (a-h, o-z)
 
-       dimension     auxdub(midub, mjdub, naux)
-       dimension     auxbgc(mi2tot,mj2tot,naux)
+       dimension     auxdub(naux,midub, mjdub)
+       dimension     auxbgc(naux,mi2tot,mj2tot)
        character*10  auxtype(naux)
 
 c :::::::::::::::::::::::: COARSEN ::::::::::::::::::::::::::::::::
@@ -24,10 +24,10 @@ c :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             jfine = 2*(j-1) + 1
             do 20 i = 1, mi2tot
                ifine = 2*(i-1) + 1
-               auxbgc(i,j,iaux) = (auxdub(ifine,jfine,iaux) +
-     &                             auxdub(ifine+1,jfine,iaux)+
-     &                             auxdub(ifine,jfine+1,iaux) +
-     &                             auxdub(ifine+1,jfine+1,iaux))/4.d0
+               auxbgc(iaux,i,j) = (auxdub(iaux,ifine,jfine) +
+     &                             auxdub(iaux,ifine+1,jfine)+
+     &                             auxdub(iaux,ifine,jfine+1) +
+     &                             auxdub(iaux,ifine+1,jfine+1))/4.d0
 20       continue
 
        elseif (auxtype(iaux) .eq. "xleft") then 
@@ -35,8 +35,8 @@ c :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             jfine = 2*(j-1) + 1
             do 10 i = 1, mi2tot
                ifine = 2*(i-1) + 1
-               auxbgc(i,j,iaux) = (auxdub(ifine,jfine,iaux) +
-     &                          auxdub(ifine,jfine+1,iaux)) /2.d0 
+               auxbgc(iaux,i,j) = (auxdub(iaux,ifine,jfine) +
+     &                             auxdub(iaux,ifine,jfine+1)) /2.d0 
 10       continue
 
        elseif (auxtype(iaux) .eq. "yleft") then 
@@ -44,8 +44,8 @@ c :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             jfine = 2*(j-1) + 1
             do 15 i = 1, mi2tot
                ifine = 2*(i-1) + 1
-               auxbgc(i,j,iaux) = (auxdub(ifine,jfine,iaux) +
-     &                             auxdub(ifine+1,jfine,iaux))/2.d0
+               auxbgc(iaux,i,j) = (auxdub(iaux,ifine,jfine) +
+     &                             auxdub(iaux,ifine+1,jfine))/2.d0
 15       continue
 
        endif

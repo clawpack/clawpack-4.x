@@ -8,7 +8,7 @@ c
 
       include  "call.i"
 
-      dimension rctold(mitot,mjtot,idim3)
+      dimension rctold(idim3,mitot,mjtot)
       integer*1 iflags(0:isize+1,0:jsize+1)
 
 c :::::::::::::::::::::: SETFLAGS ::::::::::::::::::::::::::::::::::
@@ -23,7 +23,7 @@ c
 
       do 10 j = nghost+1, mjtot-nghost
       do 10 i = nghost+1, mitot-nghost
-        iflags(ibeg+i,jbeg+j) = iflags(ibeg+i,jbeg+j) + rctold(i,j,1)
+        iflags(ibeg+i,jbeg+j) = iflags(ibeg+i,jbeg+j) + rctold(1,i,j)
  10   continue
 c
  99   return

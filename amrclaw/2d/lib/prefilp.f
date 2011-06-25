@@ -21,7 +21,7 @@ c      iaddscratch(i,j,ivar)  = i  + nr*((ivar-1)*nc+j-1)
 
 
        iadd(ivar,i,j) = locflip + ivar-1 + nvar*((j-1)*nr+i-1)
-       iaddscratch(ivar,i,j) = ivar + nvar*((j-1)*nr+i-1)
+       iaddscratch(ivar,i,j) = ivar + nvar*((j-1)*nr+i-1)  ! no subtract 1
 
 c
 c  :::::::::::::: PREFILRECUR :::::::::::::::::::::::::::::::::::::::::::
