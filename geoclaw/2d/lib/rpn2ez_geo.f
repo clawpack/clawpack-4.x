@@ -105,7 +105,7 @@ c        !set normal direction
 
          if (ql(i,1).lt.0.d0) then
             do m=1,meqn
-               ql(i,1)=0.d0
+               ql(i,m)=0.d0
             enddo
          endif
 
