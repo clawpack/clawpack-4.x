@@ -36,20 +36,20 @@ c
       implicit double precision (a-h,o-z)
 
 
-      dimension qold(1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc, meqn)
-      dimension   fm(1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc, meqn)
-      dimension   fp(1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc, meqn)
-      dimension   gm(1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc, meqn)
-      dimension   gp(1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc, meqn)
-      dimension  q1d(1-mbc:maxm+mbc, meqn)
-      dimension faddm(1-mbc:maxm+mbc, meqn)
-      dimension faddp(1-mbc:maxm+mbc, meqn)
-      dimension gaddm(1-mbc:maxm+mbc, meqn, 2)
-      dimension gaddp(1-mbc:maxm+mbc, meqn, 2)
-      dimension aux(1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc, maux)
-      dimension aux1(1-mbc:maxm+mbc, maux)
-      dimension aux2(1-mbc:maxm+mbc, maux)
-      dimension aux3(1-mbc:maxm+mbc, maux)
+      dimension qold(meqn,1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc)
+      dimension   fm(meqn,1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc)
+      dimension   fp(meqn,1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc)
+      dimension   gm(meqn,1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc)
+      dimension   gp(meqn,1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc)
+      dimension  q1d(meqn,1-mbc:maxm+mbc)
+      dimension faddm(meqn,1-mbc:maxm+mbc)
+      dimension faddp(meqn,1-mbc:maxm+mbc)
+      dimension gaddm(meqn,1-mbc:maxm+mbc, 2)
+      dimension gaddp(meqn,1-mbc:maxm+mbc, 2)
+      dimension aux(maux,1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc)
+      dimension aux1(maux,1-mbc:maxm+mbc)
+      dimension aux2(maux,1-mbc:maxm+mbc)
+      dimension aux3(maux,1-mbc:maxm+mbc)
       dimension dtdx1d(1-mbc:maxm+mbc)
       dimension dtdy1d(1-mbc:maxm+mbc)
       dimension work(mwork)
@@ -95,13 +95,13 @@ c
       dtdx = dt/dx
       dtdy = dt/dy
 c
-      do 10 m=1,meqn
+      do 10 j=1-mbc,my+mbc
          do 10 i=1-mbc,mx+mbc
-            do 10 j=1-mbc,my+mbc
-               fm(i,j,m) = 0.d0
-               fp(i,j,m) = 0.d0
-               gm(i,j,m) = 0.d0
-               gp(i,j,m) = 0.d0
+            do 10 m=1,meqn
+               fm(m,i,j) = 0.d0
+               fp(m,i,j) = 0.d0
+               gm(m,i,j) = 0.d0
+               gp(m,i,j) = 0.d0
    10          continue
 c
       if (mcapa.eq.0) then
@@ -120,23 +120,23 @@ c
       do 50 j = 0,my+1
 c
 c        # copy data along a slice into 1d arrays:
-         do 20 m=1,meqn
-           do 20 i = 1-mbc, mx+mbc
-               q1d(i,m) = qold(i,j,m)
+         do 20 i = 1-mbc, mx+mbc
+           do 20 m=1,meqn
+               q1d(m,i) = qold(m,i,j)
    20          continue
 c
          if (mcapa.gt.0)  then
            do 21 i = 1-mbc, mx+mbc
-               dtdx1d(i) = dtdx / aux(i,j,mcapa)
+               dtdx1d(i) = dtdx / aux(mcapa,i,j)
    21          continue
            endif
 c
          if (maux .gt. 0)  then
-             do 22 ma=1,maux
-               do 22 i = 1-mbc, mx+mbc
-                 aux1(i,ma) = aux(i,j-1,ma)
-                 aux2(i,ma) = aux(i,j  ,ma)
-                 aux3(i,ma) = aux(i,j+1,ma)
+             do 22 i = 1-mbc, mx+mbc
+               do 22 ma=1,maux
+                 aux1(ma,i) = aux(ma,i,j-1)
+                 aux2(ma,i) = aux(ma,i,j  )
+                 aux3(ma,i) = aux(ma,i,j+1)
    22            continue
            endif
 c
@@ -156,14 +156,14 @@ c        # compute modifications fadd and gadd to fluxes along this slice:
 c
 c        # update fluxes for use in AMR:
 c
-         do 25 m=1,meqn
-            do 25 i=1,mx+1
-               fm(i,j,m) = fm(i,j,m) + faddm(i,m)
-               fp(i,j,m) = fp(i,j,m) + faddp(i,m)
-               gm(i,j,m) = gm(i,j,m) + gaddm(i,m,1)
-               gp(i,j,m) = gp(i,j,m) + gaddp(i,m,1)
-               gm(i,j+1,m) = gm(i,j+1,m) + gaddm(i,m,2)
-               gp(i,j+1,m) = gp(i,j+1,m) + gaddp(i,m,2)
+          do 25 i=1,mx+1
+           do 25 m=1,meqn
+               fm(m,i,j) = fm(m,i,j) + faddm(m,i)
+               fp(m,i,j) = fp(m,i,j) + faddp(m,i)
+               gm(m,i,j) = gm(m,i,j) + gaddm(m,i,1)
+               gp(m,i,j) = gp(m,i,j) + gaddp(m,i,1)
+               gm(m,i,j+1) = gm(m,i,j+1) + gaddm(m,i,2)
+               gp(m,i,j+1) = gp(m,i,j+1) + gaddp(m,i,2)
    25          continue
    50    continue
 c
@@ -176,23 +176,23 @@ c
       do 100 i = 0, mx+1
 c
 c        # copy data along a slice into 1d arrays:
-         do 70 m=1,meqn
-           do 70 j = 1-mbc, my+mbc
-               q1d(j,m) = qold(i,j,m)
+         do 70 j = 1-mbc, my+mbc
+           do 70 m=1,meqn
+               q1d(m,j) = qold(m,i,j)
    70          continue
 c
          if (mcapa.gt.0)  then
            do 71 j = 1-mbc, my+mbc
-               dtdy1d(j) = dtdy / aux(i,j,mcapa)
+               dtdy1d(j) = dtdy / aux(mcapa,i,j)
    71          continue
            endif
 c
          if (maux .gt. 0)  then
-             do 72 ma=1,maux
-               do 72 j = 1-mbc, my+mbc
-                 aux1(j,ma) = aux(i-1,j,ma)
-                 aux2(j,ma) = aux(i,  j,ma)
-                 aux3(j,ma) = aux(i+1,j,ma)
+             do 72 j = 1-mbc, my+mbc
+               do 72 ma=1,maux
+                 aux1(ma,j) = aux(ma,i-1,j)
+                 aux2(ma,j) = aux(ma,i,  j)
+                 aux3(ma,j) = aux(ma,i+1,j)
    72            continue
            endif
 c
@@ -216,12 +216,12 @@ c        # update fluxes for use in AMR:
 c
          do 75 m=1,meqn
             do 75 j=1,my+1
-               gm(i,j,m)   = gm(i,j,m)  + faddm(j,m)
-               gp(i,j,m)   = gp(i,j,m)  + faddp(j,m)
-               fm(i,j,m)   = fm(i,j,m)  + gaddm(j,m,1)
-               fp(i,j,m)   = fp(i,j,m)  + gaddp(j,m,1)
-               fm(i+1,j,m) = fm(i+1,j,m)+ gaddm(j,m,2)
-               fp(i+1,j,m) = fp(i+1,j,m)+ gaddp(j,m,2)
+               gm(m,i,j)   = gm(m,i,j)  + faddm(m,j)
+               gp(m,i,j)   = gp(m,i,j)  + faddp(m,j)
+               fm(m,i,j)   = fm(m,i,j)  + gaddm(m,j,1)
+               fp(m,i,j)   = fp(m,i,j)  + gaddp(m,j,1)
+               fm(m,i+1,j) = fm(m,i+1,j)+ gaddm(m,j,2)
+               fp(m,i+1,j) = fp(m,i+1,j)+ gaddp(m,j,2)
    75          continue
   100    continue
 
@@ -232,38 +232,38 @@ c     # relimit correction fluxes if they drive a cell negative
          do 101 i=1,mx
             do 101 j=1,my
                   if (mcapa.gt.0) then
-                     dtdxij=dtdx/aux(i,j,mcapa)
-                     dtdyij=dtdy/aux(i,j,mcapa)
+                     dtdxij=dtdx/aux(mcapa,i,j)
+                     dtdyij=dtdy/aux(mcapa,i,j)
                   endif
 
-                  p   = dmax1(0.d0,dtdxij*fm(i+1,j,1))
-     &                 +  dmax1(0.d0,dtdyij*gm(i,j+1,1))
-     &                 -  dmin1(0.d0,dtdxij*fp(i,j,1))
-     &                 -  dmin1(0.d0,dtdyij*gp(i,j,1))
+                  p   = dmax1(0.d0,dtdxij*fm(1.i+1,j))
+     &                + dmax1(0.d0,dtdyij*gm(1,i,j+1))
+     &                - dmin1(0.d0,dtdxij*fp(1,i,j))
+     &                - dmin1(0.d0,dtdyij*gp(1,i,j))
                   phi = dmin1(1.d0,
-     &                 dabs(qold(i,j,1)/(p+drytolerance)))
+     &                 dabs(qold(1,i,j)/(p+drytolerance)))
 
                   if (phi.lt.1.d0) then
                      do m=1,meqn
-                        if (fp(i,j,1).lt.0.d0) then
-                           cm=fp(i,j,m)-fm(i,j,m)
-                           fm(i,j,m)=phi*fm(i,j,m)
-                           fp(i,j,m)=fm(i,j,m)+cm
+                        if (fp(1,i,j).lt.0.d0) then
+                           cm=fp(m,i,j)-fm(m,i,j)
+                           fm(m,i,j)=phi*fm(m,i,j)
+                           fp(m,i,j)=fm(m,i,j)+cm
                         endif
-                        if (gp(i,j,1).lt.0.d0) then
-                           cm=gp(i,j,m)-gm(i,j,m)
-                           gm(i,j,m)=phi*gm(i,j,m)
-                           gp(i,j,m)=gm(i,j,m)+cm
+                        if (gp(1,i,j).lt.0.d0) then
+                           cm=gp(m,i,j)-gm(m,i,j)
+                           gm(m,i,j)=phi*gm(m,i,j)
+                           gp(m,i,j)=gm(m,i,j)+cm
                         endif
-                        if (fm(i+1,j,1).gt.0.d0) then
-                           cm=fp(i+1,j,m)-fm(i+1,j,m)
-                           fp(i+1,j,m)=phi*fp(i+1,j,m)
-                           fm(i+1,j,m)=fp(i+1,j,m)-cm
+                        if (fm(1,i+1,j).gt.0.d0) then
+                           cm=fp(m,i+1,j)-fm(m,i+1,j)
+                           fp(m,i+1,j)=phi*fp(m,i+1,j)
+                           fm(m,i+1,j)=fp(m,i+1,j)-cm
                         endif
-                        if (gm(i,j+1,1).gt.0.d0) then
-                           cm=gp(i,j+1,m)-gm(i,j+1,m)
-                           gp(i,j+1,m)=phi*gp(i,j+1,m)
-                           gm(i,j+1,m)=gp(i,j+1,m)-cm
+                        if (gm(1,i,j+1).gt.0.d0) then
+                           cm=gp(m,i,j+1)-gm(m,i,j+1)
+                           gp(m,i,j+1)=phi*gp(m,i,j+1)
+                           gm(m,i,j+1)=gp(m,i,j+1)-cm
                         endif
                      enddo
                   endif

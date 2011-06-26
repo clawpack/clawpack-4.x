@@ -19,8 +19,8 @@ c     Also calls movetopo if topography might be moving.
 
       implicit double precision (a-h,o-z)
 
-      dimension q(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, meqn)
-      dimension aux(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, maux)
+      dimension q(meqn,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
+      dimension aux(maux,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
 
 
 c=====================Parameters===========================================
@@ -35,10 +35,10 @@ c     # set hu = hv = 0 in all these cells
 
       do i=1-mbc,mx+mbc
         do j=1-mbc,my+mbc
-          if (q(i,j,1).lt.drytolerance) then
-             q(i,j,1) = max(q(i,j,1),0.d0)
+          if (q(1,i,j).lt.drytolerance) then
+             q(1,i,j) = max(q(1,i,j),0.d0)
              do m=2,meqn
-                q(i,j,m)=0.d0
+                q(m,i,j)=0.d0
                 enddo
              endif
         enddo

@@ -8,8 +8,14 @@ c
 
       include  "call.i"
 
-      iadd(i,j,ivar) = loc + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-      iaddaux(i,j,iaux) = locaux + i - 1 + mitot*((iaux-1)*mjtot+j-1)
+c OLD INDEXING
+c     iadd(i,j,ivar) = loc + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c     iaddaux(i,j,iaux) = locaux + i - 1 + mitot*((iaux-1)*mjtot+j-1)
+c NEW INDEXING ORDER SWITCHED
+      iadd(ivar,i,j)  = loc + ivar - 1 + nvar*((j-1)*mitot+i-1)
+      iaddaux(iaux,i,j) = locaux + iaux-1 + naux*(i-1) +
+     .                                      naux*mitot*(j-1)
+
 
 
 c ::::::::::::::::::::::::::: VALOUT ::::::::::::::::::::::::::::::::::;
@@ -70,12 +76,12 @@ c  old        ycorn = rnode(cornylo,mptr) - .5d0*hyposs(level)
       do j = nghost+1, mjtot-nghost
          do i = nghost+1, mitot-nghost
             do ivar=1,nvar
-               if (dabs(alloc(iadd(i,j,ivar))) .lt. 1d-90) then
-                  alloc(iadd(i,j,ivar)) = 0.d0
+               if (dabs(alloc(iadd(ivar,i,j))) .lt. 1d-90) then
+                  alloc(iadd(ivar,i,j)) = 0.d0
                endif
             enddo
-            surface = alloc(iadd(i,j,1)) + alloc(iaddaux(i,j,1))
-            write(matunit1,109) (alloc(iadd(i,j,ivar)), ivar=1,nvar),
+            surface = alloc(iadd(1,i,j)) + alloc(iaddaux(1,i,j))
+            write(matunit1,109) (alloc(iadd(ivar,i,j)), ivar=1,nvar),
      &         surface
          enddo
          write(matunit1,*) ' '

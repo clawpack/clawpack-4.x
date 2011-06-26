@@ -183,7 +183,7 @@ c
 101       format(8h  level ,i5,32h  stays fixed during regridding )
           call regrid(nvar,lbase,cut,naux,t0)
           call setbestsrc()     ! need at every grid change
-c         call conck(1,nvar,time,rest)
+c         call conck(1,nvar,naux,time,rest)
 c         call outtre(lstart(lbase+1),.true.,nvar,naux)
 c note negative time to signal regridding output in plots
 c         call valout(lbase,lfine,-tlevel(lbase),nvar,naux)
@@ -278,7 +278,7 @@ c                   adjust time steps for this and finer levels
                  go to 60
               else
                  level = level - 1
-                 call update(level,nvar)
+                 call update(level,nvar,naux)
               endif
           go to 105
 c
@@ -289,7 +289,7 @@ c
  110      continue
           time    = time   + possk(1)
           ncycle  = ncycle + 1
-          call conck(1,nvar,time,rest)
+          call conck(1,nvar,naux,time,rest)
 
        if ((ichkpt.gt.0 .and. mod(ncycle,ichkpt).eq.0) 
      &      .or. dumpchk) then

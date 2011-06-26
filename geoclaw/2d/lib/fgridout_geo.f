@@ -8,9 +8,9 @@ c======================================================================
 
       implicit double precision (a-h,o-z)
 
-      dimension fgrid1(1:mxfg,1:myfg,mvarsfg)
-      dimension fgrid2(1:mxfg,1:myfg,mvarsfg)
-      dimension fgrid3(1:mxfg,1:myfg,mvarsfg2)
+      dimension fgrid1(mvarsfg, 1:mxfg,1:myfg)
+      dimension fgrid2(mvarsfg, 1:mxfg,1:myfg)
+      dimension fgrid3(mvarsfg2,1:mxfg,1:myfg)
 
       character*30 fgoutname
 
@@ -71,16 +71,16 @@ c     # solution on the fixed grid at the two nearest computational times
 
       do jfg=1,myfg
       do ifg=1,mxfg
-        t0=fgrid1(ifg,jfg,mvarsfg)
-        tf=fgrid2(ifg,jfg,mvarsfg)
+        t0=fgrid1(mvarsfg,ifg,jfg)
+        tf=fgrid2(mvarsfg,ifg,jfg)
         tau=(toutfg-t0)/(tf-t0)
        if (icolumns.eq.mvarsfg-1) then 
-        write(90,109) ((1.d0 - tau)*fgrid1(ifg,jfg,iv)
-     &            +tau*fgrid2(ifg,jfg,iv), iv=1,mvarsfg-1)
+        write(90,109) ((1.d0 - tau)*fgrid1(iv,ifg,jfg)
+     &            +tau*fgrid2(iv,ifg,jfg), iv=1,mvarsfg-1)
        else
-        write(90,109) ((1.d0 - tau)*fgrid1(ifg,jfg,iv)
-     &            +tau*fgrid2(ifg,jfg,iv), iv=1,mvarsfg-1),
-     &            fgrid3(ifg,jfg,indetamin),fgrid3(ifg,jfg,indetamax)
+        write(90,109) ((1.d0 - tau)*fgrid1(iv,ifg,jfg)
+     &            +tau*fgrid2(iv,ifg,jfg), iv=1,mvarsfg-1),
+     &            fgrid3(indetamin,ifg,jfg),fgrid3(indetamax,ifg,jfg)
 
        endif
       enddo
@@ -122,7 +122,7 @@ c        ###  make the file name and open output file for arrival times
       do jfg=1,myfg
       do ifg=1,mxfg
 
-        write(95,167) fgrid3(ifg,jfg,1)
+        write(95,167) fgrid3(1,ifg,jfg)
   
       enddo
       enddo

@@ -26,7 +26,7 @@ c :::::::::::::::::::::::::::::::::::::::;:::::::::::::::::::::::;
       include  "call.i"
 
       logical   set, sticksout
-      dimension valbig(mitot,mjtot,nvar), aux(mitot,mjtot,naux)
+      dimension valbig(nvar,mitot,mjtot), aux(naux,mitot,mjtot)
 
 c     use stack-based scratch arrays instead of alloc, since dont really
 c     need to save beyond these routines, and to allow dynamic memory resizing
@@ -52,13 +52,21 @@ c
       double precision slopey((ihi-ilo+2)*(jhi-jlo+2))
       integer icount((ihi-ilo+2)*(jhi-jlo+2))
 
-      ivalc(i,j,ivar) = i + nrowc*(j - 1)
-     &                    + nrowc*ncolc*(ivar-1)
+c OLD INDEXING
+c$$$      ivalc(i,j,ivar) = i + nrowc*(j - 1)
+c$$$     &                    + nrowc*ncolc*(ivar-1)
+c$$$      icrse(i,j) = i + nrowc*(j-1)
+c$$$c
+c$$$c     # index into first component of aux = topo:
+c$$$      iauxc(i,j) =  i + nrowc*(j-1)
+
+c NEW INDEXING - ORDER SWITCHED
+      ivalc(ivar,i,j) = ivar + nvar*(i-1) + nvar*nrowc*(j-1)
       icrse(i,j) = i + nrowc*(j-1)
 c
 c     # index into first component of aux = topo:
-      iauxc(i,j) =  i + nrowc*(j-1)
-
+      iauxc(i,j) = 1 + naux*(i-1) + naux*nrowc*(j-1)
+c
       sticksout(iplo,iphi,jplo,jphi)  =
      &            (iplo .lt. 0 .or. jplo .lt. 0 .or.
      &             iphi .ge. iregsz(levc) .or. jphi .ge. jregsz(levc))
@@ -203,14 +211,14 @@ c       interpolate back up
             icount(icrse(ic,jc)) = 0
             finemass(icrse(ic,jc)) = 0.d0
             do ivar=1,nvar
-               fineflag(ivalc(ic,jc,ivar)) = .false.
+               fineflag(ivalc(ivar,ic,jc)) = .false.
             enddo
 
-*           !find interpolation slope for eta = q(:,1)+ aux(:,1)
+*           !find interpolation slope for eta = q(1,:)+ aux(1,:)
             do i=-1,1
-               etacrse(icrse(ic+i,jc)) = valcrse(ivalc(ic+i,jc,1))
+               etacrse(icrse(ic+i,jc)) = valcrse(ivalc(1,ic+i,jc))
      &            +  auxcrse(iauxc(ic+i,jc))
-               if (valcrse(ivalc(ic+i,jc,1)).lt.toldry) then
+               if (valcrse(ivalc(1,ic+i,jc)).lt.toldry) then
                   etacrse(icrse(ic+i,jc)) = sealevel
                   endif
                enddo
@@ -223,13 +231,13 @@ c       interpolate back up
      &               etacrse(icrse(ic+1,jc))- etacrse(icrse(ic-1,jc)))
                endif
             do j=-1,1
-               etacrse(icrse(ic,jc+j)) = valcrse(ivalc(ic,jc+j,1))
+               etacrse(icrse(ic,jc+j)) = valcrse(ivalc(1,ic,jc+j))
      &            +  auxcrse(iauxc(ic,jc+j))
-               if (valcrse(ivalc(ic,jc+j,1)).lt.toldry) then
+               if (valcrse(ivalc(1,ic,jc+j)).lt.toldry) then
                   etacrse(icrse(ic,jc+j)) = sealevel
                   endif
                enddo
-            s1 = etacrse(icrse(ic,jc))- etacrse(icrse(ic,jc-1))
+            s1 = etacrse(icrse(ic,jc))  - etacrse(icrse(ic,jc-1))
             s2 = etacrse(icrse(ic,jc+1))- etacrse(icrse(ic,jc))
             if (s1*s2.le.0) then
                slopey(icrse(ic,jc))= 0.d0
@@ -256,14 +264,14 @@ c           flag = alloc(iadflag(iff,jf))
                icount(icrse(ic,jc)) = icount(icrse(ic,jc)) + 1
                etafine =  etacrse(icrse(ic,jc))
      &            + eta1*slopex(icrse(ic,jc))+eta2*slopey(icrse(ic,jc))
-               hfine = max(etafine - aux(iff+nrowst-1,jf+ncolst-1,1),
+               hfine = max(etafine - aux(1,iff+nrowst-1,jf+ncolst-1),
      &            0.d0)
-               valbig(iff+nrowst-1,jf+ncolst-1,1) = hfine
+               valbig(1,iff+nrowst-1,jf+ncolst-1) = hfine
 
                finemass(icrse(ic,jc)) = finemass(icrse(ic,jc)) +
-     &                        valbig(iff+nrowst-1,jf+ncolst-1,1)
-               if (valbig(iff+nrowst-1,jf+ncolst-1,1).lt.toldry) then
-                  fineflag(ivalc(ic,jc,1)) = .true.
+     &                        valbig(1,iff+nrowst-1,jf+ncolst-1)
+               if (valbig(1,iff+nrowst-1,jf+ncolst-1).lt.toldry) then
+                  fineflag(ivalc(1,ic,jc)) = .true.
                   reloop = .true.
                   endif
                endif
@@ -276,34 +284,34 @@ c        ! determine momentum
             do ic  = 2, nrowc-1
             do jc  = 2, ncolc-1
 
-               s1 = valcrse(ivalc(ic,jc,ivar))
-     &               - valcrse(ivalc(ic-1,jc,ivar))
-               s2 = valcrse(ivalc(ic+1,jc,ivar))
-     &               - valcrse(ivalc(ic,jc,ivar))
+               s1 = valcrse(ivalc(ivar,ic,jc))
+     &               - valcrse(ivalc(ivar,ic-1,jc))
+               s2 = valcrse(ivalc(ivar,ic+1,jc))
+     &               - valcrse(ivalc(ivar,ic,jc))
                if (s1*s2.le.0) then
                   slopex(icrse(ic,jc))= 0.d0
                else
                   slopex(icrse(ic,jc))=dmin1(dabs(s1),dabs(s2))
-     &               *dsign(1.d0, valcrse(ivalc(ic+1,jc,ivar))
-     &                  - valcrse(ivalc(ic-1,jc,ivar)))
+     &               *dsign(1.d0, valcrse(ivalc(ivar,ic+1,jc))
+     &                  - valcrse(ivalc(ivar,ic-1,jc)))
                   endif
-               s1 = valcrse(ivalc(ic,jc,ivar))
-     &               - valcrse(ivalc(ic,jc-1,ivar))
-               s2 = valcrse(ivalc(ic,jc+1,ivar))
-     &               - valcrse(ivalc(ic,jc,ivar))
+               s1 = valcrse(ivalc(ivar,ic,jc))
+     &               - valcrse(ivalc(ivar,ic,jc-1))
+               s2 = valcrse(ivalc(ivar,ic,jc+1))
+     &               - valcrse(ivalc(ivar,ic,jc))
                if (s1*s2.le.0) then
                   slopey(icrse(ic,jc))= 0.d0
                else
                   slopey(icrse(ic,jc))=dmin1(dabs(s1),dabs(s2))
-     &               *dsign(1.d0, valcrse(ivalc(ic,jc+1,ivar))
-     &                  - valcrse(ivalc(ic,jc-1,ivar)))
+     &               *dsign(1.d0, valcrse(ivalc(ivar,ic,jc+1))
+     &                  - valcrse(ivalc(ivar,ic,jc-1)))
                   endif
 
-               if (valcrse(ivalc(ic,jc,1)).gt.toldry) then
-                  velmax(icrse(ic,jc)) = valcrse(ivalc(ic,jc,ivar))
-     &                                       /valcrse(ivalc(ic,jc,1))
-                  velmin(icrse(ic,jc)) =  valcrse(ivalc(ic,jc,ivar))
-     &                                       /valcrse(ivalc(ic,jc,1))
+               if (valcrse(ivalc(1,ic,jc)).gt.toldry) then
+                  velmax(icrse(ic,jc)) = valcrse(ivalc(ivar,ic,jc))
+     &                                       /valcrse(ivalc(1,ic,jc))
+                  velmin(icrse(ic,jc)) =  valcrse(ivalc(ivar,ic,jc))
+     &                                       /valcrse(ivalc(1,ic,jc))
                else
                   velmax(icrse(ic,jc)) = 0.d0
                   velmin(icrse(ic,jc)) = 0.d0
@@ -313,21 +321,21 @@ c        ! determine momentum
 *              !necessary since interpolating momentum linearly
 *              !yet depth is not interpolated linearly
                do ii = -1,1,2
-                  if (valcrse(ivalc(ic+ii,jc,1)).gt.toldry) then
+                  if (valcrse(ivalc(1,ic+ii,jc)).gt.toldry) then
                      velmax(icrse(ic,jc)) = max(velmax(icrse(ic,jc))
-     &                  ,valcrse(ivalc(ic+ii,jc,ivar))
-     &                  /valcrse(ivalc(ic+ii,jc,1)))
+     &                  ,valcrse(ivalc(ivar,ic+ii,jc))
+     &                  /valcrse(ivalc(1,ic+ii,jc)))
                      velmin(icrse(ic,jc)) = min(velmin(icrse(ic,jc))
-     &                  ,valcrse(ivalc(ic+ii,jc,ivar))
-     &                  /valcrse(ivalc(ic+ii,jc,1)))
+     &                  ,valcrse(ivalc(ivar,ic+ii,jc))
+     &                  /valcrse(ivalc(1,ic+ii,jc)))
                      endif
-                  if (valcrse(ivalc(ic,jc+ii,1)).gt.toldry) then
+                  if (valcrse(ivalc(1,ic,jc+ii)).gt.toldry) then
                      velmax(icrse(ic,jc)) = max(velmax(icrse(ic,jc))
-     &                  ,valcrse(ivalc(ic,jc+ii,ivar))
-     &                  /valcrse(ivalc(ic,jc+ii,1)))
+     &                  ,valcrse(ivalc(ivar,ic,jc+ii))
+     &                  /valcrse(ivalc(1,ic,jc+ii)))
                      velmin(icrse(ic,jc)) = min(velmin(icrse(ic,jc))
-     &                  ,valcrse(ivalc(ic,jc+ii,ivar))
-     &                  /valcrse(ivalc(ic,jc+ii,1)))
+     &                  ,valcrse(ivalc(ivar,ic,jc+ii))
+     &                  /valcrse(ivalc(1,ic,jc+ii)))
                      endif
                   enddo
 
@@ -344,18 +352,18 @@ c        ! determine momentum
 
                flag = flaguse(iff,jf)
                if (flag .eq. 0.0) then
-                  if (.not.(fineflag(ivalc(ic,jc,1)))) then
+                  if (.not.(fineflag(ivalc(1,ic,jc)))) then
 *                    !this is a normal wet cell. intepolate normally
-                     hvf = valcrse(ivalc(ic,jc,ivar))
+                     hvf = valcrse(ivalc(ivar,ic,jc))
      &                   + eta1*slopex(icrse(ic,jc))
      &                   + eta2*slopey(icrse(ic,jc))
-                     vf = hvf/valbig(iff+nrowst-1,jf+ncolst-1,1)
+                     vf = hvf/valbig(1,iff+nrowst-1,jf+ncolst-1)
                      if (vf.lt.velmin(icrse(ic,jc)).or.
      &                        vf.gt.velmax(icrse(ic,jc))) then
-                        fineflag(ivalc(ic,jc,ivar))=.true.
+                        fineflag(ivalc(ivar,ic,jc))=.true.
                         reloop = .true.
                      else
-                        valbig(iff+nrowst-1,jf+ncolst-1,ivar) = hvf
+                        valbig(ivar,iff+nrowst-1,jf+ncolst-1) = hvf
                         endif
                      endif
                   endif
@@ -374,19 +382,19 @@ c        ! determine momentum
                   eta2 = (-0.5d0+dble(mod(jf -1,lratioy)))/dble(lratioy)
                   flag = flaguse(iff,jf)
                   if (flag.eq.0.0) then
-                     if (fineflag(ivalc(ic,jc,1))
-     &                           .or.fineflag(ivalc(ic,jc,ivar))) then
+                     if (fineflag(ivalc(1,ic,jc))
+     &               .or.fineflag(ivalc(ivar,ic,jc))) then
                         if (finemass(icrse(ic,jc)).gt.toldry) then
-                           hcrse = valcrse(ivalc(ic,jc,1))
+                           hcrse = valcrse(ivalc(1,ic,jc))
                            hcnt = dble(icount(icrse(ic,jc)))
                            hfineave = finemass(icrse(ic,jc))/hcnt
                            dividemass = max(hcrse,hfineave)
-                           hfine = valbig(iff+nrowst-1,jf+ncolst-1,1)
-                           Vnew = valcrse(ivalc(ic,jc,ivar))/dividemass
-                           valbig(iff+nrowst-1,jf+ncolst-1,ivar) =
-     &                           Vnew*valbig(iff+nrowst-1,jf+ncolst-1,1)
+                           hfine = valbig(1,iff+nrowst-1,jf+ncolst-1)
+                           Vnew = valcrse(ivalc(ivar,ic,jc))/dividemass
+                           valbig(ivar,iff+nrowst-1,jf+ncolst-1) =
+     &                           Vnew*valbig(1,iff+nrowst-1,jf+ncolst-1)
                         else
-                           valbig(iff+nrowst-1,jf+ncolst-1,ivar)=0.d0
+                           valbig(ivar,iff+nrowst-1,jf+ncolst-1)=0.d0
                            endif
                         endif
                      endif

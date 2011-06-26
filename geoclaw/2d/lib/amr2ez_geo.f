@@ -78,6 +78,9 @@ c
 
       common /combc2/ mthbc(4)
       common /comfine/ dxmin,dymin
+c     NEW COMMON ADDED TO GET MAUX INTO RIEMANN SOLVERS
+c     NEEDED SINCE NEW ORDERING HAS MAUX FIRST INSTEAD OF LAST
+      common /cmmaux/  maux   
 
       character * 12     pltfile,infile,outfile,dbugfile,matfile
       character * 20     parmfile
@@ -239,6 +242,7 @@ c             # if it's a lot less, add another tout at tfinal:
       read(inunit,*) method(5)
       read(inunit,*) mcapa1
       read(inunit,*) naux
+      maux = naux  ! to get it into common block
       if (naux .gt. maxaux) then
          write(outunit,*) 'Error ***   naux > maxaux in common'
          write(*,*)       'Error ***   naux > maxaux in common'
@@ -558,7 +562,7 @@ c
 
       call outtre (mstart,printout,nvar,naux)
       write(outunit,*) "  original total mass ..."
-      call conck(1,nvar,time,rest)
+      call conck(1,nvar,naux,time,rest)
       call valout(1,lfine,time,nvar,naux)
 c
 c     --------------------------------------------------------

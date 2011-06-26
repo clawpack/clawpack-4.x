@@ -8,8 +8,8 @@ c =========================================================
       
       implicit double precision (a-h,o-z)
 
-      dimension   q(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, meqn)
-      dimension aux(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, maux)
+      dimension   q(meqn,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
+      dimension aux(maux,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
 c
 
 c     # incorporates friction using Manning coefficient
@@ -25,23 +25,23 @@ c     call check4nans(maxmx,maxmy,meqn,mbc,mx,my,q,t,2)
 
 *     ! friction--------------------------------------------------------
       if (coeffmanning.gt.0.d0.and.frictiondepth.gt.0.d0) then
-         do i=1,mx
-            do j=1,my
+         do j=1,my
+            do i=1,mx
 
-               h=q(i,j,1)
+               h=q(1,i,j)
                if (h.le.frictiondepth) then
 c                 # apply friction source term only in shallower water
-                  hu=q(i,j,2)
-                  hv=q(i,j,3)
+                  hu=q(2,i,j)
+                  hv=q(3,i,j)
 
                   if (h.lt.tol) then
-                     q(i,j,2)=0.d0
-                     q(i,j,3)=0.d0
+                     q(2,i,j)=0.d0
+                     q(3,i,j)=0.d0
                   else
                      gamma= dsqrt(hu**2 + hv**2)*(g*coeff**2)/(h**(7/3))
                      dgamma=1.d0 + dt*gamma
-                     q(i,j,2)= q(i,j,2)/dgamma
-                     q(i,j,3)= q(i,j,3)/dgamma
+                     q(2,i,j)= q(2,i,j)/dgamma
+                     q(3,i,j)= q(3,i,j)/dgamma
                   endif
                endif
             enddo
@@ -59,8 +59,8 @@ c                 # apply friction source term only in shallower water
                ct = cor*dt
 *              !integrate momentum exactly using matrix exponential
 *              !forth order term should be sufficient since cor^3 ~= eps
-               hu0 = q(i,j,2)
-               hv0 = q(i,j,3)
+               hu0 = q(2,i,j)
+               hv0 = q(3,i,j)
 *              !dq/dt = 2w*sin(latitude)*[0 1 ; -1 0] q = Aq
 *              !e^Adt = [a11 a12; a21 a22] + I
                a11 = -0.5d0*ct**2 + ct**4/24.d0
@@ -68,8 +68,8 @@ c                 # apply friction source term only in shallower water
                a21 = -ct + ct**3/6.0d0
                a22 = a11
 *              !q = e^Adt * q0
-               q(i,j,2) = q(i,j,2) + hu0*a11 + hv0*a12
-               q(i,j,3) = q(i,j,3) + hu0*a21 + hv0*a22
+               q(2,i,j) = q(2,i,j) + hu0*a11 + hv0*a12
+               q(3,i,j) = q(3,i,j) + hu0*a21 + hv0*a22
             enddo
          enddo
       endif

@@ -47,6 +47,7 @@ def setplot(plotdata):
     plotitem.pcolor_cmax = 0.2
     plotitem.add_colorbar = True
     plotitem.show = True       # show on plot?
+    plotitem.amr_gridedges_show = [1 ]
     
 
     # Figure for q[1]
@@ -68,6 +69,7 @@ def setplot(plotdata):
     plotitem.pcolor_cmax = 0.2
     plotitem.add_colorbar = True
     plotitem.show = True       # show on plot?
+    plotitem.amr_gridedges_show = [1 ]
     
 
     # Figure for q[2]
@@ -89,6 +91,7 @@ def setplot(plotdata):
     plotitem.pcolor_cmax = 0.2
     plotitem.add_colorbar = True
     plotitem.show = True       # show on plot?
+    plotitem.amr_gridedges_show = [1 ]
     
 
     # Parameters used only when creating html and/or latex hardcopy

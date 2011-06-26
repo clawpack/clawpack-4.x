@@ -15,14 +15,14 @@ c
       use topo_module
       
       implicit double precision (a-h,o-z)
-      dimension aux(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, maux)
+      dimension aux(maux,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
       dimension dtopo(mxdtopo,mydtopo,mtdtopo)
 
       logical topoaltered
 
       include "call.i"
-      dimension auxorig(-1:mx+mbc,-1:my+mbc, maux)
-c      dimension auxorig(-1:max1d+mbc,-1:max1d+mbc, maxaux)
+      dimension auxorig(maux,-1:mx+mbc,-1:my+mbc)
+c      dimension auxorig(maxaux,-1:max1d+mbc,-1:max1d+mbc)
 
         t0=t  !# start of coming timestep
         tf=t+dt !# end of coming timestep
@@ -109,22 +109,22 @@ c              if (xim.ge.xlowdtopo.and.xip.le.xhidtopo) then
                  xcellc=0.5d0*(xipc+ximc)
 c==========alter aux(i,j,1) if it is in the dtopo region=====================
 
-                 aux(i,j,1) = auxorig(i,j,1)
+                 aux(1,i,j) = auxorig(1,i,j)
 
 c==================dynamically alter the topography to the interpolated value=
                  dauxijm=0.d0
                  dauxijm = topointegral(ximc,xcellc,xipc,yjmc,
      &              ycellc,yjpc,xlowdtopo,ylowdtopo,dxdtopo,dydtopo,
      &              mxdtopo,mydtopo,dtopo(1,1,kkm),1)
-                 dauxijm = dauxijm/(dxc*dyc*aux(i,j,2))
+                 dauxijm = dauxijm/(dxc*dyc*aux(2,i,j))
 
                  dauxijp=0.d0
                  dauxijp = topointegral(ximc,xcellc,xipc,yjmc,
      &              ycellc,yjpc,xlowdtopo,ylowdtopo,dxdtopo,dydtopo,
      &              mxdtopo,mydtopo,dtopo(1,1,kkp),1)
-                 dauxijp = dauxijp/(dxc*dyc*aux(i,j,2))
+                 dauxijp = dauxijp/(dxc*dyc*aux(2,i,j))
 
-                 aux(i,j,1)=aux(i,j,1)+tau*dauxijm+(1.d0-tau)*dauxijp
+                 aux(1,i,j)=aux(1,i,j)+tau*dauxijm+(1.d0-tau)*dauxijp
 
               endif
            enddo
@@ -151,7 +151,7 @@ c        # boundary conditions must be reset
      &                     (yjm.ge.ylowdtopo.and.yjp.le.yhidtopo)) then
 
                    do i=1-mbc,0
-                      aux(i,j,1) = aux(1,j,1)
+                      aux(1,i,j) = aux(1,1,j)
                    enddo
                endif
             enddo
@@ -171,7 +171,7 @@ c        # boundary conditions must be reset
      &                     (yjm.ge.ylowdtopo.and.yjp.le.yhidtopo)) then
 
                    do i=mx+1,mx+mbc
-                      aux(i,j,1) = aux(mx,j,1)
+                      aux(1,i,j) = aux(1,mx,j)
                    enddo
                endif
             enddo
@@ -192,7 +192,7 @@ c        # boundary conditions must be reset
      &                     (yjm.ge.ylowdtopo.and.yjp.le.yhidtopo)) then
 
                    do j=1-mbc,0
-                      aux(i,j,1) = aux(i,1,1)
+                      aux(1,i,j) = aux(1,i,1)
                    enddo
                endif
             enddo
@@ -213,7 +213,7 @@ c        # boundary conditions must be reset
      &                      (yjm.ge.ylowdtopo.and.yjp.le.yhidtopo)) then
 
                    do j=my+1,my+mbc
-                      aux(i,j,1) = aux(i,my,1)
+                      aux(1,i,j) = aux(1,i,my)
                    enddo
                endif
             enddo

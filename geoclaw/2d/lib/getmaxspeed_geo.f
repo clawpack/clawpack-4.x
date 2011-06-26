@@ -3,11 +3,11 @@ c
 c -----------------------------------------------------------------------------
 c
       double precision function get_max_speed(val,mitot,mjtot,nvar,
-     &                          aux,naux,nghost,hx,hy)
+     &                                        aux,naux,nghost,hx,hy)
 
       use geoclaw_module
       implicit double precision (a-h,o-z)
-      dimension   val(mitot,mjtot,nvar), aux(mitot,mjtot,naux)
+      dimension   val(nvar,mitot,mjtot), aux(naux,mitot,mjtot)
 
 
       sp_over_h = 0.d0   ! compute max speed over h, since dx may not equal dy
@@ -17,12 +17,12 @@ c
          hyphys = ymetric*hy
 
          do i = nghost+1, mitot-nghost
-            xmetric = cos(aux(i,j,3))*Rearth*pi/180.d0
+            xmetric = cos(aux(3,i,j))*Rearth*pi/180.d0
             hxphys = xmetric * hx
-            h  = val(i,j,1)
+            h  = val(1,i,j)
             if (h .gt. drytolerance) then
-              u  = val(i,j,2)/h
-              v  = val(i,j,3)/h
+              u  = val(2,i,j)/h
+              v  = val(3,i,j)/h
             else
               u = 0.d0
               v = 0.d0
@@ -35,10 +35,10 @@ c
       else  ! speeds in cartesian coords, no metrics needed
          do j = nghost+1, mjtot-nghost
          do i = nghost+1, mitot-nghost
-            h  = val(i,j,1)
+            h  = val(1,i,j)
             if (h .gt. drytolerance) then
-              u  = val(i,j,2)/h
-              v  = val(i,j,3)/h
+              u  = val(2,i,j)/h
+              v  = val(3,i,j)/h
             else
               u = 0.d0
               v = 0.d0
