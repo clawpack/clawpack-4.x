@@ -20,7 +20,7 @@ CLAWMAKE = $(CLAW)/util/Makefile.common
 FC ?= gfortran44   # default if not set as environment variable
 
 # Add any desired compiler flags such as -g here:
-FFLAGS ?=  -fopenmp -W -Wall -fbounds-check -ffpe-trap=zero,overflow,invalid -g
+FFLAGS ?=  -fopenmp  -fbounds-check -ffpe-trap=zero,overflow,invalid -g
 #FFLAGS ?= -O2 -fopenmp -fbounds-check -ffpe-trap=invalid,overflow,zero
 #FFLAGS ?= -g -fbounds-check -ffpe-trap=invalid,overflow,zero
 
@@ -69,6 +69,8 @@ CLAW_SOURCES = \
   $(GEOCLAW_LIB)/src2_geo.f \
   $(GEOCLAW_LIB)/step2_geo.f \
   $(GEOCLAW_LIB)/stepgrid_geo.f \
+  $(GEOCLAW_LIB)/advanc_geo.f \
+  $(GEOCLAW_LIB)/fgrid_geo.f \
   $(GEOCLAW_LIB)/tick_geo.f \
   $(GEOCLAW_LIB)/topointegral_geo.f \
   $(GEOCLAW_LIB)/upbnd_geo.f \

@@ -22,7 +22,15 @@ CLAW_PLOTDIR = _plots               # Directory for plots
 # Environment variable FC should be set to fortran compiler, e.g. gfortran
 FC ?= gfortran   # default if not set as environment variable
 # Add any desired compiler flags such as -g here:
-FFLAGS ?= -g -fbounds-check -ffpe-trap=zero,overflow,invalid
+#gfortran flags
+FFLAGS ?= -O2 -fopenmp
+#FFLAGS ?= -g -fbounds-check -ffpe-trap=zero,overflow,invalid
+
+# ifort flags
+#FFLAGS ?= -g -C -CB -CU -fpe0 -ftrapuv
+#FFLAGS ?= -O2  -openmp
+
+
 
 
 # ---------------------------------
@@ -64,6 +72,8 @@ CLAW_LIBSOURCES = \
   $(GEOLIB)/bc2amr_geo.f \
   $(GEOLIB)/update_geo.f \
   $(GEOLIB)/amr2ez_geo.f \
+  $(GEOLIB)/advanc_geo.f \
+  $(GEOLIB)/fgrid_geo.f \
   $(GEOLIB)/setaux_geo.f \
   $(GEOLIB)/setqinit_geo.f \
   $(GEOLIB)/setregions_geo.f \
@@ -81,7 +91,6 @@ CLAW_LIBSOURCES = \
   $(GEOLIB)/getmaxspeed_geo.f \
   $(CLAW_LIB)/prefilp.f \
   $(CLAW_LIB)/quick_sort1.f \
-  $(CLAW_LIB)/advanc.f \
   $(CLAW_LIB)/estdt.f \
   $(CLAW_LIB)/bound.f \
   $(CLAW_LIB)/check4nans.f \
