@@ -236,7 +236,7 @@ c     # relimit correction fluxes if they drive a cell negative
                      dtdyij=dtdy/aux(mcapa,i,j)
                   endif
 
-                  p   = dmax1(0.d0,dtdxij*fm(1.i+1,j))
+                  p   = dmax1(0.d0,dtdxij*fm(1,i+1,j))
      &                + dmax1(0.d0,dtdyij*gm(1,i,j+1))
      &                - dmin1(0.d0,dtdxij*fp(1,i,j))
      &                - dmin1(0.d0,dtdyij*gp(1,i,j))

@@ -59,7 +59,7 @@ c      # been strored in qinitwork.
 
                    if (iqinit.lt.4) then 
                       if (aux(1,i,j).le.0.d0) then
-                          q(qinit,i,j) = q(iqinit,i,j) + dq
+                          q(iqinit,i,j) = q(iqinit,i,j) + dq
                       endif
                    elseif (iqinit.eq.4) then
                       q(1,i,j) = max(dq-aux(1,i,j),0.d0)
