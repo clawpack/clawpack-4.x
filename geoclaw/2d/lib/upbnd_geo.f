@@ -1,7 +1,7 @@
 c
 c ------------------------------------------------------------
 c
-       subroutine upbnd(listbc,val,nvar,mitot,mjtot,
+       subroutine upbnd(listbc,val,nvar,maux,mitot,mjtot,
      1                  maxsp,mptr)
 c     1                  maxsp,iused,mptr)
  
@@ -11,11 +11,15 @@ c     1                  maxsp,iused,mptr)
 
       include  "call.i"
  
-       dimension val(mitot,mjtot,nvar),listbc(5,maxsp),
+       dimension val(nvar,mitot,mjtot),listbc(5,maxsp),
      1           iused(mitot,mjtot)
 
-       iaddaux(i,j) = locaux + i-1 +  mitot*(j-1) 
-     1                 + mitot*mjtot*(mcapa-1)
+c  OLD INDEXING
+c      iaddaux(i,j) = locaux + i-1 +  mitot*(j-1) 
+c    1                 + mitot*mjtot*(mcapa-1)
+c NEW INDEXING ORDER SWITCHED
+       iaddaux(i,j) = locaux + mcapa-1 +  maux*(i-1) 
+     1                 + maux*mitot*(j-1)
  
 c
 c :::::::::::::::::::::::::::: UPBND :::::::::::::::::::::::::::::
@@ -81,7 +85,7 @@ c           (iside .eq. 4 .or. iside .eq. 1)
 c        ## debugging output
          if (uprint) then
            write(outunit,101) icrse,jcrse,
-     .         (val(icrse,jcrse,ivar),ivar=1,nvar)
+     .         (val(ivar,icrse,jcrse),ivar=1,nvar)
  101       format(" old ",1x,2i4,4e15.7)
          endif
 
@@ -95,9 +99,9 @@ c            # Note capa is stored in aux(icrse,jcrse,mcapa)
 c        # If coarse cell is dry then don't include updates from fine
 c        # grid fluxes that might give unphysical wetting because coarse
 c        # cell may be much higher than some fine cells:
-         if (val(icrse,jcrse,1) .gt. drytolerance) then
+         if (val(1,icrse,jcrse) .gt. drytolerance) then
            do 20 ivar = 1,nvar
-            val(icrse,jcrse,ivar) = val(icrse,jcrse,ivar) +
+            val(ivar,icrse,jcrse) = val(ivar,icrse,jcrse) +
      1      sgnm*alloc(kidlst+nvar*(lkid-1)+ivar-1)/area
  20        continue
          else
@@ -106,9 +110,9 @@ c          write(6,*) '+++ throw out ',alloc(kidlst+nvar*(lkid-1))
          endif
          
 c        # Reset small h to zeros once again:
-         if (val(icrse,jcrse,1) .lt. drytolerance) then
+         if (val(1,icrse,jcrse) .lt. drytolerance) then
             do ivar=1,nvar
-               val(icrse,jcrse,ivar) = 0.d0
+               val(ivar,icrse,jcrse) = 0.d0
                enddo
             endif
          iused(icrse,jcrse) = iused(icrse,jcrse) + norm
@@ -116,7 +120,7 @@ c        # Reset small h to zeros once again:
 c        ## debugging output
          if (uprint) then
            write(outunit,102) mkid,
-     .         (val(icrse,jcrse,ivar),ivar=1,nvar)
+     .         (val(ivar,icrse,jcrse),ivar=1,nvar)
  102       format(" new ","(grid",i3,")",4e15.7)
          endif
 

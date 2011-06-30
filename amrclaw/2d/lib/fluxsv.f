@@ -8,8 +8,8 @@ c
 
       include  "call.i"
 
-      dimension xfluxp(ndimx,ndimy,nvar), yfluxp(ndimx,ndimy,nvar)
-      dimension xfluxm(ndimx,ndimy,nvar), yfluxm(ndimx,ndimy,nvar)
+      dimension xfluxp(nvar,ndimx,ndimy), yfluxp(nvar,ndimx,ndimy)
+      dimension xfluxm(nvar,ndimx,ndimy), yfluxm(nvar,ndimx,ndimy)
       dimension listbc(5,maxsp)
 c
 c :::::::::::::::::::: FLUXSV :::::::::::::::::::::::::
@@ -44,33 +44,33 @@ c rather than putting in cell center coords).
          if (listbc(3,ispot) .eq. 1) then
 c           ::::: Cell i,j is on right side of a fine grid
             do 100 ivar = 1, nvar
-               alloc(inlist + ivar) = -xfluxp(i,j,ivar)*dtc*hy
+               alloc(inlist + ivar) = -xfluxp(ivar,i,j)*dtc*hy
 100         continue
-c         write(dbugunit,901) i,j,1,(xfluxp(i,j,ivar),ivar=1,nvar)
+c         write(dbugunit,901) i,j,1,(xfluxp(ivar,i,j),ivar=1,nvar)
          endif
 
          if (listbc(3,ispot) .eq. 2) then
 c           ::::: Cell i,j on bottom side of fine grid
             do 200 ivar = 1, nvar
-               alloc(inlist + ivar) = -yfluxm(i,j+1,ivar)*dtc*hx
+               alloc(inlist + ivar) = -yfluxm(ivar,i,j+1)*dtc*hx
 200         continue
-c         write(dbugunit,901) i,j,2,(yfluxm(i,j+1,ivar),ivar=1,nvar)
+c         write(dbugunit,901) i,j,2,(yfluxm(ivar,i,j+1),ivar=1,nvar)
          endif
 
          if (listbc(3,ispot) .eq. 3) then
 c           ::::: Cell i,j on left side of fine grid
             do 300 ivar = 1, nvar
-               alloc(inlist + ivar) = -xfluxm(i+1,j,ivar)*dtc*hy
+               alloc(inlist + ivar) = -xfluxm(ivar,i+1,j)*dtc*hy
 300         continue
-c         write(dbugunit,901) i,j,3,(xfluxm(i+1,j,ivar),ivar=1,nvar)
+c         write(dbugunit,901) i,j,3,(xfluxm(ivar,i+1,j),ivar=1,nvar)
          endif
 
          if (listbc(3,ispot) .eq. 4) then
 c           ::::: Cell i,j on top side of fine grid
             do 400 ivar = 1, nvar
-               alloc(inlist + ivar) = -yfluxp(i,j,ivar)*dtc*hx
+               alloc(inlist + ivar) = -yfluxp(ivar,i,j)*dtc*hx
 400         continue
-c         write(dbugunit,901) i,j,4,(yfluxp(i,j,ivar),ivar=1,nvar)
+c         write(dbugunit,901) i,j,4,(yfluxp(ivar,i,j),ivar=1,nvar)
          endif
 c
 c        ### new bcs 5 and 6 come from spherical mapping. note sign change:
@@ -81,18 +81,18 @@ c
          if (listbc(3,ispot) .eq. 5) then
 c           ::::: Cell i,j on top side of fine grid with spherical mapped bc
             do 500 ivar = 1, nvar
-               alloc(inlist + ivar) = yfluxm(i,j+1,ivar)*dtc*hx
+               alloc(inlist + ivar) = yfluxm(ivar,i,j+1)*dtc*hx
 500         continue
-c         write(dbugunit,901) i,j,5,(yfluxm(i,j+1,ivar),ivar=1,nvar)
+c         write(dbugunit,901) i,j,5,(yfluxm(ivar,i,j+1),ivar=1,nvar)
  901        format(2i4," side",i3,4e15.7)
          endif
 c
          if (listbc(3,ispot) .eq. 6) then
 c           ::::: Cell i,j on bottom side of fine grid with spherical mapped bc
             do 600 ivar = 1, nvar
-               alloc(inlist + ivar) = yfluxp(i,j,ivar)*dtc*hx
+               alloc(inlist + ivar) = yfluxp(ivar,i,j)*dtc*hx
 600         continue
-c         write(dbugunit,901) i,j,6,(yfluxp(i,j,ivar),ivar=1,nvar)
+c         write(dbugunit,901) i,j,6,(yfluxp(ivar,i,j),ivar=1,nvar)
          endif
 
       ispot = ispot + 1

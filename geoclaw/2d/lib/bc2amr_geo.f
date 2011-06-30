@@ -84,7 +84,7 @@ c ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;
 
       common /combc2/ mthbc(4)
 
-      dimension val(nrow,ncol,meqn), aux(nrow,ncol,naux)
+      dimension val(meqn,nrow,ncol), aux(naux,nrow,ncol)
       logical xperiodic, yperiodic, spheredom
 
       hxmarg = hx*.01
@@ -117,11 +117,11 @@ c     # user-specified boundary conditions go here in place of error output
 c
   110 continue
 c     # zero-order extrapolation:
-      do 115 m=1,meqn
+      do 115 j = 1,ncol
          do 115 i=1,nxl
-            do 115 j = 1,ncol
-               aux(i,j,1) = aux(nxl+1,j,1)  !inserted for bc2amr_noslope
-               val(i,j,m) = val(nxl+1,j,m)
+            do 115 m=1,meqn
+               aux(1,i,j) = aux(1,nxl+1,j)  !inserted for bc2amr_noslope
+               val(m,i,j) = val(m,nxl+1,j)
   115       continue
       go to 199
 
@@ -131,16 +131,16 @@ c     # periodic:   handled elsewhere in amr
 
   130 continue
 c     # solid wall (assumes 2'nd component is velocity or momentum in x):
-      do 135 m=1,meqn
+      do 135 j = 1,ncol
          do 135 i=1,nxl
-            do 135 j = 1,ncol
-               aux(i,j,1) = aux(2*nxl+1-i,j,1)  !inserted for bc2amr_noslope
-               val(i,j,m) = val(2*nxl+1-i,j,m)
+            do 135 m=1,meqn
+               aux(1,i,j) = aux(1,2*nxl+1-i,j)  !inserted for bc2amr_noslope
+               val(m,i,j) = val(m,2*nxl+1-i,j)
   135       continue
 c     # negate the normal velocity:
-      do 136 i=1,nxl
-         do 136 j = 1,ncol
-            val(i,j,2) = -val(i,j,2)
+      do 136 j = 1,ncol
+         do 136 i=1,nxl
+            val(2,i,j) = -val(2,i,j)
   136    continue
       go to 199
 
@@ -171,11 +171,11 @@ c     # user-specified boundary conditions go here in place of error output
 
   210 continue
 c     # zero-order extrapolation:
-      do 215 m=1,meqn
-         do 215 i=ibeg,nrow
+      do 215 i=ibeg,nrow
+         do 215 m=1,meqn
             do 215 j = 1,ncol
-               aux(i,j,1) = aux(ibeg-1,j,1) !inserted for bc2amr_noslope
-               val(i,j,m) = val(ibeg-1,j,m)
+               aux(1,i,j) = aux(1,ibeg-1,j) !inserted for bc2amr_noslope
+               val(m,i,j) = val(m,ibeg-1,j)
   215       continue
       go to 299
 
@@ -185,16 +185,16 @@ c     # periodic:   handled elsewhere in amr
 
   230 continue
 c     # solid wall (assumes 2'nd component is velocity or momentum in x):
-      do 235 m=1,meqn
+      do 235 j = 1,ncol
          do 235 i=ibeg,nrow
-            do 235 j = 1,ncol
-               aux(i,j,1) = aux(2*ibeg-1-i,j,1) !inserted for bc2amr_noslope
-               val(i,j,m) = val(2*ibeg-1-i,j,m)
+            do 235 m=1,meqn
+               aux(1,i,j) = aux(1,2*ibeg-1-i,j) !inserted for bc2amr_noslope
+               val(m,i,j) = val(m,2*ibeg-1-i,j)
   235       continue
 c     # negate the normal velocity:
-      do 236 i=ibeg,nrow
-         do 236 j = 1,ncol
-            val(i,j,2) = -val(i,j,2)
+      do 236 j = 1,ncol
+         do 236 i=ibeg,nrow
+            val(2,i,j) = -val(2,i,j)
   236    continue
       go to 299
 
@@ -224,11 +224,11 @@ c     # user-specified boundary conditions go here in place of error output
 c
   310 continue
 c     # zero-order extrapolation:
-      do 315 m=1,meqn
-         do 315 j=1,nyb
-            do 315 i=1,nrow
-                aux(i,j,1) = aux(i,nyb+1,1) !inserted for bc2amr_noslope
-                val(i,j,m) = val(i,nyb+1,m)
+      do 315 j=1,nyb
+         do 315 i=1,nrow
+            do 315 m=1,meqn
+                aux(1,i,j) = aux(1,i,nyb+1) !inserted for bc2amr_noslope
+                val(m,i,j) = val(m,i,nyb+1)
   315       continue
       go to 399
 
@@ -238,16 +238,16 @@ c     # periodic:   handled elsewhere in amr
 
   330 continue
 c     # solid wall (assumes 3'rd component is velocity or momentum in y):
-      do 335 m=1,meqn
-         do 335 j=1,nyb
-            do 335 i=1,nrow
-                aux(i,j,1) =  aux(i,2*nyb+1-j,1) !inserted for bc2amr_noslope
-                val(i,j,m) =  val(i,2*nyb+1-j,m)
+      do 335 j=1,nyb
+         do 335 i=1,nrow
+            do 335 m=1,meqn
+                aux(1,i,j) =  aux(1,i,2*nyb+1-j) !inserted for bc2amr_noslope
+                val(m,i,j) =  val(m,i,2*nyb+1-j)
   335       continue
 c     # negate the normal velocity:
       do 336 j=1,nyb
          do 336 i=1,nrow
-            val(i,j,3) = -val(i,j,3)
+            val(3,i,j) = -val(3,i,j)
   336    continue
       go to 399
 
@@ -278,11 +278,11 @@ c     # user-specified boundary conditions go here in place of error output
 
   410 continue
 c     # zero-order extrapolation:
-      do 415 m=1,meqn
-         do 415 j=jbeg,ncol
-            do 415 i=1,nrow
-               aux(i,j,1) = aux(i,jbeg-1,1)  !inserted for bc2amr_noslope
-               val(i,j,m) =  val(i,jbeg-1,m)
+      do 415 j=jbeg,ncol
+         do 415 i=1,nrow
+            do 415 m=1,meqn
+               aux(1,i,j) = aux(1,i,jbeg-1)  !inserted for bc2amr_noslope
+               val(m,i,j) = val(m,i,jbeg-1)
   415       continue
       go to 499
 
@@ -292,16 +292,16 @@ c     # periodic:   handled elsewhere in amr
 
   430 continue
 c     # solid wall (assumes 3'rd component is velocity or momentum in y):
-      do 435 m=1,meqn
-         do 435 j=jbeg,ncol
-            do 435 i=1,nrow
-               aux(i,j,1) =  aux(i,2*jbeg-1-j,1)  !inserted for bc2amr_noslope
-               val(i,j,m) =  val(i,2*jbeg-1-j,m)
+      do 435 j=jbeg,ncol
+         do 435 i=1,nrow
+            do 435 m=1,meqn
+               aux(1,i,j) =  aux(1,i,2*jbeg-1-j)  !inserted for bc2amr_noslope
+               val(m,i,j) =  val(m,i,2*jbeg-1-j)
   435       continue
 c     # negate the normal velocity:
       do 436 j=jbeg,ncol
          do 436 i=1,nrow
-            val(i,j,3) = -val(i,j,3)
+            val(3,i,j) = -val(3,i,j)
   436    continue
       go to 499
 

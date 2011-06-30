@@ -40,19 +40,20 @@ c
       !input
       integer maxm,meqn,mwaves,mbc,mx,ixy
 
-      double precision  fwave(1-mbc:maxm+mbc, meqn, mwaves)
+      double precision  fwave(meqn, 1-mbc:maxm+mbc, mwaves)
       double precision  s(1-mbc:maxm+mbc, mwaves)
-      double precision  ql(1-mbc:maxm+mbc, meqn)
-      double precision  qr(1-mbc:maxm+mbc, meqn)
-      double precision  apdq(1-mbc:maxm+mbc, meqn)
-      double precision  amdq(1-mbc:maxm+mbc, meqn)
-      double precision  auxl(1-mbc:maxm+mbc, *)
-      double precision  auxr(1-mbc:maxm+mbc, *)
+      double precision  ql(meqn, 1-mbc:maxm+mbc)
+      double precision  qr(meqn, 1-mbc:maxm+mbc)
+      double precision  apdq(meqn,1-mbc:maxm+mbc)
+      double precision  amdq(meqn,1-mbc:maxm+mbc)
+      double precision  auxl(maux,1-mbc:maxm+mbc)
+      double precision  auxr(maux,1-mbc:maxm+mbc)
 
       double precision drytol,g
 
       !local only
       integer m,i,mw,maxiter,mu,nv,mcapa
+      integer maux  ! should be passed in or put into a module
       double precision wall(3)
       double precision fw(3,3)
       double precision sw(3)
@@ -66,6 +67,7 @@ c
       logical rare1,rare2
 
       common /cmcapa/  mcapa
+      common /cmmaux/  maux
 
       g=grav
       drytol=drytolerance
@@ -75,15 +77,15 @@ c
 
 !-----------------------Initializing-----------------------------------
          !inform of a bad riemann problem from the start
-         if((qr(i-1,1).lt.0.d0).or.(ql(i,1) .lt. 0.d0)) then
-            write(*,*) 'Negative input: hl,hr,i=',qr(i-1,1),ql(i,1),i
+         if((qr(1,i-1).lt.0.d0).or.(ql(1,i) .lt. 0.d0)) then
+            write(*,*) 'Negative input: hl,hr,i=',qr(1,i-1),ql(1,i),i
          endif
 
          !Initialize Riemann problem for grid interface
          do mw=1,mwaves
               s(i,mw)=0.d0
               do m=1,meqn
-                 fwave(i,m,mw)=0.d0
+                 fwave(m,i,mw)=0.d0
               enddo
          enddo
 
@@ -97,33 +99,33 @@ c        !set normal direction
          endif
 
          !zero (small) negative values if they exist
-         if (qr(i-1,1).lt.0.d0) then
+         if (qr(1,i-1).lt.0.d0) then
             do m=1,meqn
-               qr(i-1,m)=0.d0
+               qr(m,i-1)=0.d0
             enddo
          endif
 
-         if (ql(i,1).lt.0.d0) then
+         if (ql(1,i).lt.0.d0) then
             do m=1,meqn
-               ql(i,m)=0.d0
+               ql(m,i)=0.d0
             enddo
          endif
 
          !skip problem if in a completely dry area
-         if (qr(i-1,1).le.drytol.and.ql(i,1).le.drytol) then
+         if (qr(1,i-1).le.drytol.and.ql(1,i).le.drytol) then
             go to 30
          endif
 
          !Riemann problem variables
-         hL = qr(i-1,1)
-         hR = ql(i,1)
-         huL = qr(i-1,mu)
-         huR = ql(i,mu)
-         bL = auxr(i-1,1)
-         bR = auxl(i,1)
+         hL = qr(1,i-1)
+         hR = ql(1,i)
+         huL = qr(mu,i-1)
+         huR = ql(mu,i)
+         bL = auxr(1,i-1)
+         bR = auxl(1,i)
 
-         hvL=qr(i-1,nv)
-         hvR=ql(i,nv)
+         hvL=qr(nv,i-1)
+         hvR=ql(nv,i)
 
          !check for wet/dry boundary
          if (hR.gt.drytol) then
@@ -228,9 +230,9 @@ c        !eliminate ghost fluxes for wall
 
          do mw=1,mwaves
             s(i,mw)=sw(mw)
-            fwave(i,1,mw)=fw(1,mw)
-            fwave(i,mu,mw)=fw(2,mw)
-            fwave(i,nv,mw)=fw(3,mw)
+            fwave(1,i,mw)=fw(1,mw)
+            fwave(mu,i,mw)=fw(2,mw)
+            fwave(nv,i,mw)=fw(3,mw)
          enddo
 
  30      continue
@@ -244,7 +246,7 @@ c==========Capacity for mapping from latitude longitude to physical space====
           if (ixy.eq.1) then
              dxdc=(Rearth*pi/180.d0)
           else
-	          dxdc=Rearth*pi*cos(auxl(i,3))/180.d0
+             dxdc=Rearth*pi*cos(auxl(3,i))/180.d0
           endif
 
           do mw=1,mwaves
@@ -254,7 +256,7 @@ c                write(6,*) 'speed > 316: i,mw,s(i,mw): ',i,mw,s(i,mw)
 c                endif
 	           s(i,mw)=dxdc*s(i,mw)
              do m=1,meqn
-               fwave(i,m,mw)=dxdc*fwave(i,m,mw)
+               fwave(m,i,mw)=dxdc*fwave(m,i,mw)
              enddo
           enddo
          enddo
@@ -266,16 +268,16 @@ c===============================================================================
 c============= compute fluctuations=============================================
          do i=1-mbc,mx+mbc
             do m=1,meqn
-               amdq(i,m)=0.0d0
-               apdq(i,m)=0.0d0
+               amdq(m,i)=0.0d0
+               apdq(m,i)=0.0d0
                do  mw=1,mwaves
                   if (s(i,mw).lt.0.d0) then
-                     amdq(i,m)=amdq(i,m) + fwave(i,m,mw)
+                     amdq(m,i)=amdq(m,i) + fwave(m,i,mw)
                   elseif (s(i,mw).gt.0.d0) then
-                     apdq(i,m)=apdq(i,m) + fwave(i,m,mw)
+                     apdq(m,i)=apdq(m,i) + fwave(m,i,mw)
                   else
-		            amdq(i,m) = amdq(i,m) + .5d0*fwave(i,m,mw)
-		            apdq(i,m) = apdq(i,m) + .5d0*fwave(i,m,mw)
+	            amdq(m,i) = amdq(m,i) + .5d0*fwave(m,i,mw)
+	            apdq(m,i) = apdq(m,i) + .5d0*fwave(m,i,mw)
                   endif
                enddo
             enddo
@@ -284,12 +286,5 @@ c============= compute fluctuations=============================================
 
       return
       end subroutine
-
-
-
-
-
-
-
 
 

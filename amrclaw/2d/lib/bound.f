@@ -9,7 +9,7 @@ c
 
       include  "call.i"
 
-      dimension valbig(mitot,mjtot,nvar), aux(mitot,mjtot,naux)
+      dimension valbig(nvar,mitot,mjtot), aux(naux,mitot,mjtot)
 
 c
 c  :::::::::::::: BOUND :::::::::::::::::::::::::::::::::::::::::::

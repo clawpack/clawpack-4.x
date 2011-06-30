@@ -5,12 +5,12 @@ c     ============================================
 c
 c     # set auxiliary arrays
 c
-c     # aux(i,j,1) = Z(x,y) topography
+c     # aux(1,i,j) = Z(x,y) topography
 c     #                     (negative below sea level for topoymetry)
 c
 c     # If icoordsys=2 then lat-lon coordinates on the sphere and
-c     #    aux(i,j,2) = area ratio (capacity function -- set mcapa = 2)
-c     #    aux(i,j,3) = length ratio for edge
+c     #    aux(2,i,j) = area ratio (capacity function -- set mcapa = 2)
+c     #    aux(3,i,j) = length ratio for edge
 c
 
       use geoclaw_module
@@ -18,7 +18,7 @@ c
       
       implicit double precision (a-h,o-z)
 
-      dimension aux(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, maux)
+      dimension aux(maux,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
 
       include "call.i"
 
@@ -44,13 +44,13 @@ c
             if (icoordsys.eq.2) then
 c           # for lat-lon grid on sphere:
                deg2rad = pi/180.d0
-               aux(i,j,2)= deg2rad*Rearth**2*
+               aux(2,i,j)= deg2rad*Rearth**2*
      &               (sin(yjp*deg2rad)-sin(yjm*deg2rad))/dy
-               aux(i,j,3)= yjm*deg2rad
+               aux(3,i,j)= yjm*deg2rad
             else
-               aux(i,j,2) = 1.d0
-               aux(i,j,3) = 1.d0
-	            endif
+               aux(2,i,j) = 1.d0
+               aux(3,i,j) = 1.d0
+            endif
 
             if (mtopofiles.gt.0) then
                topoint=0.d0
@@ -58,10 +58,10 @@ c           # for lat-lon grid on sphere:
      &	        yjp,xlowtopo,ylowtopo,xhitopo,yhitopo,dxtopo,dytopo,
      &	        mxtopo,mytopo,mtopo,i0topo,mtopoorder,
      &	        mtopofiles,mtoposize,topowork)
-               aux(i,j,1) = topoint/(dx*dy*aux(i,j,2))
+               aux(1,i,j) = topoint/(dx*dy*aux(2,i,j))
 
             else
-               aux(i,j,1) = 0.d0
+               aux(1,i,j) = 0.d0
 c     	      # or set-up your own topo
                endif
             enddo
@@ -74,9 +74,9 @@ c     # output aux array for debugging:
       open(23, file='fort.aux',status='unknown',form='formatted')
       write(23,*) 'Setting aux arrays'
       write(23,*) ' '
-      do i=1,mx
-        do j=1,my
-           write(23,231) i,j,(aux(i,j,m),m=1,maux)
+      do j=1,my
+        do i=1,mx
+           write(23,231) i,j,(aux(m,i,j),m=1,maux)
            enddo
         enddo
  231  format(2i4,4d15.3)

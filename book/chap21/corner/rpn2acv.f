@@ -37,14 +37,14 @@ c
 c
       implicit double precision (a-h,o-z)
 c
-      dimension wave(1-mbc:maxm+mbc, meqn, mwaves)
+      dimension wave(meqn, 1-mbc:maxm+mbc, mwaves)
       dimension    s(1-mbc:maxm+mbc, mwaves)
-      dimension   ql(1-mbc:maxm+mbc, meqn)
-      dimension   qr(1-mbc:maxm+mbc, meqn)
-      dimension apdq(1-mbc:maxm+mbc, meqn)
-      dimension amdq(1-mbc:maxm+mbc, meqn)
-      dimension auxl(1-mbc:maxm+mbc, 2)
-      dimension auxr(1-mbc:maxm+mbc, 2)
+      dimension   ql(meqn, 1-mbc:maxm+mbc)
+      dimension   qr(meqn, 1-mbc:maxm+mbc)
+      dimension apdq(meqn, 1-mbc:maxm+mbc)
+      dimension amdq(meqn, 1-mbc:maxm+mbc)
+      dimension auxl(2,1-mbc:maxm+mbc)
+      dimension auxr(2,1-mbc:maxm+mbc)
 c
 c     local arrays
 c     ------------
@@ -79,11 +79,11 @@ c     # relative to the material properties to the right of the interface,
 c
 c     # find a1 and a2, the coefficients of the 2 eigenvectors:
       do 20 i = 2-mbc, mx+mbc
-         delta(1) = ql(i,1) - qr(i-1,1)
-         delta(2) = ql(i,mu) - qr(i-1,mu)
+         delta(1) = ql(1,i) - qr(1,i-1)
+         delta(2) = ql(mu,i) - qr(mu,i-1)
 c        # impedances:
-         zi = auxl(i,1)
-         zim = auxl(i-1,1)
+         zi = auxl(1,i)
+         zim = auxl(1,i-1)
 
          a1 = (-delta(1) + zi*delta(2)) / (zim + zi)
          a2 =  (delta(1) + zim*delta(2)) / (zim + zi)
@@ -91,15 +91,15 @@ c        # impedances:
 c
 c        # Compute the waves.
 c
-         wave(i,1,1) = -a1*zim
-         wave(i,mu,1) = a1
-         wave(i,mv,1) = 0.d0
-         s(i,1) = -auxl(i-1,2)
+         wave(1,i,1) = -a1*zim
+         wave(mu,i,1) = a1
+         wave(mv,i,1) = 0.d0
+         s(i,1) = -auxl(2,i-1)
 c
-         wave(i,1,2) = a2*zi
-         wave(i,mu,2) = a2
-         wave(i,mv,2) = 0.d0
-         s(i,2) = auxl(i,2)
+         wave(1,i,2) = a2*zi
+         wave(mu,i,2) = a2
+         wave(mv,i,2) = 0.d0
+         s(i,2) = auxl(2,i)
 c
    20    continue
 c
@@ -108,10 +108,10 @@ c
 c     # compute the leftgoing and rightgoing flux differences:
 c     # Note s(i,1) < 0   and   s(i,2) > 0.
 c
-      do 220 m=1,meqn
-	 do 220 i = 2-mbc, mx+mbc
-	    amdq(i,m) = s(i,1)*wave(i,m,1)
-	    apdq(i,m) = s(i,2)*wave(i,m,2)
+      do 220 i = 2-mbc, mx+mbc
+         do 220 m=1,meqn
+	    amdq(m,i) = s(i,1)*wave(m,i,1)
+	    apdq(m,i) = s(i,2)*wave(m,i,2)
   220       continue
 c
       return

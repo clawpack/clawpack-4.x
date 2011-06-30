@@ -1,7 +1,7 @@
 c
 c -------------------------------------------------------------------------
 c
-      subroutine dumpgauge(q,aux,xlow,ylow,nvar,mitot,mjtot,mptr)
+      subroutine dumpgauge(q,aux,xlow,ylow,nvar,mitot,mjtot,naux,mptr)
 c
       use geoclaw_module
 
@@ -11,8 +11,8 @@ c
       include "call.i"
 
       integer bsearch
-      dimension q(mitot,mjtot,nvar), var(maxvar)
-      dimension aux(mitot,mjtot,1)
+      dimension q(nvar,mitot,mjtot), var(maxvar)
+      dimension aux(naux,mitot,mjtot)
 
 c  # see if this grid contains any gauges so data can be output
 c  # may turn out this should be sorted, but for now do linear search
@@ -69,30 +69,30 @@ c velocities are zeroed out which can then lead to increase in h again.
 
         drytol2 = 0.1d0 * drytolerance
 
-        if (q(iindex,jindex,1).lt.drytol2 .or.
-     &      q(iindex+1,jindex,1).lt.drytol2 .or.
-     &      q(iindex,jindex+1,1).lt.drytol2 .or.
-     &      q(iindex+1,jindex+1,1).lt.drytol2) then
+        if (q(1,iindex,jindex).lt.drytol2 .or.
+     &      q(1,iindex+1,jindex).lt.drytol2 .or.
+     &      q(1,iindex,jindex+1).lt.drytol2 .or.
+     &      q(1,iindex+1,jindex+1).lt.drytol2) then
 c         # one of cells is dry, so just use value from grid cell that
 c         # contains gauge rather than interpolating.
           icell =  int(1. +(xgauge(i)-xlow)/hx)
           jcell =  int(1. +(ygauge(i)-ylow)/hy)
           do ivar=1,nvar
-             var(ivar) = q(icell,jcell,ivar)
-             topo = aux(icell,jcell,1)
+             var(ivar) = q(ivar,icell,jcell)
+             topo = aux(1,icell,jcell)
              enddo
          else
 c         ## straightforward linear interp 
           do ivar = 1, nvar
-             var(ivar) = (1.d0-xoff)*(1.d0-yoff)*q(iindex,jindex,ivar) 
-     .             + xoff*(1.d0-yoff)*q(iindex+1,jindex,ivar)
-     .             + (1.d0-xoff)*yoff*q(iindex,jindex+1,ivar) 
-     .             + xoff*yoff*q(iindex+1,jindex+1,ivar)
+             var(ivar) = (1.d0-xoff)*(1.d0-yoff)*q(ivar,iindex,jindex) 
+     .             + xoff*(1.d0-yoff)*q(ivar,iindex+1,jindex)
+     .             + (1.d0-xoff)*yoff*q(ivar,iindex,jindex+1) 
+     .             + xoff*yoff*q(ivar,iindex+1,jindex+1)
             end do
-          topo = (1.d0-xoff)*(1.d0-yoff)*aux(iindex,jindex,1) 
-     .             + xoff*(1.d0-yoff)*aux(iindex+1,jindex,1)
-     .             + (1.d0-xoff)*yoff*aux(iindex,jindex+1,1) 
-     .             + xoff*yoff*aux(iindex+1,jindex+1,1)
+          topo = (1.d0-xoff)*(1.d0-yoff)*aux(1,iindex,jindex) 
+     .             + xoff*(1.d0-yoff)*aux(1,iindex+1,jindex)
+     .             + (1.d0-xoff)*yoff*aux(1,iindex,jindex+1) 
+     .             + xoff*yoff*aux(1,iindex+1,jindex+1)
         endif
 
         eta = topo + var(1)

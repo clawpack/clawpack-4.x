@@ -2,7 +2,7 @@
 c
 c -----------------------------------------------------------
 c
-      subroutine update (level, nvar)
+      subroutine update (level, nvar, naux)
       
       use geoclaw_module
 c
@@ -16,13 +16,24 @@ c
 
       integer listgrids(numgrids(level))
 
-      iadd(i,j,ivar)  = loc     + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-      iaddf(i,j,ivar) = locf    + i - 1 + mi*((ivar-1)*mj  +j-1)
-      iaddfaux(i,j)   = locfaux + i - 1 + mi*((mcapa-1)*mj + (j-1))
-      iaddcaux(i,j)   = loccaux + i - 1 + mitot*((mcapa-1)*mjtot+(j-1))
+c$$$  OLD INDEXING
+c$$$      iadd(i,j,ivar)  = loc     + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c$$$      iaddf(i,j,ivar) = locf    + i - 1 + mi*((ivar-1)*mj  +j-1)
+c$$$      iaddfaux(i,j)   = locfaux + i - 1 + mi*((mcapa-1)*mj + (j-1))
+c$$$      iaddcaux(i,j)   = loccaux + i - 1 + mitot*((mcapa-1)*mjtot+(j-1))
 
-      iaddftopo(i,j)   = locfaux + i - 1 + mi*((1-1)*mj + (j-1))
-      iaddctopo(i,j)   = loccaux + i - 1 + mitot*((1-1)*mjtot+(j-1))
+c$$$      iaddftopo(i,j)   = locfaux + i - 1 + mi*((1-1)*mj + (j-1))
+c$$$      iaddctopo(i,j)   = loccaux + i - 1 + mitot*((1-1)*mjtot+(j-1))
+
+c   NEW INDEXING, ORDER SWITCHED
+      iadd(ivar,i,j)  = loc    + ivar-1 + nvar*((j-1)*mitot+i-1)
+      iaddf(ivar,i,j) = locf   + ivar-1 + nvar*((j-1)*mi+i-1)
+      iaddfaux(i,j)   = locfaux + mcapa-1 + naux*((j-1)*mi + (i-1))
+      iaddcaux(i,j)   = loccaux + mcapa-1 + naux*((j-1)*mitot+(i-1))
+c  topo in aux component 1
+      iaddftopo(i,j)   = locfaux +  naux*((j-1)*mi + (i-1))
+      iaddctopo(i,j)   = loccaux +  naux*((j-1)*mitot+(i-1))
+
 c
 c :::::::::::::::::::::::::: UPDATE :::::::::::::::::::::::::::::::::
 c update - update all grids at level 'level'.
@@ -54,7 +65,7 @@ c 20   if (mptr .eq. 0) go to 85
 !$OMP&                    newt,ico, jco,hf,bf,huf,hvf,
 !$OMP&                    etaf,etaav,hav,nwet,hc,huc,hvc),
 !$OMP&            SHARED(lget,numgrids,listgrids,level,intratx,intraty,
-!$OMP&                   nghost,uprint,nvar,mcapa,node,listsp,
+!$OMP&                   nghost,uprint,nvar,naux,mcapa,node,listsp,
 !$OMP&                   alloc,lstart,drytolerance),
 !$OMP&            DEFAULT(none)
       do ng = 1, numgrids(lget)
@@ -73,7 +84,7 @@ c        mptr    = mget(ng, level)
 c
          if (node(cfluxptr,mptr) .eq. 0) go to 25
 c         locuse = igetsp(mitot*mjtot)
-         call upbnd(alloc(node(cfluxptr,mptr)),alloc(loc),nvar,
+         call upbnd(alloc(node(cfluxptr,mptr)),alloc(loc),nvar,naux,
      1              mitot,mjtot,listsp(lget),mptr) ! took out next to last arg
 c     1              mitot,mjtot,listsp(lget),alloc(locuse),mptr)
 c         call reclam(locuse,mitot*mjtot)
@@ -113,7 +124,7 @@ c
               write(outunit,101) i,j,mptr,iff,jff,mkid
  101          format(' updating pt. ',2i4,' of grid ',i3,' using ',2i4,
      1               ' of grid ',i4)
-              write(outunit,102)(alloc(iadd(i,j,ivar)),ivar=1,nvar)
+              write(outunit,102)(alloc(iadd(ivar,i,j)),ivar=1,nvar)
  102          format(' old vals: ',4e12.4)
            endif
 c
@@ -157,10 +168,10 @@ c     and is never increased given an increase in mass
                capa=alloc(iaddfaux(iff+ico-1,jff+jco-1))
                endif
 
-            hf = alloc(iaddf(iff+ico-1,jff+jco-1,1))*capa
+            hf = alloc(iaddf(1,iff+ico-1,jff+jco-1))*capa
             bf = alloc(iaddftopo(iff+ico-1,jff+jco-1))*capa
-            huf= alloc(iaddf(iff+ico-1,jff+jco-1,2))*capa
-            hvf= alloc(iaddf(iff+ico-1,jff+jco-1,3))*capa
+            huf= alloc(iaddf(2,iff+ico-1,jff+jco-1))*capa
+            hvf= alloc(iaddf(3,iff+ico-1,jff+jco-1))*capa
 
             if (hf .gt. drytol) then
                etaf = hf+bf
@@ -193,11 +204,11 @@ c     and is never increased given an increase in mass
 
 c     # set h on coarse grid based on surface, not conservative near shoreline
 
-      alloc(iadd(i,j,1)) = hc/capac
-      alloc(iadd(i,j,2)) = huc/capac
-      alloc(iadd(i,j,3)) = hvc/capac
+      alloc(iadd(1,i,j)) = hc/capac
+      alloc(iadd(2,i,j)) = huc/capac
+      alloc(iadd(3,i,j)) = hvc/capac
 c
-      if (uprint) write(outunit,103)(alloc(iadd(i,j,ivar)),
+      if (uprint) write(outunit,103)(alloc(iadd(ivar,i,j)),
      .     ivar=1,nvar)
  103  format(' new vals: ',4e12.4)
 c

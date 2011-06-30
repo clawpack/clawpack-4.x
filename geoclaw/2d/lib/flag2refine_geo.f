@@ -34,8 +34,8 @@ c
 
       implicit double precision (a-h, o-z)
 
-      dimension   q(1-mbc:mx+mbc,1-mbc:my+mbc,meqn)
-      dimension   aux(1-mbc:mx+mbc,1-mbc:my+mbc,maux)
+      dimension   q(meqn,1-mbc:mx+mbc,1-mbc:my+mbc)
+      dimension   aux(maux,1-mbc:mx+mbc,1-mbc:my+mbc)
       dimension   amrflags(1-mbc:mx+mbc,1-mbc:my+mbc)
       logical     allowflag
       external  allowflag
@@ -83,9 +83,9 @@ c           # check to see if refinement is forced in any other region:
             if (level .lt. minlevelregion(m) .and.
      &          t.ge.tlowregion(m) .and. t.le.thiregion(m)) then
               xlow = xlowregion(m)
-              xhi = xhiregion(m)
+              xhi  = xhiregion(m)
               ylow = ylowregion(m)
-              yhi = yhiregion(m)
+              yhi  = yhiregion(m)
                  if (x2.gt.xlow.and.x1.lt.xhi.and.
      &               y2.gt.ylow.and.y1.lt.yhi) then
                     amrflags(i,j) = DOFLAG
@@ -128,11 +128,11 @@ c        # check if there is a reason to flag this point:
 
          if (allowflag(x,y,t,level)) then
 
-             surface = q(i,j,1) + aux(i,j,1)
+             surface = q(1,i,j) + aux(1,i,j)
 c
 c            # RJL: not sure why this next line is done?
 c            # Need to fix for arb.  sealevel?
-c            surface = dsign(surface,q(i,j,1))
+c            surface = dsign(surface,q(1,i,j))
 
 c            # DLG: it was a way to prevent refining on dry land...
 c            # probably should be changed if we allow arbitrary sealevel
@@ -140,9 +140,9 @@ c            # by adding sealevel to surface or something.
 
 c            # determine region type and refinement params
 
-             shoreregion = dabs(aux(i,j,1)) .lt. depthdeep
+             shoreregion = dabs(aux(1,i,j)) .lt. depthdeep
              wave = (dabs(surface-sealevel).gt.wavetolerance.and.
-     &                q(i,j,1).gt.drytolerance)
+     &                q(1,i,j).gt.drytolerance)
 c             #DLG: changing following: didn't work so well for non-lat-lon grids
 c              shoretol = depthdeep*(dx*dy)
                shoretol = depthdeep
@@ -162,14 +162,14 @@ c                  shoreline=.false.
 c                 # check if any neighboring cell is dry:
 c                  do jj=-1,1
 c                   do ii=-1,1
-c                    shoreline = shoreline.or.q(i+ii,j+jj,1).le.shoretol
+c                    shoreline = shoreline.or.q(1,i+ii,j+jj).le.shoretol
 c                   enddo
 c                  enddo
 
-c                 shoreline=shoreline.and.q(i,j,1).gt.shoretol
+c                 shoreline=shoreline.and.q(1,i,j).gt.shoretol
                  shoreline = shoreregion
 
-                 if (shoreline.and.q(i,j,1).gt.drytolerance) then
+                 if (shoreline.and.q(1,i,j).gt.drytolerance) then
 c                    # following comment is regarding commented nested do loop above.
 c                    # this cell is wet and a neighbor is dry ==> shoreline
                      amrflags(i,j)=DOFLAG

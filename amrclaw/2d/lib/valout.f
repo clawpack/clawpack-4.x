@@ -17,8 +17,11 @@ c     # set outaux = .true. to also output the aux arrays to fort.a<iframe>
       include  "call.i"
       logical outaux
 
-      iadd(i,j,ivar) = loc + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-      iaddaux(i,j,ivar) = locaux + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c      iadd(i,j,ivar) = loc + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c      iaddaux(i,j,ivar) = locaux + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+      iadd(ivar,i,j)  = loc + ivar - 1 + nvar*((j-1)*mitot+i-1)
+      iaddaux(iaux,i,j) = locaux + iaux-1 + naux*(i-1) +
+     .                                      naux*mitot*(j-1)
 c
       outaux = .false.
 
@@ -122,11 +125,11 @@ c                 # output in 1d format if ny=1:
          do j = nghost+1, mjtot-nghost
             do i = nghost+1, mitot-nghost
                do ivar=1,nvar
-                  if (dabs(alloc(iadd(i,j,ivar))) .lt. 1d-90) then
-                     alloc(iadd(i,j,ivar)) = 0.d0
+                  if (dabs(alloc(iadd(ivar,i,j))) .lt. 1d-90) then
+                     alloc(iadd(ivar,i,j)) = 0.d0
                   endif
                enddo
-               write(matunit1,109) (alloc(iadd(i,j,ivar)), ivar=1,nvar)
+               write(matunit1,109) (alloc(iadd(ivar,i,j)), ivar=1,nvar)
             enddo
             write(matunit1,*) ' '
          enddo
@@ -175,11 +178,11 @@ c                 # output in 1d format if ny=1:
          do j = nghost+1, mjtot-nghost
             do i = nghost+1, mitot-nghost
                do ivar=1,naux
-                  if (dabs(alloc(iaddaux(i,j,ivar))) .lt. 1d-90) then
-                     alloc(iaddaux(i,j,ivar)) = 0.d0
+                  if (dabs(alloc(iaddaux(ivar,i,j))) .lt. 1d-90) then
+                     alloc(iaddaux(ivar,i,j)) = 0.d0
                   endif
                enddo
-               write(matunit3,109) (alloc(iaddaux(i,j,ivar)), 
+               write(matunit3,109) (alloc(iaddaux(ivar,i,j)), 
      &                              ivar=1,naux)
             enddo
             write(matunit3,*) ' '

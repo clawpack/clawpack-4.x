@@ -33,17 +33,17 @@ c
       implicit double precision (a-h,o-z)
       common /comrp/ ubar,vbar
 c
-      dimension wave(1-mbc:maxm+mbc, meqn, mwaves)
+      dimension wave(meqn, 1-mbc:maxm+mbc, mwaves)
       dimension    s(1-mbc:maxm+mbc, mwaves)
-      dimension   ql(1-mbc:maxm+mbc, meqn)
-      dimension   qr(1-mbc:maxm+mbc, meqn)
-      dimension  apdq(1-mbc:maxm+mbc, meqn)
-      dimension  amdq(1-mbc:maxm+mbc, meqn)
+      dimension   ql(meqn,1-mbc:maxm+mbc)
+      dimension   qr(meqn,1-mbc:maxm+mbc)
+      dimension  apdq(meqn,1-mbc:maxm+mbc)
+      dimension  amdq(meqn,1-mbc:maxm+mbc)
 c
 c
 c$$$      do 30 i = 2-mbc, mx+mbc-1
       do 30 i = 2-mbc, mx+mbc
-         wave(i,1,1) = ql(i,1) - qr(i-1,1)
+         wave(1,i,1) = ql(1,i) - qr(1,i-1)
          if (ixy.eq.1) then
              s(i,1) = ubar
            else
@@ -51,8 +51,8 @@ c$$$      do 30 i = 2-mbc, mx+mbc-1
            endif
 c
 c        # flux differences:
-         amdq(i,1) = dmin1(s(i,1), 0.d0) * wave(i,1,1)
-         apdq(i,1) = dmax1(s(i,1), 0.d0) * wave(i,1,1)
+         amdq(1,i) = dmin1(s(i,1), 0.d0) * wave(1,i,1)
+         apdq(1,i) = dmax1(s(i,1), 0.d0) * wave(1,i,1)
 c
    30    continue
 c

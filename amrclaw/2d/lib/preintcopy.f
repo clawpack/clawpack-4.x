@@ -8,10 +8,13 @@ c
 
       include  "call.i"
 
-      dimension val(mitot,mjtot,nvar)
+      dimension val(nvar,mitot,mjtot)
       dimension ist(3), iend(3), jst(3), jend(3), ishift(3), jshift(3)
 
-      iadd(i,j,ivar)  = locflip + i - 1 + nr*((ivar-1)*nc+j-1)
+c  OLD INDEXING
+c     iadd(i,j,ivar)  = locflip + i - 1 + nr*((ivar-1)*nc+j-1)
+c  NEW INDEXING ORDER SWITCHED
+      iadd(ivar,i,j)  = locflip + ivar-1 + nvar*((j-1)*nr+i-1)
 c
 c  :::::::::::::: PREINTCOPY :::::::::::::::::::::::::::::::::::::::::::
 c     For periodic boundary conditions more work needed to initialize a
@@ -121,8 +124,8 @@ c    1                            nc-jj+j1
  100          format(" filling loc ",2i5," with ",2i5)
 
               do 15 ivar = 1, nvar
-                 val(nrowst+(ii-ilo),ncolst+(jj-jlo),ivar) = 
-     1                  alloc(iadd(nr-(ii-i1),nc-(jj-j1),ivar))
+                 val(ivar,nrowst+(ii-ilo),ncolst+(jj-jlo)) = 
+     1                  alloc(iadd(ivar,nr-(ii-i1),nc-(jj-j1)))
  15           continue
              
 c             call reclam(locflip, (nr*nc*nvar))

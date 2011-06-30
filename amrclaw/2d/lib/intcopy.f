@@ -6,11 +6,14 @@ c
 
        implicit double precision (a-h, o-z)
 
-       dimension val(mitot,mjtot,nvar)
+       dimension val(nvar,mitot,mjtot)
 
        include "call.i"
 
-       iadd(i,j,ivar) = loc + i - 1 + mi*((ivar-1)*mj+j-1)
+c   OLD INDEXING
+c      iadd(i,j,ivar) = loc + i - 1 + mi*((ivar-1)*mj+j-1)
+c   NEW INDEXING ORDER SWITCHED
+       iadd(ivar,i,j) = loc + ivar-1 + nvar*((j-1)*mi+i-1)
 
 c ::::::::::::::::::::::::::: INTCOPY :::::::::::::::::::::::::::::::
 c
@@ -48,8 +51,8 @@ c         # does it intersect?
               do 20 j    = jxlo, jxhi
               do 20 ivar = 1, nvar
               do 30 i    = ixlo, ixhi
-                  val(iputst+i-ilo,jputst+j-jlo,ivar) =
-     1                alloc(iadd(i-iglo+nghost+1,j-jglo+nghost+1,ivar))
+                  val(ivar,iputst+i-ilo,jputst+j-jlo) =
+     1                alloc(iadd(ivar,i-iglo+nghost+1,j-jglo+nghost+1))
  30           continue
  20           continue
           endif

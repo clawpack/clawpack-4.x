@@ -5,8 +5,8 @@ c =========================================================
      &             q,maux,aux,t,dt)
 c =========================================================
       implicit double precision (a-h,o-z)
-      dimension   q(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, meqn)
-      dimension aux(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, maux)
+      dimension   q(meqn,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
+      dimension aux(maux,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
 c
 c     # dummy source routine... does nothing
 c

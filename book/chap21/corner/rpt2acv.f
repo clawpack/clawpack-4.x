@@ -19,14 +19,14 @@ c     # Split asdq into down-going flux bmasdq and up-going flux bpasdq.
 c
 c     # imp=1  means  asdq=amdq,    imp=2 means asdq=apdq
 c
-      dimension    ql(1-mbc:maxm+mbc, meqn)
-      dimension    qr(1-mbc:maxm+mbc, meqn)
-      dimension    asdq(1-mbc:maxm+mbc, meqn)
-      dimension bmasdq(1-mbc:maxm+mbc, meqn)
-      dimension bpasdq(1-mbc:maxm+mbc, meqn)
-      dimension   aux1(1-mbc:maxm+mbc, *)
-      dimension   aux2(1-mbc:maxm+mbc, *)
-      dimension   aux3(1-mbc:maxm+mbc, *)
+      dimension    ql(meqn,1-mbc:maxm+mbc)
+      dimension    qr(meqn,1-mbc:maxm+mbc)
+      dimension    asdq(meqn, 1-mbc:maxm+mbc)
+      dimension bmasdq(meqn,1-mbc:maxm+mbc)
+      dimension bpasdq(meqn,1-mbc:maxm+mbc)
+      dimension   aux1(2,1-mbc:maxm+mbc)
+      dimension   aux2(2,1-mbc:maxm+mbc)
+      dimension   aux3(2,1-mbc:maxm+mbc)
 c
 c
 c
@@ -62,34 +62,34 @@ c        # since there is also reflection at the interfaces which decreases
 c        # the flux.
 c
 c        # sound speed in each row of cells:
-	 cm = aux1(i1,2)
-	 c = aux2(i1,2)
-	 cp = aux3(i1,2)
+	 cm = aux1(2,i1)
+	 c  = aux2(2,i1)
+	 cp = aux3(2,i1)
 c
 c        # impedances:
-         zm = aux1(i1,1)
-         zz = aux2(i1,1)
-         zp = aux3(i1,1)
+         zm = aux1(1,i1)
+         zz = aux2(1,i1)
+         zp = aux3(1,i1)
 
 c        # transmitted part of down-going wave:
-	 a1 = (-asdq(i,1) + asdq(i,mv)*zz) /
+	 a1 = (-asdq(1,i) + asdq(mv,i)*zz) /
      &         (zm + zz)
 
 c        # transmitted part of up-going wave:
-	 a2 = (asdq(i,1) + asdq(i,mv)*zz) /
+	 a2 = (asdq(1,i) + asdq(mv,i)*zz) /
      &         (zz + zp)
 c
 c        # The down-going flux difference bmasdq is the product  -c * wave
 c
-         bmasdq(i,1) = cm * a1*zm
-         bmasdq(i,mu) = 0.d0
-         bmasdq(i,mv) = -cm * a1
+         bmasdq(1,i) = cm * a1*zm
+         bmasdq(mu,i) = 0.d0
+         bmasdq(mv,i) = -cm * a1
 c
 c        # The up-going flux difference bpasdq is the product  c * wave
 c
-         bpasdq(i,1) = cp * a2*zp
-         bpasdq(i,mu) = 0.d0
-         bpasdq(i,mv) = cp * a2
+         bpasdq(1,i) = cp * a2*zp
+         bpasdq(mu,i) = 0.d0
+         bpasdq(mv,i) = cp * a2
 c
    20    continue
 c

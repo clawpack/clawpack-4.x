@@ -6,15 +6,16 @@ c
 
        implicit double precision (a-h, o-z)
 
-       dimension val(nrow,ncol,nvar)
-       dimension aux(nrow,ncol,naux)
+       dimension val(nvar,nrow,ncol)
+       dimension aux(naux,nrow,ncol)
 
        logical sticksout
 
        include "call.i"
 
-       iadd   (i,j,ivar) = loc    + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-       iaddaux(i,j,ivar) = locaux + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c NEW INDEX ORDERING
+       iadd   (ivar,i,j) = loc    + ivar-1 + nvar*((j-1)*mitot+i-1)
+       iaddaux(ivar,i,j) = locaux + ivar-1 + naux*((j-1)*mitot+i-1)
 
 c ::::::::::::::::::::::::::: ICALL :::::::::::::::::::::::::::::::
 c
@@ -64,12 +65,12 @@ c  that have been primed with bcs to be advanced.
               do 30 j    = jxlo, jxhi
               do 30 i    = ixlo, ixhi
               do 20 ivar = 1, nvar
-                  ialloc  =  iadd(i-iglo+nghost+1,j-jglo+nghost+1,ivar)
-                  val(i-ilo+iputst,j-jlo+jputst,ivar)  =  alloc(ialloc)
+                  ialloc  =  iadd(ivar,i-iglo+nghost+1,j-jglo+nghost+1)
+                  val(ivar,i-ilo+iputst,j-jlo+jputst)  =  alloc(ialloc)
  20           continue
               do 25 iaux = 1, naux
-                  ialloc = iaddaux(i-iglo+nghost+1,j-jglo+nghost+1,iaux)
-                  aux(i-ilo+iputst,j-jlo+jputst,iaux)  =  alloc(ialloc)
+                  ialloc = iaddaux(iaux,i-iglo+nghost+1,j-jglo+nghost+1)
+                  aux(iaux,i-ilo+iputst,j-jlo+jputst)  =  alloc(ialloc)
  25           continue
  30           continue
           endif
@@ -102,11 +103,11 @@ c dont fill using values where debuggers might complain about uninitialized valu
 c               it has got to be the first row that sticks out
 c               since called from filval with enlarged patch and
 c               no ghost cells
-                val(1,jj,ivar) = val(2,jj,ivar) 
+                val(ivar,1,jj) = val(ivar,2,jj) 
               end do
               do iaux = 1, naux
 c                do same for aux arrays
-                 aux(1,jj,iaux) = aux(2,jj,iaux) 
+                 aux(iaux,1,jj) = aux(iaux,2,jj) 
               end do
             end do
          endif
@@ -114,10 +115,10 @@ c                do same for aux arrays
             do j = max(jlo,0), min(jhi,jregsz(level)-1)
               jj = jputst + j - jlo
               do ivar = 1, nvar
-                 val(nrow,jj,ivar) = val(nrow-1,jj,ivar) 
+                 val(ivar,nrow,jj) = val(ivar,nrow-1,jj) 
               end do
               do iaux = 1, naux
-                 aux(nrow,jj,iaux) = aux(nrow-1,jj,iaux) 
+                 aux(iaux,nrow,jj) = aux(iaux,nrow-1,jj) 
               end do
             end do
          endif
@@ -125,10 +126,10 @@ c                do same for aux arrays
             do i = max(ilo,0), min(ihi,iregsz(level)-1)
               ii = iputst + i - ilo
               do ivar = 1, nvar
-                val(ii,1,ivar) = val(ii,2,ivar) 
+                val(ivar,ii,1) = val(ivar,ii,2) 
               end do
               do iaux = 1, naux
-                aux(ii,1,iaux) = aux(ii,2,iaux) 
+                aux(iaux,ii,1) = aux(iaux,ii,2) 
               end do
             end do
          endif
@@ -136,10 +137,10 @@ c                do same for aux arrays
             do i = max(ilo,0), min(ihi,iregsz(level)-1)
               ii = iputst + i - ilo
               do ivar = 1, nvar
-                 val(ii,ncol,ivar) = val(ii,ncol-1,ivar) 
+                 val(ivar,ii,ncol) = val(ivar,ii,ncol-1) 
               end do
               do iaux = 1, naux
-                 aux(ii,ncol,iaux) = aux(ii,ncol-1,iaux) 
+                 aux(iaux,ii,ncol) = aux(iaux,ii,ncol-1) 
               end do
             end do
          endif

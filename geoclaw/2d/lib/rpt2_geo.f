@@ -16,14 +16,14 @@ c-----------------------last modified 1/10/05----------------------
 
       integer ixy,maxm,meqn,mwaves,mbc,mx,ilr
 
-      double precision  ql(1-mbc:maxm+mbc, meqn)
-      double precision  qr(1-mbc:maxm+mbc, meqn)
-      double precision  asdq(1-mbc:maxm+mbc, meqn)
-      double precision  bmasdq(1-mbc:maxm+mbc, meqn)
-      double precision  bpasdq(1-mbc:maxm+mbc, meqn)
-      double precision  aux1(1-mbc:maxm+mbc,*)
-      double precision  aux2(1-mbc:maxm+mbc,*)
-      double precision  aux3(1-mbc:maxm+mbc,*)
+      double precision  ql(meqn,1-mbc:maxm+mbc)
+      double precision  qr(meqn,1-mbc:maxm+mbc)
+      double precision  asdq(meqn,1-mbc:maxm+mbc)
+      double precision  bmasdq(meqn,1-mbc:maxm+mbc)
+      double precision  bpasdq(meqn,1-mbc:maxm+mbc)
+      double precision  aux1(maux,1-mbc:maxm+mbc)
+      double precision  aux2(maux,1-mbc:maxm+mbc)
+      double precision  aux3(maux,1-mbc:maxm+mbc)
 
       double precision  s(3)
       double precision  r(3,3)
@@ -35,6 +35,8 @@ c-----------------------last modified 1/10/05----------------------
       double precision  dxdcm,dxdcp,topo1,topo3,eta
 
       integer i,m,mw,mu,mv
+      integer maux
+      common /cmmaux/  maux
 
       g=grav
       tol=drytolerance
@@ -51,12 +53,12 @@ c-----------------------last modified 1/10/05----------------------
 
       do i=2-mbc,mx+mbc
 
-         hl=qr(i-1,1)
-         hr=ql(i,1)
-         hul=qr(i-1,mu)
-         hur=ql(i,mu)
-         hvl=qr(i-1,mv)
-         hvr=ql(i,mv)
+         hl=qr(1,i-1)
+         hr=ql(1,i)
+         hul=qr(mu,i-1)
+         hur=ql(mu,i)
+         hvl=qr(mv,i-1)
+         hvr=ql(mv,i)
 
 c===========determine velocity from momentum===========================
        if (hl.lt.abs_tol) then
@@ -91,16 +93,16 @@ c===========determine velocity from momentum===========================
 
 *      !check and see if cell that transverse waves are going in is high and dry
        if (ilr.eq.1) then
-            eta = qr(i-1,1) + aux2(i-1,1)
-            topo1 = aux1(i-1,1)
-            topo3 = aux3(i-1,1)
+            eta = qr(1,i-1) + aux2(1,i-1)
+            topo1 = aux1(1,i-1)
+            topo3 = aux3(1,i-1)
 c            s1 = vl-sqrt(g*hl)
 c            s3 = vl+sqrt(g*hl)
 c            s2 = 0.5d0*(s1+s3)
        else
-            eta = ql(i,1) + aux2(i,1)
-            topo1 = aux1(i,1)
-            topo3 = aux3(i,1)
+            eta = ql(1,i) + aux2(1,i)
+            topo1 = aux1(1,i)
+            topo3 = aux3(1,i)
 c            s1 = vr-sqrt(g*hr)
 c            s3 = vr+sqrt(g*hr)
 c            s2 = 0.5d0*(s1+s3)
@@ -113,11 +115,11 @@ c            s2 = 0.5d0*(s1+s3)
             dxdcm = dxdcp
          else
             if (ilr.eq.1) then
-               dxdcp = Rearth*pi*cos(aux3(i-1,3))/180.d0
-               dxdcm = Rearth*pi*cos(aux1(i-1,3))/180.d0
+               dxdcp = Rearth*pi*cos(aux3(3,i-1))/180.d0
+               dxdcm = Rearth*pi*cos(aux1(3,i-1))/180.d0
             else
-               dxdcp = Rearth*pi*cos(aux3(i,3))/180.d0
-               dxdcm = Rearth*pi*cos(aux1(i,3))/180.d0
+               dxdcp = Rearth*pi*cos(aux3(3,i))/180.d0
+               dxdcm = Rearth*pi*cos(aux1(3,i))/180.d0
             endif
          endif
       endif
@@ -145,9 +147,9 @@ c=====Determine some speeds necessary for the Jacobian=================
            s(2)=s2
            s(3)=s3
 c=======================Determine asdq decomposition (beta)============
-         delf1=asdq(i,1)
-         delf2=asdq(i,mu)
-         delf3=asdq(i,mv)
+         delf1=asdq(1,i)
+         delf2=asdq(mu,i)
+         delf3=asdq(mv, i)
 
          beta(1) = (s3*delf1/(s3-s1))-(delf3/(s3-s1))
          beta(2) = -s2*delf1 + delf2
@@ -171,18 +173,18 @@ c============================================================================
 c============= compute fluctuations==========================================
 
             do  m=1,meqn
-               bmasdq(i,m)=0.0d0
-               bpasdq(i,m)=0.0d0
+               bmasdq(m,i)=0.0d0
+               bpasdq(m,i)=0.0d0
             enddo
             do  mw=1,3
                if (s(mw).lt.0.d0) then
-                 bmasdq(i,1) =bmasdq(i,1) + dxdcm*s(mw)*beta(mw)*r(1,mw)
-                 bmasdq(i,mu)=bmasdq(i,mu)+ dxdcm*s(mw)*beta(mw)*r(2,mw)
-                 bmasdq(i,mv)=bmasdq(i,mv)+ dxdcm*s(mw)*beta(mw)*r(3,mw)
+                 bmasdq(1,i) =bmasdq(1,i) + dxdcm*s(mw)*beta(mw)*r(1,mw)
+                 bmasdq(mu,i)=bmasdq(mu,i)+ dxdcm*s(mw)*beta(mw)*r(2,mw)
+                 bmasdq(mv,i)=bmasdq(mv,i)+ dxdcm*s(mw)*beta(mw)*r(3,mw)
                elseif (s(mw).gt.0.d0) then
-                 bpasdq(i,1) =bpasdq(i,1) + dxdcp*s(mw)*beta(mw)*r(1,mw)
-                 bpasdq(i,mu)=bpasdq(i,mu)+ dxdcp*s(mw)*beta(mw)*r(2,mw)
-                 bpasdq(i,mv)=bpasdq(i,mv)+ dxdcp*s(mw)*beta(mw)*r(3,mw)
+                 bpasdq(1,i) =bpasdq(1,i) + dxdcp*s(mw)*beta(mw)*r(1,mw)
+                 bpasdq(mu,i)=bpasdq(mu,i)+ dxdcp*s(mw)*beta(mw)*r(2,mw)
+                 bpasdq(mv,i)=bpasdq(mv,i)+ dxdcp*s(mw)*beta(mw)*r(3,mw)
                endif
             enddo
 c========================================================================

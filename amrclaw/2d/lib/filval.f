@@ -10,8 +10,8 @@ c
 
       include "call.i"
 
-      dimension   val(mitot,mjtot,nvar), valc(mic,mjc,nvar)
-      dimension   aux(mitot,mjtot,naux), auxc(mic,mjc,naux)
+      dimension   val(nvar,mitot,mjtot), valc(nvar,mic,mjc)
+      dimension   aux(naux,mitot,mjtot), auxc(naux,mic,mjc)
       dimension   dudx(max1d), dudy(max1d)
 c
 c :::::::::::::::::::::::::::::: FILVAL ::::::::::::::::::::::::::
@@ -71,10 +71,10 @@ c
       do 30 ivar = 1, nvar
       do 10 i    = 2, mic-1
 
-         slp = valc(i+1,j,ivar) - valc(i,j,ivar)
-         slm = valc(i,j,ivar)   - valc(i-1,j,ivar)
+         slp = valc(ivar,i+1,j) - valc(ivar,i,j)
+         slm = valc(ivar,i,j)   - valc(ivar,i-1,j)
          slopex = dmin1(dabs(slp),dabs(slm))*
-     .            dsign(1.0d0,valc(i+1,j,ivar) - valc(i-1,j,ivar))
+     .            dsign(1.0d0,valc(ivar,i+1,j) - valc(ivar,i-1,j))
 c        # if there's a sign change, set slope to 0.
          if ( slm*slp .gt. 0.d0) then
            dudx(i) = slopex
@@ -82,10 +82,10 @@ c        # if there's a sign change, set slope to 0.
            dudx(i) = 0.d0
          endif
 
-         slp = valc(i,j+1,ivar) - valc(i,j,ivar)
-         slm = valc(i,j,ivar)   - valc(i,j-1,ivar)
+         slp = valc(ivar,i,j+1) - valc(ivar,i,j)
+         slm = valc(ivar,i,j)   - valc(ivar,i,j-1)
          slopey = dmin1(dabs(slp),dabs(slm))*
-     .            dsign(1.0d0,valc(i,j+1,ivar) - valc(i,j-1,ivar))
+     .            dsign(1.0d0,valc(ivar,i,j+1) - valc(ivar,i,j-1))
          if ( slm*slp .gt. 0.d0) then
            dudy(i) = slopey
          else
@@ -103,8 +103,8 @@ c
          yoff  = (float(jco) - .5)/lratioy - .5
             do 20 i = 2, mic-1
             ifine   = (i-2)*lratiox + nghost + ico
-            val(ifine,jfine,ivar) = valc(i,j,ivar)
-     1                                + xoff*dudx(i) + yoff*dudy(i)
+            val(ivar,ifine,jfine) = valc(ivar,i,j)
+     1                              + xoff*dudx(i) + yoff*dudy(i)
  20   continue
 c
  30   continue

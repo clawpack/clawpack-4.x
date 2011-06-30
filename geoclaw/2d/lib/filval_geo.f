@@ -13,8 +13,8 @@ c
 
       include "call.i"
 
-      dimension   val(mitot,mjtot,nvar), valc(mic,mjc,nvar)
-      dimension   aux(mitot,mjtot,naux), auxc(mic,mjc,naux)
+      dimension   val(nvar,mitot,mjtot), valc(nvar,mic,mjc)
+      dimension   aux(naux,mitot,mjtot), auxc(naux,mic,mjc)
 
       double precision coarseval(3)
       logical fineflag(3)
@@ -88,8 +88,8 @@ c     #prepare slopes - use min-mod limiters
          fineflag(1) = .false.
 *        !interpolate eta to find depth---------------------------------------
          do ii=-1,1
-            coarseval(2+ii) = valc(i+ii,j,1)+ auxc(i+ii,j,1)
-            if (valc(i+ii,j,1).le.toldry) then
+            coarseval(2+ii) = valc(1,i+ii,j)+ auxc(1,i+ii,j)
+            if (valc(1,i+ii,j).le.toldry) then
                coarseval(2+ii)=sealevel
                endif
             enddo
@@ -99,8 +99,8 @@ c     #prepare slopes - use min-mod limiters
      &      coarseval(3)-coarseval(1))
          if (s1m*s1p.le.0.d0) slopex=0.d0
          do jj=-1,1
-            coarseval(2+jj) = valc(i,j+jj,1)+ auxc(i,j+jj,1)
-            if (valc(i,j+jj,1).le.toldry) then
+            coarseval(2+jj) = valc(1,i,j+jj)+ auxc(1,i,j+jj)
+            if (valc(1,i,j+jj).le.toldry) then
                coarseval(2+jj)=sealevel
                endif
             enddo
@@ -117,15 +117,15 @@ c     #prepare slopes - use min-mod limiters
                xoff = (float(ico) - .5)/lratiox - .5
                jfine = (j-2)*lratioy + nghost + jco
                ifine = (i-2)*lratiox + nghost + ico
-               val(ifine,jfine,1) = coarseval(2)
+               val(1,ifine,jfine) = coarseval(2)
      &            + xoff*slopex + yoff*slopey
-               val(ifine,jfine,1)=max(0.d0,
-     &            val(ifine,jfine,1)-aux(ifine,jfine,1))
-               finemass = finemass + val(ifine,jfine,1)
-               if (val(ifine,jfine,1).le.toldry) then
+               val(1,ifine,jfine)=max(0.d0,
+     &            val(1,ifine,jfine)-aux(1,ifine,jfine))
+               finemass = finemass + val(1,ifine,jfine)
+               if (val(1,ifine,jfine).le.toldry) then
                   fineflag(1) = .true.
-                  val(ifine,jfine,2)=0.d0
-                  val(ifine,jfine,3)=0.d0
+                  val(2,ifine,jfine)=0.d0
+                  val(3,ifine,jfine)=0.d0
                   endif
                enddo
             enddo
@@ -136,31 +136,31 @@ c     #prepare slopes - use min-mod limiters
          if (finemass.ge.toldry) then
             do ivar = 2,nvar
                fineflag(ivar)=.false.
-               s1p=valc(i+1,j,ivar)-valc(i,j,ivar)
-               s1m=valc(i,j,ivar)-valc(i-1,j,ivar)
+               s1p=valc(ivar,i+1,j)-valc(ivar,i,j)
+               s1m=valc(ivar,i,j)-valc(ivar,i-1,j)
                slopex=dmin1(dabs(s1p),dabs(s1m))*dsign(1.d0,
-     &            valc(i+1,j,ivar)-valc(i-1,j,ivar))
+     &            valc(ivar,i+1,j)-valc(ivar,i-1,j))
                if (s1m*s1p.le.0.d0) slopex=0.d0
-               s1p=valc(i,j+1,ivar)-valc(i,j,ivar)
-               s1m=valc(i,j,ivar)-valc(i,j-1,ivar)
+               s1p=valc(ivar,i,j+1)-valc(ivar,i,j)
+               s1m=valc(ivar,i,j)-valc(ivar,i,j-1)
                slopey=dmin1(dabs(s1p),dabs(s1m))*dsign(1.d0,
-     &            valc(i,j+1,ivar)-valc(i,j-1,ivar))
+     &            valc(ivar,i,j+1)-valc(ivar,i,j-1))
                if (s1m*s1p.le.0.d0) slopey=0.d0
-               if (valc(i,j,1).gt.toldry) then
-                  velmax = valc(i,j,ivar)/valc(i,j,1)
-                  velmin = valc(i,j,ivar)/valc(i,j,1)
+               if (valc(1,i,j).gt.toldry) then
+                  velmax = valc(ivar,i,j)/valc(1,i,j)
+                  velmin = valc(ivar,i,j)/valc(1,i,j)
                else
                   velmax = 0.d0
                   velmin = 0.d0
                   endif
                do ii = -1,1,2
-                  if (valc(i+ii,j,1).gt.toldry) then
-                     vel = valc(i+ii,j,ivar)/valc(i+ii,j,1)
+                  if (valc(1,i+ii,j).gt.toldry) then
+                     vel = valc(ivar,i+ii,j)/valc(1,i+ii,j)
                      velmax = max(vel,velmax)
                      velmin = min(vel,velmin)
                      endif
-                  if (valc(i,j+ii,1).gt.toldry) then
-                     vel = valc(i,j,ivar)/valc(i,j+ii,1)
+                  if (valc(1,i,j+ii).gt.toldry) then
+                     vel = valc(ivar,i,j)/valc(1,i,j+ii)
                      velmax = max(vel,velmax)
                      velmin = min(vel,velmin)
                      endif
@@ -174,13 +174,13 @@ c     #prepare slopes - use min-mod limiters
                      ifine = (i-2)*lratiox + nghost + ico
                      yoff = (float(jco) - .5)/lratioy - .5
                      xoff = (float(ico) - .5)/lratiox - .5
-                     hvf = valc(i,j,ivar)+ xoff*slopex + yoff*slopey
-                     vf = hvf/val(ifine,jfine,1)
+                     hvf = valc(ivar,i,j)+ xoff*slopex + yoff*slopey
+                     vf = hvf/val(1,ifine,jfine)
                      if (vf.gt.velmax.or.vf.lt.velmin) then
                         fineflag(ivar)=.true.
                         exit
                      else
-                        val(ifine,jfine,ivar) = hvf
+                        val(ivar,ifine,jfine) = hvf
                         endif
                      enddo
                   enddo
@@ -189,14 +189,14 @@ c     #prepare slopes - use min-mod limiters
 *              !generating new extrema in velocities
                if (fineflag(1).or.fineflag(ivar)) then !more mass now, conserve momentum
                   area = dble(lratiox*lratioy)
-                  dividemass = max(finemass,valc(i,j,1))
-                  Vnew = area*valc(i,j,ivar)/dividemass
+                  dividemass = max(finemass,valc(1,i,j))
+                  Vnew = area*valc(ivar,i,j)/dividemass
 
                   do ico = 1,lratiox
                      do jco = 1,lratioy
                         jfine = (j-2)*lratioy + nghost + jco
                         ifine = (i-2)*lratiox + nghost + ico
-                        val(ifine,jfine,ivar) = Vnew*val(ifine,jfine,1)
+                        val(ivar,ifine,jfine) = Vnew*val(1,ifine,jfine)
                         enddo
                      enddo
                   endif

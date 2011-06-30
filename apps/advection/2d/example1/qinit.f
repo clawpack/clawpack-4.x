@@ -9,7 +9,7 @@ c     # q = 1.0  if  0.1 < x < 0.6   and   0.1 < y < 0.6
 c     #     0.1  otherwise
 c
       implicit double precision (a-h,o-z)
-      dimension q(1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc, meqn)
+      dimension q(meqn, 1-mbc:maxmx+mbc, 1-mbc:maxmy+mbc)
 
 c     # set concentration profile
 c     ---------------------------
@@ -19,9 +19,9 @@ c     ---------------------------
             xi = xlower + (i-0.5d0)*dx
             if (xi.gt.0.1d0 .and. xi.lt.0.6d0 .and.
      &            yj.gt.0.1d0 .and. yj.lt.0.6d0) then
-               q(i,j,1) = 1.d0
+               q(1,i,j) = 1.d0
             else
-               q(i,j,1) = 0.1d0
+               q(1,i,j) = 0.1d0
             endif
    20    continue
 

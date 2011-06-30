@@ -9,9 +9,9 @@ c======================================================================
 
       implicit double precision (a-h,o-z)
 
-      dimension q(1-mbc:mxc+mbc,1-mbc:myc+mbc, meqn)
-      dimension aux(1-mbc:mxc+mbc,1-mbc:myc+mbc, maux)
-      dimension fgrid(1:mxfg,1:myfg,mvarsfg)
+      dimension q(meqn,1-mbc:mxc+mbc,1-mbc:myc+mbc)
+      dimension aux(maux,1-mbc:mxc+mbc,1-mbc:myc+mbc)
+      dimension fgrid(mvarsfg,1:mxfg,1:myfg)
 
 c=====================FGRIDINTERP=======================================
 c         # This routine interpolates q and aux on a computational grid
@@ -78,39 +78,39 @@ c        # define constant parts of bilinear
 
          if (maxcheck.eq.0) then 
          do m=1,meqn
-            z11=q(ic1,jc1,m)
-            z21=q(ic2,jc1,m)
-            z12=q(ic1,jc2,m)
-            z22=q(ic2,jc2,m)
+            z11=q(m,ic1,jc1)
+            z21=q(m,ic2,jc1)
+            z12=q(m,ic1,jc2)
+            z22=q(m,ic2,jc2)
             a=z21-z11
             b=z12-z11
             d=z11
             c=z22-(a+b+d)
-            fgrid(ifg,jfg,m) = a*xterm + b*yterm + c*xyterm + d
+            fgrid(m,ifg,jfg) = a*xterm + b*yterm + c*xyterm + d
 
          enddo
-         z11=aux(ic1,jc1,1)
-         z21=aux(ic2,jc1,1)
-         z12=aux(ic1,jc2,1)
-         z22=aux(ic2,jc2,1) 
+         z11=aux(1,ic1,jc1)
+         z21=aux(1,ic2,jc1)
+         z12=aux(1,ic1,jc2)
+         z22=aux(1,ic2,jc2) 
          a=z21-z11
          b=z12-z11
          d=z11
          c=z22-(a+b+d)
-         fgrid(ifg,jfg,indb) = a*xterm + b*yterm + c*xyterm + d
+         fgrid(indb,ifg,jfg) = a*xterm + b*yterm + c*xyterm + d
          endif
 c        # This next output variable is the surface using bilinear interpolation,
 c        # using a surface that only uses the wet eta points near the shoreline
 
-         z11=aux(ic1,jc1,1)+q(ic1,jc1,1)
-         z21=aux(ic2,jc1,1)+q(ic2,jc1,1)
-         z12=aux(ic1,jc2,1)+q(ic1,jc2,1)
-         z22=aux(ic2,jc2,1)+q(ic2,jc2,1)
+         z11=aux(1,ic1,jc1)+q(1,ic1,jc1)
+         z21=aux(1,ic2,jc1)+q(1,ic2,jc1)
+         z12=aux(1,ic1,jc2)+q(1,ic1,jc2)
+         z22=aux(1,ic2,jc2)+q(1,ic2,jc2)
 
-         h11=q(ic1,jc1,1)
-         h21=q(ic2,jc1,1)
-         h12=q(ic1,jc2,1)
-         h22=q(ic2,jc2,1)
+         h11=q(1,ic1,jc1)
+         h21=q(1,ic2,jc1)
+         h12=q(1,ic1,jc2)
+         h22=q(1,ic2,jc2)
          depthindicator= min(h11,h12,h21,h22)
          totaldepth= h11+h22+h21+h12
 
@@ -144,32 +144,32 @@ c        # using a surface that only uses the wet eta points near the shoreline
 
 c        #If eta max/min are saved on this grid initialized if necessary
          if (ioutsurfacemax.gt.0.and.maxcheck.eq.2) then 
-            if (.not.(fgrid(ifg,jfg,indetamin).eq.
-     &        fgrid(ifg,jfg,indetamin))) fgrid(ifg,jfg,indetamin)=0.d0
-            if (.not.(fgrid(ifg,jfg,indetamax).eq.
-     &        fgrid(ifg,jfg,indetamax))) fgrid(ifg,jfg,indetamax)=0.d0
+            if (.not.(fgrid(indetamin,ifg,jfg).eq.
+     &        fgrid(indetamin,ifg,jfg))) fgrid(indetamin,ifg,jfg)=0.d0
+            if (.not.(fgrid(indetamax,ifg,jfg).eq.
+     &        fgrid(indetamax,ifg,jfg))) fgrid(indetamax,ifg,jfg)=0.d0
              
          endif
 
 c        # check wich task to perform
          if (maxcheck.eq.0) then 
-           fgrid(ifg,jfg,indeta) = a*xterm + b*yterm + c*xyterm + d
-           fgrid(ifg,jfg,mvarsfg) = t
+           fgrid(indeta,ifg,jfg) = a*xterm + b*yterm + c*xyterm + d
+           fgrid(mvarsfg,ifg,jfg) = t
          elseif (maxcheck.eq.1.and.ioutsurfacemax.gt.0) then
-           fgrid(ifg,jfg,indetanow) = a*xterm + b*yterm + c*xyterm + d   
+           fgrid(indetanow,ifg,jfg) = a*xterm + b*yterm + c*xyterm + d   
          elseif (maxcheck.eq.2.and.ioutsurfacemax.gt.0) then
-            fgrid(ifg,jfg,indetamin) = 
-     &          min(fgrid(ifg,jfg,indetamin),fgrid(ifg,jfg,indetanow))
-            fgrid(ifg,jfg,indetamax) = 
-     &          max(fgrid(ifg,jfg,indetamax),fgrid(ifg,jfg,indetanow))            
+            fgrid(indetamin,ifg,jfg) = 
+     &          min(fgrid(indetamin,ifg,jfg),fgrid(indetanow,ifg,jfg))
+            fgrid(indetamax,ifg,jfg) = 
+     &          max(fgrid(indetamax,ifg,jfg),fgrid(indetanow,ifg,jfg))            
          endif
 
 c        #If arrival times are saved on this grid
          if (maxcheck.eq.1.and.ioutarrivaltimes.gt.0) then
-            check=fgrid(ifg,jfg,indarrive)
+            check=fgrid(indarrive,ifg,jfg)
             if (.not.(check.eq.check)) then !# check=NaN: Waves haven't arrived previously 
-            if (dabs(fgrid(ifg,jfg,indeta)).gt.arrivaltol) then
-                fgrid(ifg,jfg,indarrive)= t
+            if (dabs(fgrid(indeta,ifg,jfg)).gt.arrivaltol) then
+                fgrid(indarrive,ifg,jfg)= t
             endif
             endif
          endif

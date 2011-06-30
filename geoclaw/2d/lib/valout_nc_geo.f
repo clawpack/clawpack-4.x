@@ -13,7 +13,7 @@ c     Routine to write netcdf files in the classic format
 !        #           ngrids        : Number of grids in this frame
 !        #           naux          : Number of Auxilary Variables
 !        #           ndim          : Number of Dimensions in the frame
-!        #           grid_<gridno> : A grid of (dimx,dimy,meqn)
+!        #           grid_<gridno> : A grid of (meqn,dimx,dimy)
 !        # Attributes:
 !        # (grid_<no>) gridno      : The number of this grid <grid_no>
 !        #           level         : The AMR level
@@ -40,8 +40,13 @@ c
       REAL, ALLOCATABLE  ::grid(:,:,:)
       real dx,dy,xlow,ylow
       
-      iadd(i,j,ivar) = loc + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-      iaddaux(i,j,iaux) = locaux + i - 1 + mitot*((iaux-1)*mjtot+j-1)
+c OLD INDEXING
+c     iadd(i,j,ivar) = loc + i - 1 + mitot*((ivar-1)*mjtot+j-1)
+c     iaddaux(i,j,iaux) = locaux + i - 1 + mitot*((iaux-1)*mjtot+j-1)
+c NEW INDEXING
+      iadd(ivar,i,j)  = loc + ivar-1 + nvar*((j-1)*mitot+i-1)
+      iaddaux(iaux,i,j) = locaux + iaux-1 + naux*((j-1)*mitot+i-1)
+
 
       ntimes=1
 c ::::::::::::::::::::::::::: VALOUT ::::::::::::::::::::::::::::::::::;
@@ -131,21 +136,21 @@ c        ###  make the file names and open output files
      
               rcode=NF_ENDDEF(ncid)
               
-              allocate(grid(nx,ny,nvar+1))
+              allocate(grid(nvar+1,nx,ny))
               
 !!! with netcdf4 we can have groups that will encapsulate all of this data, but for now....use the netcdf3 format "universal" with scientific python
 
       do j = nghost+1, mjtot-nghost
          do i = nghost+1, mitot-nghost
             do ivar=1,nvar
-               if (dabs(alloc(iadd(i,j,ivar))) .lt. 1d-90) then
-                  alloc(iadd(i,j,ivar)) = 0.d0
+               if (dabs(alloc(iadd(ivar,i,j))) .lt. 1d-90) then
+                  alloc(iadd(ivar,i,j)) = 0.d0
                endif
                if ivar .eq. 4 then
-                 surface = alloc(iadd(i,j,1)) + alloc(iaddaux(i,j,1))
-                 grid(i-nghost,j-nghost,4) = surface
+                 surface = alloc(iadd(1,i,j)) + alloc(iaddaux(1,i,j))
+                 grid(4,i-nghost,j-nghost) = surface
                else
-                 grid(i-nghost,j-nghost,ivar)=alloc(iadd(i,j,ivar))  
+                 grid(ivar,i-nghost,j-nghost)=alloc(iadd(ivar,i,j))  
                endif
             enddo
          enddo

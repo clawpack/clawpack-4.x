@@ -1,21 +1,28 @@
 c
 c -----------------------------------------------------------
 c
-      subroutine conck(level, nvar, time, rest)
+      subroutine conck(level, nvar, naux, time, rest)
 c
       implicit double precision (a-h,o-z)
 
       include  "call.i"
       logical  rest
 
-      iadd(i,j,ivar)  = loc + i - 1 + mitot*((ivar-1)*mjtot+j-1)
-      iaddaux(i,j) = locaux + i - 1 + mitot*(j-1) +
-     .                        mitot*mjtot*(mcapa-1)
+c      iadd(i,j,ivar)  = loc + i - 1 + mitot*((ivar-1)*mjtot+j-1) OLD INDEXING
+c      iaddaux(i,j) = locaux + i - 1 + mitot*(j-1) +
+c     .                        mitot*mjtot*(mcapa-1)
+
+c ## indexing into mcapa assumes cell volume is in mcapa location
+      iadd(ivar,i,j)  = loc + ivar - 1 + nvar*((j-1)*mitot+i-1)
+      iaddaux(i,j) = locaux + mcapa - 1 + naux*(i-1) +
+     .                                    naux*mitot*(j-1)
+c
 c
 c ******************************************************************
 c conck - conservation check  for specified level
 c         mostly a debugging tool
 c         this assumes grids don't overlap
+c
 c ******************************************************************
 c
 c
@@ -38,13 +45,13 @@ c
          if (mcapa .eq. 0) then
            do 50 j  = nghost+1, mjtot-nghost
            do 50 i  = nghost+1, mitot-nghost
-              totmass = totmass + alloc(iadd(i,j,1)) 
+              totmass = totmass + alloc(iadd(1,i,j)) 
  50           continue
           else
 c          # with capa array:
            do 60 j  = nghost+1, mjtot-nghost
            do 60 i  = nghost+1, mitot-nghost
-              totmass = totmass + alloc(iadd(i,j,1))*alloc(iaddaux(i,j)) 
+              totmass = totmass + alloc(iadd(1,i,j))*alloc(iaddaux(i,j)) 
  60           continue
           endif
 c
