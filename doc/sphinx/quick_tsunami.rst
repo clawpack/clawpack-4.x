@@ -494,9 +494,10 @@ Let's add a line for
 <http://www.ndbc.noaa.gov/station_page.php?station=51407>`_, which is near
 the island of Hawaii::
 
-    geodata.gauges.append([51407, 203.484, 19.642, 25200., 1.e10])
+    geodata.gauges.append([51407, 203.484, 19.642, 3600*7., 1.e10])
 
-Note that `t1 = 25200` since the tsunami doesn't reach this
+Note that gauge output is only requested after time
+`t1 = 3600*7` seconds since the tsunami doesn't reach this
 gauge until more than 7 hours after the earthquake (which could be
 determined by first doing a coarse grid simulation).
 

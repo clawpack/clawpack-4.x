@@ -6,14 +6,28 @@
 GeoClaw
 ***************
 
-The `$CLAW/geoclaw` directory contains a specialized version of some Clawpack
-and AMRClaw routines that have been modified to work well for certain
-geophysical flow problems.  
-
 .. warning:: As with all of Clawpack, this code is provided as a research
    and teaching tool with no guarantee of suitability for any particular
    purpose, and no liability on the part of the authors.  See the
    :ref:`license` for more details.
+
+
+**See also:**
+
+.. toctree::
+   :maxdepth: 1
+   
+   topo
+   setrun_geoclaw
+   plotting_geoclaw
+   quick_tsunami
+
+Overview
+--------
+
+The `$CLAW/geoclaw` directory contains a specialized version of some Clawpack
+and AMRClaw routines that have been modified to work well for certain
+geophysical flow problems.  
 
 Currently the focus is on 2d depth-averaged
 shallow water equations for flow over varying topography.  The term
@@ -85,5 +99,5 @@ Some special tools and colormaps are available, see :ref:`geoplot`.
 Setting up a new example
 ------------------------
 
- * Hints to appear.
+ * :ref:`quick_tsunami`
 
