@@ -103,8 +103,8 @@ if clawdir == None:
 # change the lines below if you want to point to a webpage home instead
 # of the local file system  (e.g.  clawaddr = "http://www.mywebpage/claw")
 
-clawaddr = 'http://localhost:50005'
-#clawaddr = 'http://kingkong.amath.washington.edu/claw4'
+#clawaddr = 'http://localhost:50005'
+clawaddr = 'http://depts.washington.edu/clawpack/clawpack-4.x'
 
 
 # Set comment characters for different programming languages:

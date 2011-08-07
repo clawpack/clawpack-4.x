@@ -31,8 +31,9 @@ jsMath.Easy = {
   //  If you leave this blank, jsMath will try to look it up from
   //  the URL where it loaded this file, but that may not work.
   //
-  // root: "http://kingkong.amath.washington.edu/claw4/doc/jsMath",
-  root: "http://localhost:50005/doc/jsMath",
+  // root: "http://localhost:50005/doc/jsMath",
+  root: "http://depts.washington.edu/clawpack/jsMath",
+
   
   //
   //  The default scaling factor for mathematics compared to the
