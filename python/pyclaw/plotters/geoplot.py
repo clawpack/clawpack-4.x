@@ -4,6 +4,8 @@ Useful things for plotting GeoClaw results.
 
 from pyclaw.plotters import colormaps
 from matplotlib.colors import Normalize 
+from pyclaw.geotools import topotools
+
 
 # Colormaps from geoclaw
 # Color attributes, single instance per run
@@ -258,38 +260,50 @@ def plot_topo_file(topoplotdata):
                                          .01:[.5,.7,0],
                                         cmax:[.2,.5,.2]})
 
-    if abs(topotype) != 3:
-        print "*** Only topotype = 3, -3 implemented so far."
-        return
+    if abs(topotype) == 1:
 
-    file = open(fname, 'r')
-    lines = file.readlines()
-    ncols = int(lines[0].split()[0])
-    nrows = int(lines[1].split()[0])
-    xllcorner = float(lines[2].split()[0])
-    yllcorner = float(lines[3].split()[0])
-    cellsize = float(lines[4].split()[0])
-    NODATA_value = int(lines[5].split()[0])
+        X,Y,topo = topotools.topofile2griddata(fname, topotype)
+        topo = pylab.flipud(topo)
+        Y = pylab.flipud(Y)
+        x = X[0,:]
+        y = Y[:,0]
+        xllcorner = x[0]
+        yllcorner = y[0]
+        cellsize = x[1]-x[0]
 
-    print "Loading file ",fname
-    print "   nrows = %i, ncols = %i" % (nrows,ncols)
-    topo = pylab.loadtxt(fname,skiprows=6,dtype=float)
-    print "   Done loading"
 
-    if 0:
-        topo = []
-        for i in range(nrows):
-            topo.append(pylab.array(lines[6+i],))
-        print '+++ topo = ',topo
-        topo = pylab.array(topo)
+    elif abs(topotype) == 3:
 
-    topo = pylab.flipud(topo)
-    if topotype < 0:
-        topo = -topo
+        file = open(fname, 'r')
+        lines = file.readlines()
+        ncols = int(lines[0].split()[0])
+        nrows = int(lines[1].split()[0])
+        xllcorner = float(lines[2].split()[0])
+        yllcorner = float(lines[3].split()[0])
+        cellsize = float(lines[4].split()[0])
+        NODATA_value = int(lines[5].split()[0])
+    
+        print "Loading file ",fname
+        print "   nrows = %i, ncols = %i" % (nrows,ncols)
+        topo = pylab.loadtxt(fname,skiprows=6,dtype=float)
+        print "   Done loading"
+    
+        if 0:
+            topo = []
+            for i in range(nrows):
+                topo.append(pylab.array(lines[6+i],))
+            print '+++ topo = ',topo
+            topo = pylab.array(topo)
+    
+        topo = pylab.flipud(topo)
+    
+        x = pylab.linspace(xllcorner, xllcorner+ncols*cellsize, ncols)
+        y = pylab.linspace(yllcorner, yllcorner+nrows*cellsize, nrows)
+        print "Shape of x, y, topo: ", x.shape, y.shape, topo.shape
 
-    x = pylab.linspace(xllcorner, xllcorner+ncols*cellsize, ncols)
-    y = pylab.linspace(yllcorner, yllcorner+nrows*cellsize, nrows)
-    print "Shape of x, y, topo: ", x.shape, y.shape, topo.shape
+    else:
+        raise Exception("*** Only topotypes 1 and 3 supported so far")
+    
 
     if coarsen > 1:
         topo = topo[slice(0,nrows,coarsen), slice(0,ncols,coarsen)]
@@ -297,6 +311,9 @@ def plot_topo_file(topoplotdata):
         y = y[slice(0,nrows,coarsen)]
         print "Shapes after coarsening: ", x.shape, y.shape, topo.shape
 
+
+    if topotype < 0:
+        topo = -topo
 
     if figno:
         pylab.figure(figno)
