@@ -41,9 +41,11 @@ use_netcdf3 = True #use this implementation as default...even though it does not
 use_netcdf4 = False
 use_pupynere = False
 try:
-  from Scientific.IO import NetCDF
+  #from Scientific.IO import NetCDF
+  from scipy.io import netcdf as NetCDF
   use_netcdf3 = True
 except:
+  print "*** Could not import NetCDF from Scientific.IO"
   pass
 if not use_netcdf3:
   try:
@@ -183,7 +185,7 @@ def write_netcdf(solution,frame,path,file_prefix='fort',write_aux=False,
     if use_netcdf3:
         import numpy
         # Open new file
-        f = netCDF.NetCDFFile(filename,'w')#if I want not to clobber this mode needs to be 'a'
+        f = NetCDF.NetCDFFile(filename,'w')#if I want not to clobber this mode needs to be 'a'
         
         # Loop through description dictionary and add the attributes to the
         # root group
@@ -191,8 +193,8 @@ def write_netcdf(solution,frame,path,file_prefix='fort',write_aux=False,
             exec('f.%s = %s' % (k,v))
         
         # Create Global Dimensions
-        f.createDimension("timedimension",NoneType) #NoneType is unlimited
-        f.createDimension("meqn",grid.meqn)
+        f.createDimension("timedimension",None) #NoneType is unlimited
+        f.createDimension("meqn",solution.grid.meqn)
         
         # Create Global variables
         time=f.createVariable("timedimension",'f',("timedimension",))
@@ -202,7 +204,7 @@ def write_netcdf(solution,frame,path,file_prefix='fort',write_aux=False,
         
         # For each grid, write out attributes
         for grid in solution.grids:
-            if solutions.grids.index(grid)==0:
+            if solution.grids.index(grid)==0:
               time.assignValue(getattr(grid,'t'))
               ngrids.assignValue(len(solution.grids)) # I am not quite sure about these
               naux.assignValue(grid.naux) # 
