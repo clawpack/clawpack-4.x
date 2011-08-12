@@ -41,12 +41,13 @@ use_netcdf3 = True #use this implementation as default...even though it does not
 use_netcdf4 = False
 use_pupynere = False
 try:
-  #from Scientific.IO import NetCDF
-  from scipy.io import netcdf as NetCDF
+  from Scientific.IO import NetCDF
   use_netcdf3 = True
 except:
-  print "*** Could not import NetCDF from Scientific.IO"
-  pass
+  try: 
+    from scipy.io import netcdf as NetCDF
+  except:
+    print "*** Could not import NetCDF from Scientific.IO or scipy.io"
 if not use_netcdf3:
   try:
       import netCDF4
