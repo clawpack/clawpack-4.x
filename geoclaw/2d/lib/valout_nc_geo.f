@@ -141,7 +141,7 @@ c        ###  make the file names and open output files
                if (dabs(alloc(iadd(i,j,ivar))) .lt. 1d-90) then
                   alloc(iadd(i,j,ivar)) = 0.d0
                endif
-               if ivar .eq. 4 then
+               if (ivar .eq. 4) then
                  surface = alloc(iadd(i,j,1)) + alloc(iaddaux(i,j,1))
                  grid(i-nghost,j-nghost,4) = surface
                else
