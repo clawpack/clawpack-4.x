@@ -7,13 +7,17 @@ Execute via
 from a directory that contains a claw.data file and a Clawpack executable.
 """
 
-def runclaw(xclawcmd=None, outdir=None, overwrite=True, restart=False):
+def runclaw(xclawcmd=None, outdir=None, overwrite=True, restart=False, 
+            rundir=None):
     """
     Run the Fortran version of Clawpack using executable xclawcmd, which is
     typically set to 'xclaw', 'xamr', etc.
 
     If it is not set by the call, get it from the environment variable
     CLAW_EXE.  Default to 'xclaw' if that's not set.
+    
+    If rundir is None, all *.data is copied from current directory, if a path 
+    is given, data files are copied from there instead.
     """
 
     import os
@@ -36,13 +40,19 @@ def runclaw(xclawcmd=None, outdir=None, overwrite=True, restart=False):
 
     if outdir is None:
         outdir = '.'
+        
+    if rundir is None:
+        rundir = os.getcwd()
+    rundir = os.path.abspath(rundir)
+    print "Will take data from ", rundir
 
     # directory for fort.* files:
     outdir = os.path.abspath(outdir)
     print '== runclaw: Will write output to ',outdir
     
     clawjob = Controller()
-    clawjob.rundir = os.getcwd()      # use data files from current directory
+    clawjob.xdir = os.getcwd()
+    clawjob.rundir = rundir           # use data files from current directory
     clawjob.outdir = outdir           # write fort files to outdir
     clawjob.xclawcmd = xclawcmd       # Clawpack executable
     clawjob.overwrite = overwrite     # Ok to overwrite outdir and plotdir?
