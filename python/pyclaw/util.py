@@ -234,7 +234,7 @@ def create_topo_func(loc,verbose=False):
         
     """
     
-    cmd_str = "lambda x,y: (x < %s) * %s" % (loc[0][0],loc[0][1])
+    cmd_str = "lambda x,y: (x <= %s) * %s" % (loc[0][0],loc[0][1])
     for i in xrange(0,len(loc)-1):
         loc_str = " + (%s < x) * (x <= %s)" % (loc[i][0],loc[i+1][0])
         loc_str = "".join((loc_str," * ((%s - %s) " % (loc[i][1],loc[i+1][1])))
