@@ -52,6 +52,8 @@ class PlotPagesData(object):
         self.timeframes_frametimes = {}
         self.timeframes_fignos = 'all'
         self.timeframes_fignames = {}
+        self.timeframes_prefix = 'frame'
+        
     
         self.pageitem_list = []
 
@@ -326,7 +328,7 @@ def timeframes2html(plot_pages_data):
     """
 
 
-    print '\n-----------------------------------\n'
+    print '\n-----------------------------------\n'    
     print '\nCreating html pages for timestepping figures...\n'
 
     startdir = os.getcwd()
