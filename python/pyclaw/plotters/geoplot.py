@@ -5,6 +5,7 @@ Useful things for plotting GeoClaw results.
 from pyclaw.plotters import colormaps
 from matplotlib.colors import Normalize 
 from pyclaw.geotools import topotools
+from numpy import ma
 
 
 # Colormaps from geoclaw
@@ -204,7 +205,8 @@ class TopoPlotData(object):
     def __init__(self, fname):
         self.fname = fname 
         self.topotype = 3
-        self.cmap = None
+        self.neg_cmap = None
+        self.pos_cmap = None
         self.cmax = 100.
         self.cmin = -4000.
         self.climits = None
@@ -250,15 +252,17 @@ def plot_topo_file(topoplotdata):
     coarsen = topoplotdata.coarsen
     imshow = topoplotdata.imshow
     gridedges_show = topoplotdata.gridedges_show
-    cmap = topoplotdata.cmap
+    neg_cmap = topoplotdata.neg_cmap
+    pos_cmap = topoplotdata.pos_cmap
     print_fname = topoplotdata.print_fname
 
 
-    if cmap is None:
-        cmap = colormaps.make_colormap({cmin:[0.3,0.2,0.1],
-                                           0:[0.95,0.9,0.7],
-                                         .01:[.5,.7,0],
-                                        cmax:[.2,.5,.2]})
+    if neg_cmap is None:
+        neg_cmap = colormaps.make_colormap({cmin:[0.3,0.2,0.1],
+                                                0:[0.95,0.9,0.7]})
+    if pos_cmap is None:
+        pos_cmap = colormaps.make_colormap({    0:[.5,.7,0],
+                                              cmax:[.2,.5,.2]})
 
     if abs(topotype) == 1:
 
@@ -326,12 +330,24 @@ def plot_topo_file(topoplotdata):
                     cmap=cmap, interpolation='nearest', \
                     norm=color_norm)
     else:
-        pylab.pcolor(x,y,topo,cmap=cmap)
-        pylab.clim([cmin,cmax])
+        neg_topo = ma.masked_where(topo>0., topo)
+        all_masked = (ma.count(neg_topo) == 0)
+        if not all_masked:
+            pylab.pcolormesh(x,y,neg_topo,cmap=neg_cmap)
+            pylab.clim([cmin,0])
+            if addcolorbar:
+                pylab.colorbar()
+
+        pos_topo = ma.masked_where(topo<0., topo)
+        all_masked = (ma.count(pos_topo) == 0)
+        if not all_masked:
+            pylab.pcolormesh(x,y,pos_topo,cmap=pos_cmap)
+            pylab.clim([0,cmax])
+            if addcolorbar:
+                pylab.colorbar()
+
     pylab.axis('scaled')
 
-    if addcolorbar:
-        pylab.colorbar()
 
     if addcontour:
         pylab.contour(x,y,topo,levels=contour_levels,colors='k')
