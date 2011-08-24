@@ -166,6 +166,10 @@ def fetch_regression_data(outdir):
     try:     
         url = os.path.join(url, tarfile)
         urllib.urlretrieve(url, tarfile)
+        if os.path.getsize(tarfile) < 500:
+            os.system("mv %s tarfile_error.html" % tarfile)
+            print "\n*** Error: See tarfile_error.html"
+            raise Exception("*** Problem retrieving %s" % tarfile)
     except:
         raise Exception("*** Problem retrieving %s" % tarfile)
     
