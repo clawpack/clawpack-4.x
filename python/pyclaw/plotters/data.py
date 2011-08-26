@@ -376,8 +376,20 @@ class ClawPlotData(Data):
             gauges = {}
 
         print '    Reading gauge data from ',fname
+        
+        def stars2num(s):
+            """
+            Converter to us in case gauge number was too long and
+            Fortran printed stars instead of the number.
+            """
+            if s[0]=='*':
+                gaugeno = 99999
+            else:
+                gaugeno = int(s)
+            return gaugeno
+
         try:
-            gdata = np.loadtxt(fname)
+            gdata = np.loadtxt(fname,converters={0:stars2num})
         except:
             try:
                 print "*** Warning: incomplete last line, computation may "
@@ -385,7 +397,7 @@ class ClawPlotData(Data):
                 gdata_lines = open(fname,'r').read()
                 gdata_end = gdata_lines.rfind('\n',-200,-1)
                 gdata_file = StringIO(gdata_lines[:gdata_end+1])
-                gdata = np.loadtxt(gdata_file)
+                gdata = np.loadtxt(gdata_file,converters={0:stars2num})
             except:
                 print "*** Problem reading file ",fname
                 #print "*** Possibly an incomplete last line if computation is still in progress"
