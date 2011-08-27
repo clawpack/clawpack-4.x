@@ -265,10 +265,10 @@ class ClawPlotFGData(Data):
         os.chdir(startdir)
         ppd = plotpages.PlotPagesData()
         ppd.plotdir = plotdir
+        ppd.html_index_fname = "_FixedGrid_PlotIndex.html"
+
         ppd.timeframes_prefix='FixedGrid%sFrame' % str(self.fgno).zfill(2)
         plotpages.timeframes2html(ppd)
-    
-                
             
 
 if __name__ == "__main__":
