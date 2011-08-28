@@ -351,6 +351,7 @@ def timeframes2html(plot_pages_data):
     htmlfile = ppd._htmlfile
     frametimef = ppd._frametimef
     allfigsfile = ppd._allfigsfile
+    allframesfile = ppd._allframesfile
             
     numframes = len(framenos)
     numfigs = len(fignos)
@@ -409,8 +410,8 @@ def timeframes2html(plot_pages_data):
     if ppd.html_movie:
         html.write('<p><tr><td><b>js Movies:</b></td>')
         for figno in fignos:
-            html.write('\n   <td><a href="moviefig%s.html">%s</a></td>' \
-                           % (figno,fignames[figno]))
+            html.write('\n   <td><a href="movie%s">%s</a></td>' \
+                           % (allframesfile[figno],fignames[figno]))
         html.write('</tr>\n')
     if ppd.gif_movie:
         html.write('<p><tr><td><b>gif Movies:</b></td>')
@@ -420,8 +421,8 @@ def timeframes2html(plot_pages_data):
         html.write('</tr>\n')
     html.write('<p>\n<tr><td><b>All Frames:</b></td> ')
     for ifig in range(len(fignos)):
-        html.write('\n   <td><a href="allframesfig%s.html">%s</a></td>' \
-                       % (fignos[ifig],fignames[fignos[ifig]]))
+        html.write('\n   <td><a href="%s">%s</a></td>' \
+                       % (allframesfile[fignos[ifig]],fignames[fignos[ifig]]))
     html.write('</tr>\n')
     html.write('<p>\n<tr><td><b>Individual Frames:</b></td> </tr>\n')
 
@@ -445,7 +446,7 @@ def timeframes2html(plot_pages_data):
     # allframesfigJ.html
     #-------------------
     for figno in fignos:
-        html = open('allframesfig%s.html' % figno, 'w')
+        html = open(allframesfile[figno], 'w')
         html.write('<html><meta http-equiv="expires" content="0">')
         html.write('<title>Plots</title>')
         html.write('<body>\n<center><h1>All Frames -- %s</h1>\n' \
@@ -484,7 +485,8 @@ def timeframes2html(plot_pages_data):
             html.write('&#060; &#060;</a> &nbsp; &nbsp;\n')
             if iframe==0:
                 html.write('&#060; &nbsp; &nbsp; ')
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % ppd.html_index_fname)
                 if numframes > 1:
                     html.write('&nbsp; &nbsp; <a href="%s"> &#062; </a> ' \
                         % allfigsfile[framenos[1]])
@@ -493,13 +495,15 @@ def timeframes2html(plot_pages_data):
                 if numframes > 1:
                     html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % allfigsfile[framenos[iframe-1]])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % ppd.html_index_fname)
                 html.write(' &nbsp; &nbsp; &#062; ')
 
             else:
                 html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % allfigsfile[framenos[iframe-1]])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % ppd.html_index_fname)
                 html.write('\n&nbsp; &nbsp; <a href="%s"> &#062; </a>  &nbsp; &nbsp; ' \
                         % allfigsfile[framenos[iframe+1]])
 
@@ -551,7 +555,8 @@ def timeframes2html(plot_pages_data):
             html.write('&#060; &#060;</a> &nbsp; &nbsp;\n')
             if iframe==0:
                 html.write('&#060; &nbsp; &nbsp; ')
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % ppd.html_index_fname)
                 if numframes > 1:
                     html.write('&nbsp; &nbsp; <a href="%s"> &#062; </a> ' \
                         % htmlfile[framenos[1],figno])
@@ -560,13 +565,15 @@ def timeframes2html(plot_pages_data):
                 if numframes > 1:
                     html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % htmlfile[framenos[iframe-1],figno])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % ppd.html_index_fname)
                 html.write(' &nbsp; &nbsp; &#062; ')
 
             else:
                 html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % htmlfile[framenos[iframe-1],figno])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % ppd.html_index_fname)
                 html.write('\n &nbsp; &nbsp;<a href="%s"> &#062; </a>  &nbsp; &nbsp; ' \
                         % htmlfile[framenos[iframe+1],figno])
 
@@ -605,8 +612,8 @@ def timeframes2html(plot_pages_data):
                 else:
                     html.write('\n<a href="%s">%i</a>  &nbsp; &nbsp; ' \
                            % (htmlfile[frameno2,figno],frameno2))
-            html.write('\n<a href="allframesfig%s.html">  All Frames </a>' \
-                     % figno)
+            html.write('\n<a href="%s">  All Frames </a>' \
+                     % allframesfile[figno])
         
             html.write('\n<p><h3><a href=%s>Plot Index</a></h3>' \
                       % (ppd.html_index_fname))
@@ -620,7 +627,7 @@ def timeframes2html(plot_pages_data):
     #-------------------
     if ppd.html_movie:
         for figno in fignos:
-            html = open('moviefig%s.html' % figno, 'w')
+            html = open('movie%s' % allframesfile[figno], 'w')
             text = htmlmovie(plot_pages_data,pngfile,framenos,figno)
             html.write(text)
             html.close()
@@ -628,6 +635,12 @@ def timeframes2html(plot_pages_data):
     
 
     os.chdir(startdir)
+
+    # print out pointers to html index page:
+    path_to_html_index = os.path.join(os.path.abspath(ppd.plotdir), \
+                               ppd.html_index_fname)
+    print_html_pointers(path_to_html_index)
+
     # end of timeframes2html
     
 
@@ -966,9 +979,11 @@ def massage_frames_data(plot_pages_data):
             fignos = list(fignos)
             fignos.sort()
 
+    allframesfile = {}
     for figno in fignos:
         if not fignames.has_key(figno):
             fignames[figno] = 'Solution'
+        allframesfile[figno] = '%s_allframesfig%s.html'  % (prefix,figno)
             
     numframes = len(framenos)
     numfigs = len(fignos)
@@ -1001,7 +1016,10 @@ def massage_frames_data(plot_pages_data):
         for figno in fignos:
             pngfile[frameno,figno] = '%s%sfig%s.png'  % (prefix,framef,figno)
             htmlfile[frameno,figno] = '%s%sfig%s.html' % (prefix,framef,figno)
-        allfigsfile[frameno] = 'allfigs%s%s.html' % (prefix,framef)
+        allfigsfile[frameno] = '%s_allfigs%s.html' % (prefix,framef)
+
+    for figno in fignos:
+        allframesfile[frameno] = '%s_allframes%s.html' % (prefix,figno)
 
     ppd.timeframes_framenos = framenos
     ppd.timeframes_fignos = fignos
@@ -1010,6 +1028,7 @@ def massage_frames_data(plot_pages_data):
     ppd._htmlfile = htmlfile
     ppd._frametimef = frametimef
     ppd._allfigsfile = allfigsfile
+    ppd._allframesfile = allframesfile
     return ppd
 
 
@@ -1286,6 +1305,7 @@ def plotclaw2html(plotdata):
     htmlfile = plotdata._htmlfile
     frametimef = plotdata._frametimef
     allfigsfile = plotdata._allfigsfile
+    allframesfile = plotdata._allframesfile
     gauge_pngfile = plotdata._gauge_pngfile
     gauge_htmlfile = plotdata._gauge_htmlfile
     gauge_allfigsfile = plotdata._gauge_allfigsfile
@@ -1356,19 +1376,19 @@ def plotclaw2html(plotdata):
     if plotdata.html_movie:
         html.write('<p><tr><td><b>js Movies:</b></td>')
         for figno in fignos:
-            html.write('\n   <td><a href="moviefig%s.html">%s</a></td>' \
-                           % (figno,fignames[figno]))
+            html.write('\n   <td><a href="movie%s">%s</a></td>' \
+                           % (allframesfile[figno],fignames[figno]))
         html.write('</tr>\n')
     if plotdata.gif_movie:
         html.write('<p><tr><td><b>gif Movies:</b></td>')
         for ifig in range(len(fignos)):
-            html.write('\n   <td><a href="moviefig%s.gif">%s</a></td>' \
+            html.write('\n   <td><a href="movie%s.gif">%s</a></td>' \
                            % (fignos[ifig],fignames[fignos[ifig]]))
         html.write('</tr>\n')
     html.write('<p>\n<tr><td><b>All Frames:</b></td> ')
     for ifig in range(len(fignos)):
-        html.write('\n   <td><a href="allframesfig%s.html">%s</a></td>' \
-                       % (fignos[ifig],fignames[fignos[ifig]]))
+        html.write('\n   <td><a href="%s">%s</a></td>' \
+                       % (allframesfile[fignos[ifig]],fignames[fignos[ifig]]))
     html.write('</tr>\n')
     html.write('<p>\n<tr><td><b>Individual Frames:</b></td> </tr>\n')
 
@@ -1465,7 +1485,7 @@ def plotclaw2html(plotdata):
     # allframesfigJ.html
     #-------------------
     for figno in fignos:
-        html = open('allframesfig%s.html' % figno, 'w')
+        html = open(allframesfile[figno], 'w')
         html.write('<html><meta http-equiv="expires" content="0">')
         html.write('<title>Plots</title>')
         html.write('<body>\n<center><h1>All Frames -- %s</h1>\n' \
@@ -1504,7 +1524,8 @@ def plotclaw2html(plotdata):
             html.write('&#060; &#060;</a> &nbsp; &nbsp;\n')
             if iframe==0:
                 html.write('&#060; &nbsp; &nbsp; ')
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 if numframes > 1:
                     html.write('&nbsp; &nbsp; <a href="%s"> &#062; </a> ' \
                         % allfigsfile[framenos[1]])
@@ -1513,13 +1534,15 @@ def plotclaw2html(plotdata):
                 if numframes > 1:
                     html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % allfigsfile[framenos[iframe-1]])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 html.write(' &nbsp; &nbsp; &#062; ')
 
             else:
                 html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % allfigsfile[framenos[iframe-1]])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 html.write('\n&nbsp; &nbsp; <a href="%s"> &#062; </a>  &nbsp; &nbsp; ' \
                         % allfigsfile[framenos[iframe+1]])
 
@@ -1571,7 +1594,8 @@ def plotclaw2html(plotdata):
             html.write('&#060; &#060;</a> &nbsp; &nbsp;\n')
             if iframe==0:
                 html.write('&#060; &nbsp; &nbsp; ')
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 if numframes > 1:
                     html.write('&nbsp; &nbsp; <a href="%s"> &#062; </a> ' \
                         % htmlfile[framenos[1],figno])
@@ -1580,13 +1604,15 @@ def plotclaw2html(plotdata):
                 if numframes > 1:
                     html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % htmlfile[framenos[iframe-1],figno])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 html.write(' &nbsp; &nbsp; &#062; ')
 
             else:
                 html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % htmlfile[framenos[iframe-1],figno])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 html.write('\n &nbsp; &nbsp;<a href="%s"> &#062; </a>  &nbsp; &nbsp; ' \
                         % htmlfile[framenos[iframe+1],figno])
 
@@ -1625,8 +1651,8 @@ def plotclaw2html(plotdata):
                 else:
                     html.write('\n<a href="%s">%i</a>  &nbsp; &nbsp; ' \
                            % (htmlfile[frameno2,figno],frameno2))
-            html.write('\n<a href="allframesfig%s.html">  All Frames </a>' \
-                     % figno)
+            html.write('\n<a href="%s">  All Frames </a>' \
+                     % allframesfile[figno])
         
             html.write('\n<p><h3><a href=%s>Plot Index</a></h3>' \
                       % (plotdata.html_index_fname))
@@ -1640,7 +1666,7 @@ def plotclaw2html(plotdata):
     #-------------------
     if plotdata.html_movie:
         for figno in fignos:
-            html = open('moviefig%s.html' % figno, 'w')
+            html = open('movie%s' % allframesfile[figno], 'w')
             text = htmlmovie(plotdata,pngfile,framenos,figno)
             html.write(text)
             html.close()
@@ -1692,7 +1718,8 @@ def plotclaw2html(plotdata):
             html.write('&#060; &#060;</a> &nbsp; &nbsp;\n')
             if igauge==0:
                 html.write('&#060; &nbsp; &nbsp; ')
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 if numgauges > 1:
                     html.write('&nbsp; &nbsp; <a href="%s"> &#062; </a> ' \
                         % gauge_allfigsfile[gaugenos[1]])
@@ -1701,13 +1728,15 @@ def plotclaw2html(plotdata):
                 if numgauges > 1:
                     html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % gauge_allfigsfile[gaugenos[igauge-1]])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 html.write(' &nbsp; &nbsp; &#062; ')
 
             else:
                 html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % gauge_allfigsfile[gaugenos[igauge-1]])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 html.write('\n&nbsp; &nbsp; <a href="%s"> &#062; </a>  &nbsp; &nbsp; ' \
                         % gauge_allfigsfile[gaugenos[igauge+1]])
 
@@ -1758,7 +1787,8 @@ def plotclaw2html(plotdata):
             html.write('&#060; &#060;</a> &nbsp; &nbsp;\n')
             if igauge==0:
                 html.write('&#060; &nbsp; &nbsp; ')
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 if numgauges > 1:
                     html.write('&nbsp; &nbsp; <a href="%s"> &#062; </a> ' \
                         % gauge_htmlfile[gaugenos[1],figno])
@@ -1767,13 +1797,15 @@ def plotclaw2html(plotdata):
                 if numgauges > 1:
                     html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % gauge_htmlfile[gaugenos[igauge-1],figno])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 html.write(' &nbsp; &nbsp; &#062; ')
 
             else:
                 html.write('\n<a href="%s"> &#060; </a>  &nbsp; &nbsp; ' \
                         % gauge_htmlfile[gaugenos[igauge-1],figno])
-                html.write('\n<a href="_PlotIndex.html">Index</a>  ')
+                html.write('\n<a href="%s">Index</a> ' \
+                     % plotdata.html_index_fname)
                 html.write('\n &nbsp; &nbsp;<a href="%s"> &#062; </a>  &nbsp; &nbsp; ' \
                         % gauge_htmlfile[gaugenos[igauge+1],figno])
 
@@ -2116,7 +2148,7 @@ def plotclaw_driver(plotdata, verbose=False):
     # print out pointers to html index page:
     path_to_html_index = os.path.join(os.path.abspath(plotdata.plotdir), \
                                plotdata.html_index_fname)
-    plotpages.print_html_pointers(path_to_html_index)
+    print_html_pointers(path_to_html_index)
 
     # reset stdout for future print statements
     sys.stdout = sys.__stdout__
