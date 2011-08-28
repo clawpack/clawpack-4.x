@@ -364,6 +364,8 @@ def timeframes2html(plot_pages_data):
     # Create the index page:
     #-----------------------
     
+    print "+++ index fname: ",ppd.html_index_fname
+    print "+++ cwd: ",os.getcwd()
     html = open(ppd.html_index_fname,'w')
     
     if eagle:
@@ -1446,31 +1448,27 @@ def plotclaw2html(plotdata):
         for name in plotdata.otherfigure_dict.iterkeys():
             otherfigure = plotdata.otherfigure_dict[name]
             fname = otherfigure.fname
-            extension = os.path.splitext(fname)[1]
-            if extension not in ['.png','.jpg']:
-                print "*** Error: unrecognized extension in ",fname
-                print "*** Use .png or .jpg"
-            else:
-                makefig = otherfigure.makefig
-                if makefig:
-                    if type(makefig)==str:
-                        try:
-                            exec(makefig)
-                        except:
-                            print "*** Problem executing makefig "
-                            print "    for otherfigure ",name
-                    else:
-                        try:
-                            makefig(plotdata)
-                        except:
-                            print "*** Problem executing makefig function"
-                            print "    for otherfigure ",name
+            makefig = otherfigure.makefig
+            if makefig:
+                if type(makefig)==str:
                     try:
-                        from pylab import savefig
-                        savefig(fname)
+                        exec(makefig)
                     except:
-                        print "*** Problem importing pylab or executing savefig"
-                html.write('<p><li><a href="%s">%s</a>\n' %(fname,name))  
+                        print "*** Problem executing makefig "
+                        print "    for otherfigure ",name
+                else:
+                    try:
+                        makefig(plotdata)
+                    except:
+                        print "*** Problem executing makefig function"
+                        print "    for otherfigure ",name
+                        raise
+                try:
+                    from pylab import savefig
+                    savefig(fname)
+                except:
+                    print "*** Problem importing pylab or executing savefig"
+            html.write('<p><li><a href="%s">%s</a>\n' %(fname,name))  
         html.write('<p></ul>\n')  
 
     

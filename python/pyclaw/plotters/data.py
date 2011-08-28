@@ -602,7 +602,7 @@ class ClawPlotData(Data):
         return q
 
 
-    def new_otherfigure(self, name=None, fname=None):
+    def new_otherfigure(self, name=None):
         """
         Create a new figure for Clawpack plots.  
         For figures not repeated each frame.
@@ -611,10 +611,7 @@ class ClawPlotData(Data):
             print '*** Warning, figure named %s has already been created' % name
 
         if name is None:
-            if fname is None:
-                raise Exception("Need to provide name in new_otherfigure")
-            else:
-                name = fname
+            raise Exception("Need to provide name in new_otherfigure")
         if name in self._otherfignames:
             print "*** Error in new_otherfigure: Figure name already used... ",name
             raise Exception("Figure name already used")

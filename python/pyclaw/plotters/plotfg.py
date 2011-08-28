@@ -40,6 +40,7 @@ class ClawPlotFGData(Data):
         self.add_attribute('seafloor_show',True)
         self.add_attribute('inundated_show',True)
         self.add_attribute('outdir','_output')
+        self.add_attribute('plotdir',None)
         self.add_attribute('save_png',False)
         self.add_attribute('solutions',{})
         self.add_attribute('grids',{})
@@ -246,28 +247,40 @@ class ClawPlotFGData(Data):
     
                 
     def fg2html(self,framenos='all'):
-        plotdir='_fgplots_fg%s' % self.fgno
+        if self.plotdir is None:
+            self.plotdir='_fgplots_fg%s' % str(self.fgno).zfill(2)
         startdir = os.getcwd()
+        print "+++ self.outdir: ",self.outdir
+        print "+++ self.plotdir: ",self.plotdir
         self.outdir = os.path.abspath(self.outdir)
-        plotpages.cd_with_mkdir(plotdir, overwrite=True)
+        plotpages.cd_with_mkdir(self.plotdir, overwrite=True)
+        self.save_png = True
+
+        ppd = plotpages.PlotPagesData()
+        ppd.timeframes_frametimes = {}
 
         if framenos=='all':
             framenos = range(1,200)
     
         for frameno in framenos:
             try:
-                self.save_png = True
+                grid, solution = self.get_frame(frameno)
+                t = solution.t
+                ppd.timeframes_frametimes[frameno] = t
                 self.plotfg(frameno)
             except IOError:
                 break
             draw()
     
         os.chdir(startdir)
-        ppd = plotpages.PlotPagesData()
-        ppd.plotdir = plotdir
-        ppd.html_index_fname = "_FixedGrid_PlotIndex.html"
-
+        ppd.plotdir = self.plotdir
+        ppd.html_index_fname = "_PlotIndex_FixedGrid%s.html" \
+            % str(self.fgno).zfill(2)
+        ppd.html_index_title = "Fixed Grids Plot Index"
         ppd.timeframes_prefix='FixedGrid%sFrame' % str(self.fgno).zfill(2)
+        ppd.timeframes_fignames[150] = 'Surface'
+        ppd.timeframes_fignames[151] = 'Inundation'
+        ppd.timeframes_fignames[152] = 'Exposed seafloor'
         plotpages.timeframes2html(ppd)
             
 
