@@ -278,6 +278,7 @@ class ClawPlotFGData(Data):
             % str(self.fgno).zfill(2)
         ppd.html_index_title = "Fixed Grids Plot Index"
         ppd.timeframes_prefix='FixedGrid%sFrame' % str(self.fgno).zfill(2)
+        ppd.html_homelink = "_PlotIndex.html"
         ppd.timeframes_fignames[150] = 'Surface'
         ppd.timeframes_fignames[151] = 'Inundation'
         ppd.timeframes_fignames[152] = 'Exposed seafloor'
