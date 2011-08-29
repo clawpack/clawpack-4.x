@@ -137,14 +137,14 @@ c        ###  make the file names and open output files
 
       do j = nghost+1, mjtot-nghost
          do i = nghost+1, mitot-nghost
-            do ivar=1,nvar
-               if (dabs(alloc(iadd(i,j,ivar))) .lt. 1d-90) then
-                  alloc(iadd(i,j,ivar)) = 0.d0
-               endif
+            do ivar=1,nvar+1
                if (ivar .eq. 4) then
                  surface = alloc(iadd(i,j,1)) + alloc(iaddaux(i,j,1))
                  grid(i-nghost,j-nghost,4) = surface
                else
+                   if (dabs(alloc(iadd(i,j,ivar))) .lt. 1d-90) then
+                      alloc(iadd(i,j,ivar)) = 0.d0
+                   endif
                  grid(i-nghost,j-nghost,ivar)=alloc(iadd(i,j,ivar))  
                endif
             enddo
