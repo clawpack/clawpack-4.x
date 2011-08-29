@@ -316,7 +316,7 @@ c        # what level is most relevant for this fixed grid.  Note also that if t
 c        # grids at levelcheck overlapping a portion of the fixed grid then the max/min values 
 c        # will be updated only at start of next level 1 step.
  
-         levelcheck = 1 
+         levelcheck = 0 
          if (level .eq. levelcheck) then
          if (ioutsurfacemax(ng)+ioutarrivaltimes(ng).gt.0) then
            i0=i0fg2(ng)
