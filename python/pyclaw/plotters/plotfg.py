@@ -250,8 +250,6 @@ class ClawPlotFGData(Data):
         if self.plotdir is None:
             self.plotdir='_fgplots_fg%s' % str(self.fgno).zfill(2)
         startdir = os.getcwd()
-        print "+++ self.outdir: ",self.outdir
-        print "+++ self.plotdir: ",self.plotdir
         self.outdir = os.path.abspath(self.outdir)
         plotpages.cd_with_mkdir(self.plotdir, overwrite=True)
         self.save_png = True
