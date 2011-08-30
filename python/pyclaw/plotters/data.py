@@ -271,6 +271,8 @@ class ClawPlotData(Data):
 
 	self.plotfigure_dict.clear()
 	self._fignames = []
+        self.otherfigure_dict.clear()
+        self._otherfignames = []
 	self._fignos = []
 	self._next_FIG = 1000
 
