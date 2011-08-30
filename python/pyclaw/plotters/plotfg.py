@@ -149,7 +149,7 @@ class ClawPlotFGData(Data):
         ylim((grid.ylow, grid.yhi,))
     
         if self.save_png:
-            fname = 'FixedGrid%sFrame%sFig%s.png' \
+            fname = 'FixedGrid%sFrame%sfig%s.png' \
                 %  (str(self.fgno).zfill(2), str(frameno).zfill(4), figno)
             savefig(fname)
             print "Saved figure as ",fname
@@ -250,8 +250,6 @@ class ClawPlotFGData(Data):
         if self.plotdir is None:
             self.plotdir='_fgplots_fg%s' % str(self.fgno).zfill(2)
         startdir = os.getcwd()
-        print "+++ self.outdir: ",self.outdir
-        print "+++ self.plotdir: ",self.plotdir
         self.outdir = os.path.abspath(self.outdir)
         plotpages.cd_with_mkdir(self.plotdir, overwrite=True)
         self.save_png = True

@@ -364,8 +364,6 @@ def timeframes2html(plot_pages_data):
     # Create the index page:
     #-----------------------
     
-    print "+++ index fname: ",ppd.html_index_fname
-    print "+++ cwd: ",os.getcwd()
     html = open(ppd.html_index_fname,'w')
     
     if eagle:
@@ -1463,11 +1461,17 @@ def plotclaw2html(plotdata):
                         print "*** Problem executing makefig function"
                         print "    for otherfigure ",name
                         raise
-                try:
-                    from pylab import savefig
-                    savefig(fname)
-                except:
-                    print "*** Problem importing pylab or executing savefig"
+
+                # Assume that makefig saves the file if needed, so removing the 
+                # following lines.  
+                # For fixed grid plots, fname is an html file.  In other
+                # cases it may already exist...
+                #try:
+                    #from pylab import savefig
+                    #savefig(fname)
+                #except:
+                    #print "*** Problem importing pylab or executing savefig"
+
             html.write('<p><li><a href="%s">%s</a>\n' %(fname,name))  
         html.write('<p></ul>\n')  
 
