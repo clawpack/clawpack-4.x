@@ -14,6 +14,8 @@ Specify output directory other than _output by adding the outdir to this line:
 
 from pylab import *
 from pyclaw.plotters import geoplot, colormaps, plotpages
+from plottools import fix_long_tick_labels
+
 import os
 from numpy import ma
 from pyclaw.data import Data
@@ -147,6 +149,7 @@ class ClawPlotFGData(Data):
         title('Eta on FG %s at time = %10.3f' % (self.fgno,solution.t))
         xlim((grid.xlow, grid.xhi))
         ylim((grid.ylow, grid.yhi,))
+        fix_long_tick_labels()        
     
         if self.save_png:
             fname = 'FixedGrid%sFrame%sfig%s.png' \
@@ -195,6 +198,7 @@ class ClawPlotFGData(Data):
             axis('scaled')
             xlim((grid.xlow, grid.xhi))
             ylim((grid.ylow, grid.yhi,))
+            fix_long_tick_labels()        
             if self.save_png:
                 fname = 'FixedGrid%sFrame%sFig%s.png' \
                     %  (str(self.fgno).zfill(2), str(frameno).zfill(4), figno)
@@ -220,12 +224,12 @@ class ClawPlotFGData(Data):
             axis('scaled')
             xlim((grid.xlow, grid.xhi))
             ylim((grid.ylow, grid.yhi,))
+            fix_long_tick_labels()        
             if self.save_png:
                 fname = 'FixedGrid%sFrame%sFig%s.png' \
                     %  (str(self.fgno).zfill(2), str(frameno).zfill(4), figno)
                 savefig(fname)
                 print "Saved figure as ",fname
-                
                 
             
         
