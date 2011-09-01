@@ -37,14 +37,7 @@ if FC in ['f77','g77']:
     FC = 'gfortran'
 
 clawpythondir = os.path.join(clawdir,'python')
-try:
-    PYTHONPATH = os.environ['PYTHONPATH']
-except:
-    PYTHONPATH = clawpythondir
-
-if clawpythondir not in PYTHONPATH:
-    PYTHONPATH = clawpythondir +":"+ PYTHONPATH
-
+PYTHONPATH = ":".join((clawpythondir,"${PYTHONPATH}"))
 
 try:
     IPYTHONDIR = os.environ['IPYTHONDIR']
