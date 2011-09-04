@@ -462,9 +462,9 @@ def plotitem1(framesoln, plotitem, current_data, gridno):
         xc_edge = thisgridvar.xc_edge       # cell edges
         var = thisgridvar.var               # variable to be plotted
         var2 = thisgridvar2.var             # variable to be plotted
-	current_data.x = xc_center
-	current_data.var = var
-	current_data.var2 = var2
+        current_data.x = xc_center
+        current_data.var = var
+        current_data.var2 = var2
 
 
     elif pp_plot_type == '1d_from_2d_data':
@@ -613,7 +613,7 @@ def plotitem1(framesoln, plotitem, current_data, gridno):
                 current_data.xlower = grid.dimensions[0].lower
                 current_data.xupper = grid.dimensions[0].upper
                 current_data.x = X_center # cell centers
-		current_data.dx = grid.d[0]
+                current_data.dx = grid.d[0]
                 output = pp_aftergrid(current_data)
                 if output: current_data = output
             except:
@@ -1526,40 +1526,61 @@ def call_setplot(setplot, plotdata, verbose=True):
             print '*** Warning: no setplot specified'
         return plotdata
 
+    # rjl: Modified the way this is done, should be more robust
+    # and give better error messages.
+
     if setplot is True:
         # indicates we should import setplot.py from current directory
         # and the setplot function is in this module.  
-        try:
-            sys.path.insert(0,os.getcwd())
-            import setplot as SetPlot
-            # make sure setplot from current directory is used:
-            reload(SetPlot)
-            setplot = SetPlot.setplot   # should be a function
+        setplot = 'setplot.py'
 
-            if verbose:
-                print 'Imported setplot from ', os.getcwd()
+    if isinstance(setplot,str):
+        # Assume setplot specifies module containing setplot function.
+        # Can now give path or relative path to module.
+        # Strip off the .py if it is there:
+        setplot = os.path.abspath(setplot)
+        if not os.path.exists(setplot):
+            print "*** Error, cannot find specified setplot module:"
+            print "    Looking for ",setplot
+            raise ImportError("Missing setplot module")
+        setplotdir = os.path.split(setplot)[0]
+        setplotfile = os.path.split(setplot)[1]
+        setplotmod = os.path.splitext(setplotfile)[0]
+
+        try:
+            del SetPlot
         except:
-            print """*** Error in call_setplot: 
-                  Problem importing setplot.py in directory %s""" \
-                  % os.getcwd()
-            raise
-            return plotdata
-
-    elif isinstance(setplot,str):
-        # assume setplot specifies module containing setplot function
-        # strip off the .py if it is there:
-        setplotmod = os.path.splitext(setplot)[0]
+            pass
+        oldmod = sys.modules.pop(setplotmod, '')
+        sys.path.insert(0,setplotdir)  # search that directory first
         try:
-            sys.path.insert(0,os.getcwd())
             exec('import %s as SetPlot' % setplotmod)
-            # make sure setplot from current directory is used:
-            reload(SetPlot)
-            setplot = SetPlot.setplot   # should be a function
+            SetPlotFile = SetPlot.__file__
+            if os.path.splitext(SetPlotFile)[1] == '.pyc':
+                SetPlotFile = SetPlotFile[:-1]   # drop the 'c' at end
+            if SetPlotFile != os.path.join(setplotdir,setplotfile):
+                # Error message in case file doesn't exist but found
+                # elsewhere in the path. This should never happen now
+                # because of checks above.
+                print "*** Oops... SetPlotFile: %s" % SetPlotFile
+                print "*** Expected:  %s" % os.path.join(setplotdir,setplotfile)
+                print "*** Are you sure that file exists?"
         except:
-            print """*** Error in call_setplot: 
-                  Problem importing from %s.py in directory %s""" \
-                  % (setplotmod, os.getcwd())
-            raise
+            print "*** Error attempting to import %s" % setplotfile
+            print "***       from directory %s" % setplotdir
+            print "*** For better error messages, try importing at prompt"
+            raise ImportError("Possible syntax error in setplot file")
+        finally:
+            junk = sys.path.pop(0)   # clean up the path
+
+        try:
+            setplot = SetPlot.setplot   # should be a function
+            print "Imported setplot from "
+            print "   ", SetPlotFile
+        except:
+            print "*** Error in call_setplot: Module has no function named setplot"
+            raise AttributeError("Missing function setplot in module %s" \
+                   % SetPlotFile)
             return plotdata
     else:
         # assume setplot is the setplot function itself:
@@ -1570,9 +1591,9 @@ def call_setplot(setplot, plotdata, verbose=True):
         plotdata = setplot(plotdata)
         if verbose:
             print 'Executed setplot successfully'
-    except: #Exception as error:
+    except: 
         print '*** Error in call_setplot: Problem executing function setplot'
-        raise
+        raise Exception('Error executing setplot function')
         return plotdata
 
     if plotdata is None:
