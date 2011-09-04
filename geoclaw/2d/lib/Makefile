@@ -20,9 +20,7 @@ CLAWMAKE = $(CLAW)/util/Makefile.common
 FC ?= gfortran44   # default if not set as environment variable
 
 # Add any desired compiler flags such as -g here:
-#FFLAGS ?=  -fopenmp -W -Wall -fbounds-check -ffpe-trap=zero,overflow,invalid -g
-FFLAGS ?= -O2 -fopenmp -fbounds-check -ffpe-trap=invalid,overflow,zero
-#FFLAGS ?= -g -fbounds-check -ffpe-trap=invalid,overflow,zero
+FFLAGS ?= -O2 
 
 GEOCLAW_LIB = $(shell pwd)
 CLAW_LIB = $(CLAW)/amrclaw/2d/lib/
