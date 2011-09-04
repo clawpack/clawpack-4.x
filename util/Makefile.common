@@ -56,7 +56,6 @@ CLAW_EXE ?= xclaw
 CLAW_PKG ?= classic
 CLAW_OUTDIR ?= _output
 CLAW_PLOTDIR ?= _plots
-CLAW_INCLUDE ?= 
 CLAW_LIB ?= $(CURDIR)/
 CLAW_OVERWRITE ?= True
 CLAW_RESTART ?= False
@@ -64,26 +63,35 @@ CLAW_RESTART ?= False
 
 #----------------------------------------------------------------------------
 
-# how to make .o files from .f files:
-.SUFFIXES:
+# how to make .o files from .f or .f90 files, and .mod files from .f90:
 .SUFFIXES: .f90 .f .mod .o
-%.o : %.f90 $(CLAW_INCLUDE) ; $(FC) -c -I$(CLAW_LIB) $< -o $@ $(FFLAGS)
-%.o : %.f $(CLAW_INCLUDE) ; $(FC) -c -I$(CLAW_LIB) $< -o $@ $(FFLAGS) 
+%.o : %.f90 ; $(FC) -c $(CLAW_INCLUDE_PATH) $< -o $@ $(FFLAGS)
+%.o : %.f ; $(FC) -c $(CLAW_INCLUDE_PATH) $< -o $@ $(FFLAGS) 
+%.mod : %.f90 ; $(FC) -c -J$(@D) $< -o $*.o $(FFLAGS)
+
 
 # make list of .o files required from the sources above:
 CLAW_OBJECTS = $(subst .f,.o, $(subst .f90,.o, $(CLAW_SOURCES)))
-CLAW_LIBOBJECTS = $(subst .f,.o, $(subst .f90,.o, $(CLAW_LIBSOURCES)))
+CLAW_MOD_FILES = $(subst .f90,.mod, $(CLAW_MODULES))
+CLAW_MOD_OBJECTS = $(subst .f90,.o, $(CLAW_MODULES))
 
 #----------------------------------------------------------------------------
 # Executable:
 
-.objs: $(CLAW_OBJECTS) $(CLAW_LIBOBJECTS) ;
+.objs:  $(CLAW_MOD_FILES) $(CLAW_OBJECTS);
 
 
-$(CLAW_EXE): $(CLAW_LIBOBJECTS) $(CLAW_OBJECTS) $(MAKEFILE_LIST);
-	$(LINK) $(LFLAGS) $(CLAW_OBJECTS) $(CLAW_LIBOBJECTS) -o $(CLAW_EXE)
+$(CLAW_EXE): $(CLAW_MOD_FILES) $(CLAW_OBJECTS) $(MAKEFILE_LIST);
+	$(LINK) $(LFLAGS) $(CLAW_MOD_OBJECTS) $(CLAW_OBJECTS) \
+            $(CLAW_INCLUDE_PATH) -o $(CLAW_EXE)
 
 .exe: $(CLAW_EXE) ;
+	@echo 'CLAW_SOURCES:'
+	@echo $(CLAW_SOURCES)
+	@echo 'CLAW_MODULES:'
+	@echo $(CLAW_MODULES)
+	@echo 'CLAW_MOD_FILES:'
+	@echo $(CLAW_MOD_FILES)
 
 #----------------------------------------------------------------------------
 
@@ -140,14 +148,8 @@ output:
 #----------------------------------------------------------------------------
 
 # Python command to create plots:
-# Environment variable COMSPEC is only defined on Windows -- 
-#   in which case assume Cygwin is being used an use Windows version of
-#   Python which should have matplotlib (e.g. via EPD)
-ifdef COMSPEC   
-  PLOTCMD := C:\Python25\python.exe C:\cygwin$(CLAW)\python\pyclaw\plotters\plotclaw.py
-else
-  PLOTCMD := $(PYTHON) $(CLAW)/python/pyclaw/plotters/plotclaw.py
-endif
+
+# (Removed Cygwin stuff...)
 
 # Rule to make the plots into subdirectory specified by CLAW_PLOTDIR,
 # using data in subdirectory specified by CLAW_OUTDIR and the plotting
@@ -166,38 +168,41 @@ plots:
 # Rule to make full program by catenating all source files.
 # Sometimes useful for debugging:
 
-.program: $(CLAW_SOURCES) $(CLAW_LIBSOURCES) $(CLAW_INCLUDE) $(MAKEFILE_LIST);
-	cat $(CLAW_SOURCES) $(CLAW_LIBSOURCES) $(CLAW_INCLUDE) > claw_program.f
+.program:  $(CLAW_MODULES) $(CLAW_SOURCES) $(MAKEFILE_LIST);
+	cat  $(CLAW_MODULES) $(CLAW_SOURCES) claw_program.f
 	touch .program
 
 #----------------------------------------------------------------------------
 
+# Recompile everything:
+
+new: 
+	-rm -f  $(CLAW_OBJECTS)
+	-rm -f  $(CLAW_MOD_OBJECTS)
+	-rm -f  $(CLAW_MOD_FILES)
+	$(MAKE) .exe
+
+
 # Clean up options:
 
 clean:
-	-rm -f $(CLAW_OBJECTS) $(CLAW_EXE) $(HTML) 
+	-rm -f $(CLAW_EXE) $(HTML) 
 	-rm -f .data .output .plots .htmls 
 
 clobber:
 	$(MAKE) clean
-	-rm -f -r fort.*  *.pyc *.db pyclaw.log output *.so
+	-rm -f $(CLAW_OBJECTS)
+	-rm -f  $(CLAW_MOD_OBJECTS)
+	-rm -f  $(CLAW_MOD_FILES)
+	-rm -f fort.*  *.pyc pyclaw.log 
 	-rm -f -r _plots* _output* 
 
 #----------------------------------------------------------------------------
 
-# Do multiple things:
-
-all:
-	$(MAKE) .plots
-	$(MAKE) .htmls
-
-new: 
-	-rm -f  $(CLAW_OBJECTS)
-	-rm -f  $(CLAW_LIBOBJECTS)
-	$(MAKE) .exe
-
-regression_test: .output
-	$(PYTHON) $(CLAW)/python/pyclaw/regression_test.py $(CLAW_OUTDIR)
+# Deprecate 'make all' option since this is often defined in user file:
+#all:
+#	$(MAKE) .plots
+#	$(MAKE) .htmls
 
 #----------------------------------------------------------------------------
 
@@ -211,11 +216,9 @@ help:
 	@echo '   "make plots"    to produce plots with no dependency checking'
 	@echo '   "make .htmls"   to produce html versions of files'
 	@echo '   "make .program" to produce single program file'
-	@echo '   "make regression_test"     to compare against archived results'
 	@echo '   "make new"      to remove all objs and then make .exe'
 	@echo '   "make clean"    to clean up compilation and html files'
 	@echo '   "make clobber"  to also clean up output and plot files'
-	@echo '   "make all"      to make .htmls and make .plots'
 	@echo '   "make help"     to print this message'
 
 .help: help

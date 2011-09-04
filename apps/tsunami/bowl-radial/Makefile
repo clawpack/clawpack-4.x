@@ -32,17 +32,29 @@ FFLAGS ?=  -O2
 # List of sources for this program:
 # ---------------------------------
 
-
-CLAW_SOURCES = \
-
 # Clawpack libraries to be used:
 CLAW_LIB = $(CLAW)/amrclaw/2d/lib
 GEOLIB = $(CLAW)/geoclaw/2d/lib
 
-CLAW_LIBSOURCES = \
+# Add any paths needed to search for .mod files or include files.
+# Note that the current directory is searched first and then the following
+# list in order, and the first found instance of the required file is used.
+CLAW_INCLUDE_PATH = -I$(GEOLIB) -I$(CLAW_LIB) 
+
+# List all modules in either local or library directories.
+# List them in the order they must be compiled, remembering that if
+# a module is "used" in another module it must be compiled first.
+# It is suggested that module names be of the form fname_module.f90
+# but this is not required.
+
+CLAW_MODULES = \
   $(GEOLIB)/geoclaw_mod.f90 \
   $(GEOLIB)/topo_mod.f90 \
   $(GEOLIB)/dtopo_mod.f90 \
+
+# Source files (other than modules):
+
+CLAW_SOURCES = \
   $(GEOLIB)/setprob_geo.f \
   $(GEOLIB)/qinit_geo.f \
   $(GEOLIB)/readqinit_geo.f \
