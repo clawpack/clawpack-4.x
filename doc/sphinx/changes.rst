@@ -20,6 +20,19 @@ plans for other changes.
 Clawpack documentation pages will eventually move to
 `<http://clawpack.github.com/>`_.
 
+.. _new_in_claw4_6_2:
+
+New in Clawpack 4.6.2 (not yet released)
+========================================
+
+* OpenMP capability added to amrclaw and geoclaw.  Need to document!
+
+* Bug fixed in netcdf output for GeoClaw.
+
+* Improved fixed grid output in GeoClaw, still needs to be documented!
+
+* Added `$CLAW/python/pyclaw/plotters/plotfg.py` to plot fixed grid output.
+
 .. _new_in_claw4_6_1:
 
 New in Clawpack 4.6.1
