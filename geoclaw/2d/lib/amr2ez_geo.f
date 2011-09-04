@@ -560,6 +560,7 @@ c
       write(outunit,*) "  original total mass ..."
       call conck(1,nvar,time,rest)
       call valout(1,lfine,time,nvar,naux)
+      close(parmunit)
 c
 c     --------------------------------------------------------
 c     # tick is the main routine which drives the computation:
