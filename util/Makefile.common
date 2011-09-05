@@ -86,11 +86,9 @@ $(CLAW_EXE): $(CLAW_MOD_FILES) $(CLAW_OBJECTS) $(MAKEFILE_LIST);
             $(CLAW_INCLUDE_PATH) -o $(CLAW_EXE)
 
 .exe: $(CLAW_EXE) ;
-	@echo 'CLAW_SOURCES:'
-	@echo $(CLAW_SOURCES)
-	@echo 'CLAW_MODULES:'
+	@echo 'debugging -- CLAW_MODULES:'
 	@echo $(CLAW_MODULES)
-	@echo 'CLAW_MOD_FILES:'
+	@echo 'debugging -- CLAW_MOD_FILES:'
 	@echo $(CLAW_MOD_FILES)
 
 #----------------------------------------------------------------------------

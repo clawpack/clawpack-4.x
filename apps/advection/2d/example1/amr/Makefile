@@ -30,22 +30,31 @@ FFLAGS ?=  -O2
 # List of sources for this program:
 # ---------------------------------
 
+# Clawpack library to be used:
+CLAW_LIB = $(CLAW)/amrclaw/2d/lib
+
     
+# Add any paths needed to search for .mod files or include files.
+# Note that the current directory is searched first and then the following
+# list in order, and the first found instance of the required file is used.
+CLAW_INCLUDE_PATH = -I$(CLAW_LIB) 
+
+# List all modules in either local or library directories.
+# List them in the order they must be compiled, remembering that if
+# a module is "used" in another module it must be compiled first.
+# It is suggested that module names be of the form fname_module.f90
+# but this is not required.
+
+CLAW_MODULES = \
+  $(CLAW_LIB)/init_alloc.f90
+
+# Source files (other than modules):
+
 CLAW_SOURCES = \
   ../qinit.f \
   ../setprob.f \
   ../rpn2.f \
-  ../rpt2.f
-
-
-# Clawpack library to be used:
-CLAW_LIB = $(CLAW)/amrclaw/2d/lib
-
-# Include files (containing common blocks):
-CLAW_INCLUDE = $(CLAW_LIB)/call.i
-
-    
-CLAW_LIBSOURCES = \
+  ../rpt2.f \
   $(CLAW_LIB)/amr2ez.f \
   $(CLAW_LIB)/bc2amr.f \
   $(CLAW_LIB)/setaux.f \
@@ -131,7 +140,6 @@ CLAW_LIBSOURCES = \
   $(CLAW_LIB)/dumpgauge.f \
   $(CLAW_LIB)/quick_sort1.f \
   $(CLAW_LIB)/opendatafile.f \
-  $(CLAW_LIB)/init_alloc.f90 \
   $(CLAW_LIB)/restrt_alloc.f90 \
   $(CLAW_LIB)/resize_alloc.f90 \
 # $(CLAW_LIB)/resize_alloc_static.f90 \

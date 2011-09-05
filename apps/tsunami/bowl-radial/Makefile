@@ -48,6 +48,7 @@ CLAW_INCLUDE_PATH = -I$(GEOLIB) -I$(CLAW_LIB)
 # but this is not required.
 
 CLAW_MODULES = \
+  $(CLAW_LIB)/init_alloc.f90 \
   $(GEOLIB)/geoclaw_mod.f90 \
   $(GEOLIB)/topo_mod.f90 \
   $(GEOLIB)/dtopo_mod.f90 \
@@ -160,7 +161,6 @@ CLAW_SOURCES = \
   $(CLAW_LIB)/check.f \
   $(CLAW_LIB)/restrt.f \
   $(CLAW_LIB)/opendatafile.f \
-  $(CLAW_LIB)/init_alloc.f90 \
   $(CLAW_LIB)/restrt_alloc.f90 \
   $(CLAW_LIB)/resize_alloc.f90 \
 # $(CLAW_LIB)/resize_alloc_static.f90 \
