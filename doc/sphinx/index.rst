@@ -25,6 +25,7 @@ Overview and Getting Started:
    claw43to44
    trouble
    vm
+   aws
 
 Documentation and Examples:
 

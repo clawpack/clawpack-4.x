@@ -93,7 +93,12 @@ highlighted on the screenshot below:
 
 Go into the directory where your key pair is stored, in a file with a name
 like `rjlkey.pem` and you should be able to `ssh` into your instance using
-the name of the public DNS, e.g. for the above example::
+the name of the public DNS, with format like::
+
+    $ ssh -i KEYPAIR-FILE  ubuntu@DNS
+
+where KEYPAIR-FILE and DNS must be replaced by the appropriate
+things, e.g. for the above example::
 
     $ ssh -i rjlkey.pem ubuntu@ec2-50-19-75-229.compute-1.amazonaws.com
 
@@ -218,6 +223,28 @@ If you want to expose all of your home directory to the web::
     $ cd /var/www
     $ ln -s /home/ubuntu ./home
 
+Transferring files to/from your instance
+----------------------------------------
+
+You can use `scp` to transfer files between a running instance and
+the computer on which the ssh key is stored.
+
+From your computer (not from the instance)::
+
+    $ scp -i KEYPAIR-FILE FILE-TO-SEND ubuntu@DNS:REMOTE-DIRECTORY
+
+where DNS is the public DNS of the instance and `REMOTE-DIRECTORY` is
+the path (relative to home directory) 
+where you want the file to end up.  You can leave off
+`:REMOTE-DIRECTORY` if you want it to end up in your home directory.
+
+Going the other way, you can download a file from your instance to
+your own computer via::
+
+    $ scp -i KEYPAIR-FILE ubuntu@DNS:FILE-TO-GET .
+
+to retrieve the file named `FILE-TO-GET` (which might include a path
+relative to the home directory) into the current directory.
 
 Stopping your instance
 ----------------------
