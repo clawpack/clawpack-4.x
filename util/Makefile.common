@@ -31,12 +31,17 @@
 #       To clean up output and graphics files:    make clobber
 #
 
+# General makefile settings
+SHELL = /bin/sh
+INSTALL_PROGRAM ?= $(INSTALL)
+INSTALL_DATA ?= $(INSTALL) -m 644
+
 # Fortran compiler:  FC may be set as an environment variable or in make
 # file that 'includes' this one.
 FC ?= gfortran
 LINK ?= $(FC)
 
-# Flags for compiling and linking:
+# Default flags for compiling and linking:
 FFLAGS ?=  
 LFLAGS ?= $(FFLAGS)
 
@@ -59,21 +64,53 @@ CLAW_PLOTDIR ?= _plots
 CLAW_LIB ?= $(CURDIR)/
 CLAW_OVERWRITE ?= True
 CLAW_RESTART ?= False
+CLAW_SETRUN_FILE ?= ./setrun.py
+CLAW_SETPLOT_FILE ?= ./setplot.py
 
+#----------------------------------------------------------------------------
+# Lists of source, modules, and objects
+# These should be set in the including Makefile
+CLAW_SOURCES ?=
+CLAW_MODULES ?=
+
+# Make list of .o files required from the sources above:
+CLAW_OBJECTS = $(subst .f,.o, $(subst .f90,.o, $(CLAW_SOURCES)))
+CLAW_MOD_FILES = $(subst .f90,.mod, $(CLAW_MODULES))
+CLAW_MOD_PATHS = $(dir $(CLAW_MOD_FILES))
+CLAW_MOD_OBJECTS = $(subst .f90,.o, $(CLAW_MODULES))
+
+#----------------------------------------------------------------------------
+# Flag parsing
+ALL_INCLUDE ?=
+ALL_FFLAGS ?=
+ALL_LFLAGS ?=
+ifdef INCLUDE
+	ALL_INCLUDE += $(INCLUDE)
+endif
+ALL_INCLUDE += $(addprefix -I,$(CLAW_MOD_PATHS)) -I$(CLAW_LIB)
+ALL_FFLAGS += $(FFLAGS)
+ALL_LFLAGS += $(LFLAGS)
+
+# Module flag setting, please add other compilers here as necessary
+ifeq ($(FC),gfortran)
+	# There should be no space between this flag and the argument
+	MODULE_FLAG = -J
+else ifeq ($(FC),ifort)
+	# Note that there shoud be a space after this flag
+	MODULE_FLAG = -module 
+else
+	@echo "WARNING: Unknown Fortran compiler $(FC), cannot set module include flag."
+endif
 
 #----------------------------------------------------------------------------
 
 # how to make .o files from .f or .f90 files, and .mod files from .f90:
 .SUFFIXES: .f90 .f .mod .o
-%.o : %.f90 ; $(FC) -c $(CLAW_INCLUDE_PATH) $< -o $@ $(FFLAGS)
-%.o : %.f ; $(FC) -c $(CLAW_INCLUDE_PATH) $< -o $@ $(FFLAGS) 
-%.mod : %.f90 ; $(FC) -c -J$(@D) $< -o $*.o $(FFLAGS)
+%.o : %.f90 ; $(FC) -c $(ALL_INCLUDE) $< -o $@ $(ALL_FFLAGS)
+%.o : %.f ; $(FC) -c $(ALL_INCLUDE) $< -o $@ $(ALL_FFLAGS) 
+# %.mod : %.o ; @
+%.mod : %.f90 ; $(FC) -c $(MODULE_FLAG)$(@D) $< -o $*.o $(ALL_FFLAGS)
 
-
-# make list of .o files required from the sources above:
-CLAW_OBJECTS = $(subst .f,.o, $(subst .f90,.o, $(CLAW_SOURCES)))
-CLAW_MOD_FILES = $(subst .f90,.mod, $(CLAW_MODULES))
-CLAW_MOD_OBJECTS = $(subst .f90,.o, $(CLAW_MODULES))
 
 #----------------------------------------------------------------------------
 # Executable:
@@ -82,14 +119,17 @@ CLAW_MOD_OBJECTS = $(subst .f90,.o, $(CLAW_MODULES))
 
 
 $(CLAW_EXE): $(CLAW_MOD_FILES) $(CLAW_OBJECTS) $(MAKEFILE_LIST);
-	$(LINK) $(LFLAGS) $(CLAW_MOD_OBJECTS) $(CLAW_OBJECTS) \
-            $(CLAW_INCLUDE_PATH) -o $(CLAW_EXE)
+	$(LINK) $(ALL_LFLAGS) $(CLAW_MOD_OBJECTS) $(CLAW_OBJECTS) \
+	$(ALL_INCLUDE) -o $(CLAW_EXE)
 
 .exe: $(CLAW_EXE) ;
 	@echo 'debugging -- CLAW_MODULES:'
 	@echo $(CLAW_MODULES)
 	@echo 'debugging -- CLAW_MOD_FILES:'
 	@echo $(CLAW_MOD_FILES)
+
+test:
+	@echo $(CLAW_MODULES) $(CLAW_MOD_PATHS) $(CLAW_MOD_OBJECTS)
 
 #----------------------------------------------------------------------------
 
@@ -126,8 +166,8 @@ Makefile.html : Makefile ; $(CC2HTML) $<
 #----------------------------------------------------------------------------
 
 # Make data files needed by Fortran code:
-.data: $(CLAW_setrun_file) $(MAKEFILE_LIST) ;
-	$(PYTHON) $(CLAW_setrun_file) $(CLAW_PKG)
+.data: $(CLAW_SETRUN_FILE) $(MAKEFILE_LIST) ;
+	$(PYTHON) $(CLAW_SETRUN_FILE) $(CLAW_PKG)
 	touch .data
 
 #----------------------------------------------------------------------------
@@ -148,18 +188,20 @@ output:
 # Python command to create plots:
 
 # (Removed Cygwin stuff...)
+# Plotting command
+PLOTCMD ?= $(PYTHON) $(CLAW)/python/pyclaw/plotters/plotclaw.py
 
 # Rule to make the plots into subdirectory specified by CLAW_PLOTDIR,
 # using data in subdirectory specified by CLAW_OUTDIR and the plotting
-# commands specified in CLAW_setplot_file.
+# commands specified in CLAW_SETPLOT.
 
-.plots: .output $(CLAW_setplot_file) $(MAKEFILE_LIST) ;
-	$(PLOTCMD) $(CLAW_OUTDIR) $(CLAW_PLOTDIR) $(CLAW_setplot_file)
+.plots: .output $(CLAW_SETPLOT_FILE) $(MAKEFILE_LIST) ;
+	$(PLOTCMD) $(CLAW_OUTDIR) $(CLAW_PLOTDIR) $(CLAW_SETPLOT_FILE)
 	@echo $(CLAW_PLOTDIR) > .plots
 
 # Make the plots without checking dependencies:
 plots:
-	$(PLOTCMD) $(CLAW_OUTDIR) $(CLAW_PLOTDIR) $(CLAW_setplot_file)
+	$(PLOTCMD) $(CLAW_OUTDIR) $(CLAW_PLOTDIR) $(CLAW_SETPLOT_FILE)
 
 #----------------------------------------------------------------------------
 

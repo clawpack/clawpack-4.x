@@ -46,7 +46,7 @@ CLAW_INCLUDE_PATH = -I$(CLAW_LIB)
 # but this is not required.
 
 CLAW_MODULES = \
-  $(CLAW_LIB)/init_alloc.f90
+  $(CLAW_LIB)/mem_storage.f90
 
 # Source files (other than modules):
 
