@@ -30,7 +30,7 @@ FFLAGS ?=  -O2
 # Clawpack library to be used:
 AMR_LIB = $(CLAW)/amrclaw/2d/lib
 
-# Add AMR_LIB_PATH to list of library paths
+# Add AMR_LIB to list of library paths
 LIB_PATHS = $(AMR_LIB)
 
 # List all modules in either local or library directories.
@@ -40,7 +40,7 @@ LIB_PATHS = $(AMR_LIB)
 # but this is not required.
 
 MODULES = \
-  $(AMR_LIB_PATH)/mem_storage.f90
+  $(AMR_LIB)/mem_storage.f90
 
 # Source files (other than modules):
 
@@ -49,94 +49,94 @@ SOURCES = \
   ../setprob.f \
   ../rpn2.f \
   ../rpt2.f \
-  $(AMR_LIB_PATH)/amr2ez.f \
-  $(AMR_LIB_PATH)/bc2amr.f \
-  $(AMR_LIB_PATH)/setaux.f \
-  $(AMR_LIB_PATH)/b4step2.f \
-  $(AMR_LIB_PATH)/qad.f \
-  $(AMR_LIB_PATH)/src2.f \
-  $(AMR_LIB_PATH)/src1d.f \
-  $(AMR_LIB_PATH)/advanc.f \
-  $(AMR_LIB_PATH)/bound.f \
-  $(AMR_LIB_PATH)/stepgrid.f \
-  $(AMR_LIB_PATH)/auxcoarsen.f \
-  $(AMR_LIB_PATH)/fixcapaq.f \
-  $(AMR_LIB_PATH)/estdt.f \
-  $(AMR_LIB_PATH)/igetsp.f \
-  $(AMR_LIB_PATH)/reclam.f \
-  $(AMR_LIB_PATH)/birect.f \
-  $(AMR_LIB_PATH)/cleanup.f \
-  $(AMR_LIB_PATH)/colate.f \
-  $(AMR_LIB_PATH)/bufnst.f \
-  $(AMR_LIB_PATH)/spest.f \
-  $(AMR_LIB_PATH)/flag2refine.f \
-  $(AMR_LIB_PATH)/allowflag.f \
-  $(AMR_LIB_PATH)/errest.f \
-  $(AMR_LIB_PATH)/errf1.f \
-  $(AMR_LIB_PATH)/gfixup.f \
-  $(AMR_LIB_PATH)/filval.f \
-  $(AMR_LIB_PATH)/filpatch.f \
-  $(AMR_LIB_PATH)/prefilp.f \
-  $(AMR_LIB_PATH)/flglvl.f \
-  $(AMR_LIB_PATH)/fluxad.f \
-  $(AMR_LIB_PATH)/fluxsv.f \
-  $(AMR_LIB_PATH)/ginit.f \
-  $(AMR_LIB_PATH)/grdfit.f \
-  $(AMR_LIB_PATH)/intfil.f \
-  $(AMR_LIB_PATH)/moment.f \
-  $(AMR_LIB_PATH)/nestck.f \
-  $(AMR_LIB_PATH)/prepf.f \
-  $(AMR_LIB_PATH)/prepc.f \
-  $(AMR_LIB_PATH)/projec.f \
-  $(AMR_LIB_PATH)/signs.f \
-  $(AMR_LIB_PATH)/findcut.f \
-  $(AMR_LIB_PATH)/smartbis.f \
-  $(AMR_LIB_PATH)/putnod.f \
-  $(AMR_LIB_PATH)/putsp.f \
-  $(AMR_LIB_PATH)/regrid.f \
-  $(AMR_LIB_PATH)/setgrd.f \
-  $(AMR_LIB_PATH)/setuse.f \
-  $(AMR_LIB_PATH)/stst1.f \
-  $(AMR_LIB_PATH)/tick.f \
-  $(AMR_LIB_PATH)/trimbd.f \
-  $(AMR_LIB_PATH)/update.f \
-  $(AMR_LIB_PATH)/nodget.f \
-  $(AMR_LIB_PATH)/upbnd.f  \
-  $(AMR_LIB_PATH)/basic.f \
-  $(AMR_LIB_PATH)/outval.f \
-  $(AMR_LIB_PATH)/copysol.f \
-  $(AMR_LIB_PATH)/outvar.f \
-  $(AMR_LIB_PATH)/outmsh.f \
-  $(AMR_LIB_PATH)/outtre.f \
-  $(AMR_LIB_PATH)/domain.f  \
-  $(AMR_LIB_PATH)/setflags.f \
-  $(AMR_LIB_PATH)/shiftset.f \
-  $(AMR_LIB_PATH)/conck.f \
-  $(AMR_LIB_PATH)/domshrink.f \
-  $(AMR_LIB_PATH)/domprep.f \
-  $(AMR_LIB_PATH)/domup.f \
-  $(AMR_LIB_PATH)/domcopy.f \
-  $(AMR_LIB_PATH)/coarsen.f \
-  $(AMR_LIB_PATH)/intcopy.f \
-  $(AMR_LIB_PATH)/preintcopy.f \
-  $(AMR_LIB_PATH)/icall.f \
-  $(AMR_LIB_PATH)/preicall.f \
-  $(AMR_LIB_PATH)/step2.f \
-  $(AMR_LIB_PATH)/flux2.f \
-  $(AMR_LIB_PATH)/limiter.f \
-  $(AMR_LIB_PATH)/philim.f \
-  $(AMR_LIB_PATH)/cstore.f \
-  $(AMR_LIB_PATH)/saveqc.f \
-  $(AMR_LIB_PATH)/valout.f \
-  $(AMR_LIB_PATH)/check.f \
-  $(AMR_LIB_PATH)/restrt.f \
-  $(AMR_LIB_PATH)/setgauges.f \
-  $(AMR_LIB_PATH)/dumpgauge.f \
-  $(AMR_LIB_PATH)/quick_sort1.f \
-  $(AMR_LIB_PATH)/opendatafile.f \
-  $(AMR_LIB_PATH)/restrt_alloc.f90 \
-  $(AMR_LIB_PATH)/resize_alloc.f90 \
-# $(AMR_LIB_PATH)/resize_alloc_static.f90 \
+  $(AMR_LIB)/amr2ez.f \
+  $(AMR_LIB)/bc2amr.f \
+  $(AMR_LIB)/setaux.f \
+  $(AMR_LIB)/b4step2.f \
+  $(AMR_LIB)/qad.f \
+  $(AMR_LIB)/src2.f \
+  $(AMR_LIB)/src1d.f \
+  $(AMR_LIB)/advanc.f \
+  $(AMR_LIB)/bound.f \
+  $(AMR_LIB)/stepgrid.f \
+  $(AMR_LIB)/auxcoarsen.f \
+  $(AMR_LIB)/fixcapaq.f \
+  $(AMR_LIB)/estdt.f \
+  $(AMR_LIB)/igetsp.f \
+  $(AMR_LIB)/reclam.f \
+  $(AMR_LIB)/birect.f \
+  $(AMR_LIB)/cleanup.f \
+  $(AMR_LIB)/colate.f \
+  $(AMR_LIB)/bufnst.f \
+  $(AMR_LIB)/spest.f \
+  $(AMR_LIB)/flag2refine.f \
+  $(AMR_LIB)/allowflag.f \
+  $(AMR_LIB)/errest.f \
+  $(AMR_LIB)/errf1.f \
+  $(AMR_LIB)/gfixup.f \
+  $(AMR_LIB)/filval.f \
+  $(AMR_LIB)/filpatch.f \
+  $(AMR_LIB)/prefilp.f \
+  $(AMR_LIB)/flglvl.f \
+  $(AMR_LIB)/fluxad.f \
+  $(AMR_LIB)/fluxsv.f \
+  $(AMR_LIB)/ginit.f \
+  $(AMR_LIB)/grdfit.f \
+  $(AMR_LIB)/intfil.f \
+  $(AMR_LIB)/moment.f \
+  $(AMR_LIB)/nestck.f \
+  $(AMR_LIB)/prepf.f \
+  $(AMR_LIB)/prepc.f \
+  $(AMR_LIB)/projec.f \
+  $(AMR_LIB)/signs.f \
+  $(AMR_LIB)/findcut.f \
+  $(AMR_LIB)/smartbis.f \
+  $(AMR_LIB)/putnod.f \
+  $(AMR_LIB)/putsp.f \
+  $(AMR_LIB)/regrid.f \
+  $(AMR_LIB)/setgrd.f \
+  $(AMR_LIB)/setuse.f \
+  $(AMR_LIB)/stst1.f \
+  $(AMR_LIB)/tick.f \
+  $(AMR_LIB)/trimbd.f \
+  $(AMR_LIB)/update.f \
+  $(AMR_LIB)/nodget.f \
+  $(AMR_LIB)/upbnd.f  \
+  $(AMR_LIB)/basic.f \
+  $(AMR_LIB)/outval.f \
+  $(AMR_LIB)/copysol.f \
+  $(AMR_LIB)/outvar.f \
+  $(AMR_LIB)/outmsh.f \
+  $(AMR_LIB)/outtre.f \
+  $(AMR_LIB)/domain.f  \
+  $(AMR_LIB)/setflags.f \
+  $(AMR_LIB)/shiftset.f \
+  $(AMR_LIB)/conck.f \
+  $(AMR_LIB)/domshrink.f \
+  $(AMR_LIB)/domprep.f \
+  $(AMR_LIB)/domup.f \
+  $(AMR_LIB)/domcopy.f \
+  $(AMR_LIB)/coarsen.f \
+  $(AMR_LIB)/intcopy.f \
+  $(AMR_LIB)/preintcopy.f \
+  $(AMR_LIB)/icall.f \
+  $(AMR_LIB)/preicall.f \
+  $(AMR_LIB)/step2.f \
+  $(AMR_LIB)/flux2.f \
+  $(AMR_LIB)/limiter.f \
+  $(AMR_LIB)/philim.f \
+  $(AMR_LIB)/cstore.f \
+  $(AMR_LIB)/saveqc.f \
+  $(AMR_LIB)/valout.f \
+  $(AMR_LIB)/check.f \
+  $(AMR_LIB)/restrt.f \
+  $(AMR_LIB)/setgauges.f \
+  $(AMR_LIB)/dumpgauge.f \
+  $(AMR_LIB)/quick_sort1.f \
+  $(AMR_LIB)/opendatafile.f \
+  $(AMR_LIB)/restrt_alloc.f90 \
+  $(AMR_LIB)/resize_alloc.f90 \
+# $(AMR_LIB)/resize_alloc_static.f90 \
 
 #-------------------------------------------------------------------
 # Include Makefile containing standard definitions and make options:
