@@ -11,13 +11,12 @@ CLAWMAKE = $(CLAW)/util/Makefile.common
 
 # Adjust these variables if desired:
 # ----------------------------------
-
 CLAW_PKG = amrclaw                  # Clawpack package to use
-CLAW_EXE = xamr                     # Executable to create
-CLAW_setrun_file = setrun.py        # File containing function to make data
-CLAW_OUTDIR = _output               # Directory for output
-CLAW_setplot_file = setplot.py      # File containing function to set plots
-CLAW_PLOTDIR = _plots               # Directory for plots
+EXECUTABLE = xamr                     # Executable to create
+SETRUN_FILE = setrun.py        # File containing function to make data
+OUT_DIR = _output               # Directory for output
+SETPLOT_FILE = setplot.py      # File containing function to set plots
+PLOT_DIR = _plots               # Directory for plots
 
 # Environment variable FC should be set to fortran compiler, e.g. gfortran
 FC ?= gfortran   # default if not set as environment variable
@@ -31,13 +30,7 @@ FFLAGS ?=  -O2
 # ---------------------------------
 
 # Clawpack library to be used:
-CLAW_LIB = $(CLAW)/amrclaw/2d/lib
-
-    
-# Add any paths needed to search for .mod files or include files.
-# Note that the current directory is searched first and then the following
-# list in order, and the first found instance of the required file is used.
-CLAW_INCLUDE_PATH = -I$(CLAW_LIB) 
+AMR_LIB_PATH = $(CLAW)/amrclaw/2d/lib
 
 # List all modules in either local or library directories.
 # List them in the order they must be compiled, remembering that if
@@ -45,104 +38,107 @@ CLAW_INCLUDE_PATH = -I$(CLAW_LIB)
 # It is suggested that module names be of the form fname_module.f90
 # but this is not required.
 
-CLAW_MODULES = \
-  $(CLAW_LIB)/mem_storage.f90
+MODULES = \
+  $(AMR_LIB_PATH)/mem_storage.f90
 
 # Source files (other than modules):
 
-CLAW_SOURCES = \
+SOURCES = \
   ../qinit.f \
   ../setprob.f \
   ../rpn2.f \
   ../rpt2.f \
-  $(CLAW_LIB)/amr2ez.f \
-  $(CLAW_LIB)/bc2amr.f \
-  $(CLAW_LIB)/setaux.f \
-  $(CLAW_LIB)/b4step2.f \
-  $(CLAW_LIB)/qad.f \
-  $(CLAW_LIB)/src2.f \
-  $(CLAW_LIB)/src1d.f \
-  $(CLAW_LIB)/advanc.f \
-  $(CLAW_LIB)/bound.f \
-  $(CLAW_LIB)/stepgrid.f \
-  $(CLAW_LIB)/auxcoarsen.f \
-  $(CLAW_LIB)/fixcapaq.f \
-  $(CLAW_LIB)/estdt.f \
-  $(CLAW_LIB)/igetsp.f \
-  $(CLAW_LIB)/reclam.f \
-  $(CLAW_LIB)/birect.f \
-  $(CLAW_LIB)/cleanup.f \
-  $(CLAW_LIB)/colate.f \
-  $(CLAW_LIB)/bufnst.f \
-  $(CLAW_LIB)/spest.f \
-  $(CLAW_LIB)/flag2refine.f \
-  $(CLAW_LIB)/allowflag.f \
-  $(CLAW_LIB)/errest.f \
-  $(CLAW_LIB)/errf1.f \
-  $(CLAW_LIB)/gfixup.f \
-  $(CLAW_LIB)/filval.f \
-  $(CLAW_LIB)/filpatch.f \
-  $(CLAW_LIB)/prefilp.f \
-  $(CLAW_LIB)/flglvl.f \
-  $(CLAW_LIB)/fluxad.f \
-  $(CLAW_LIB)/fluxsv.f \
-  $(CLAW_LIB)/ginit.f \
-  $(CLAW_LIB)/grdfit.f \
-  $(CLAW_LIB)/intfil.f \
-  $(CLAW_LIB)/moment.f \
-  $(CLAW_LIB)/nestck.f \
-  $(CLAW_LIB)/prepf.f \
-  $(CLAW_LIB)/prepc.f \
-  $(CLAW_LIB)/projec.f \
-  $(CLAW_LIB)/signs.f \
-  $(CLAW_LIB)/findcut.f \
-  $(CLAW_LIB)/smartbis.f \
-  $(CLAW_LIB)/putnod.f \
-  $(CLAW_LIB)/putsp.f \
-  $(CLAW_LIB)/regrid.f \
-  $(CLAW_LIB)/setgrd.f \
-  $(CLAW_LIB)/setuse.f \
-  $(CLAW_LIB)/stst1.f \
-  $(CLAW_LIB)/tick.f \
-  $(CLAW_LIB)/trimbd.f \
-  $(CLAW_LIB)/update.f \
-  $(CLAW_LIB)/nodget.f \
-  $(CLAW_LIB)/upbnd.f  \
-  $(CLAW_LIB)/basic.f \
-  $(CLAW_LIB)/outval.f \
-  $(CLAW_LIB)/copysol.f \
-  $(CLAW_LIB)/outvar.f \
-  $(CLAW_LIB)/outmsh.f \
-  $(CLAW_LIB)/outtre.f \
-  $(CLAW_LIB)/domain.f  \
-  $(CLAW_LIB)/setflags.f \
-  $(CLAW_LIB)/shiftset.f \
-  $(CLAW_LIB)/conck.f \
-  $(CLAW_LIB)/domshrink.f \
-  $(CLAW_LIB)/domprep.f \
-  $(CLAW_LIB)/domup.f \
-  $(CLAW_LIB)/domcopy.f \
-  $(CLAW_LIB)/coarsen.f \
-  $(CLAW_LIB)/intcopy.f \
-  $(CLAW_LIB)/preintcopy.f \
-  $(CLAW_LIB)/icall.f \
-  $(CLAW_LIB)/preicall.f \
-  $(CLAW_LIB)/step2.f \
-  $(CLAW_LIB)/flux2.f \
-  $(CLAW_LIB)/limiter.f \
-  $(CLAW_LIB)/philim.f \
-  $(CLAW_LIB)/cstore.f \
-  $(CLAW_LIB)/saveqc.f \
-  $(CLAW_LIB)/valout.f \
-  $(CLAW_LIB)/check.f \
-  $(CLAW_LIB)/restrt.f \
-  $(CLAW_LIB)/setgauges.f \
-  $(CLAW_LIB)/dumpgauge.f \
-  $(CLAW_LIB)/quick_sort1.f \
-  $(CLAW_LIB)/opendatafile.f \
-  $(CLAW_LIB)/restrt_alloc.f90 \
-  $(CLAW_LIB)/resize_alloc.f90 \
-# $(CLAW_LIB)/resize_alloc_static.f90 \
+  $(AMR_LIB_PATH)/amr2ez.f \
+  $(AMR_LIB_PATH)/bc2amr.f \
+  $(AMR_LIB_PATH)/setaux.f \
+  $(AMR_LIB_PATH)/b4step2.f \
+  $(AMR_LIB_PATH)/qad.f \
+  $(AMR_LIB_PATH)/src2.f \
+  $(AMR_LIB_PATH)/src1d.f \
+  $(AMR_LIB_PATH)/advanc.f \
+  $(AMR_LIB_PATH)/bound.f \
+  $(AMR_LIB_PATH)/stepgrid.f \
+  $(AMR_LIB_PATH)/auxcoarsen.f \
+  $(AMR_LIB_PATH)/fixcapaq.f \
+  $(AMR_LIB_PATH)/estdt.f \
+  $(AMR_LIB_PATH)/igetsp.f \
+  $(AMR_LIB_PATH)/reclam.f \
+  $(AMR_LIB_PATH)/birect.f \
+  $(AMR_LIB_PATH)/cleanup.f \
+  $(AMR_LIB_PATH)/colate.f \
+  $(AMR_LIB_PATH)/bufnst.f \
+  $(AMR_LIB_PATH)/spest.f \
+  $(AMR_LIB_PATH)/flag2refine.f \
+  $(AMR_LIB_PATH)/allowflag.f \
+  $(AMR_LIB_PATH)/errest.f \
+  $(AMR_LIB_PATH)/errf1.f \
+  $(AMR_LIB_PATH)/gfixup.f \
+  $(AMR_LIB_PATH)/filval.f \
+  $(AMR_LIB_PATH)/filpatch.f \
+  $(AMR_LIB_PATH)/prefilp.f \
+  $(AMR_LIB_PATH)/flglvl.f \
+  $(AMR_LIB_PATH)/fluxad.f \
+  $(AMR_LIB_PATH)/fluxsv.f \
+  $(AMR_LIB_PATH)/ginit.f \
+  $(AMR_LIB_PATH)/grdfit.f \
+  $(AMR_LIB_PATH)/intfil.f \
+  $(AMR_LIB_PATH)/moment.f \
+  $(AMR_LIB_PATH)/nestck.f \
+  $(AMR_LIB_PATH)/prepf.f \
+  $(AMR_LIB_PATH)/prepc.f \
+  $(AMR_LIB_PATH)/projec.f \
+  $(AMR_LIB_PATH)/signs.f \
+  $(AMR_LIB_PATH)/findcut.f \
+  $(AMR_LIB_PATH)/smartbis.f \
+  $(AMR_LIB_PATH)/putnod.f \
+  $(AMR_LIB_PATH)/putsp.f \
+  $(AMR_LIB_PATH)/regrid.f \
+  $(AMR_LIB_PATH)/setgrd.f \
+  $(AMR_LIB_PATH)/setuse.f \
+  $(AMR_LIB_PATH)/stst1.f \
+  $(AMR_LIB_PATH)/tick.f \
+  $(AMR_LIB_PATH)/trimbd.f \
+  $(AMR_LIB_PATH)/update.f \
+  $(AMR_LIB_PATH)/nodget.f \
+  $(AMR_LIB_PATH)/upbnd.f  \
+  $(AMR_LIB_PATH)/basic.f \
+  $(AMR_LIB_PATH)/outval.f \
+  $(AMR_LIB_PATH)/copysol.f \
+  $(AMR_LIB_PATH)/outvar.f \
+  $(AMR_LIB_PATH)/outmsh.f \
+  $(AMR_LIB_PATH)/outtre.f \
+  $(AMR_LIB_PATH)/domain.f  \
+  $(AMR_LIB_PATH)/setflags.f \
+  $(AMR_LIB_PATH)/shiftset.f \
+  $(AMR_LIB_PATH)/conck.f \
+  $(AMR_LIB_PATH)/domshrink.f \
+  $(AMR_LIB_PATH)/domprep.f \
+  $(AMR_LIB_PATH)/domup.f \
+  $(AMR_LIB_PATH)/domcopy.f \
+  $(AMR_LIB_PATH)/coarsen.f \
+  $(AMR_LIB_PATH)/intcopy.f \
+  $(AMR_LIB_PATH)/preintcopy.f \
+  $(AMR_LIB_PATH)/icall.f \
+  $(AMR_LIB_PATH)/preicall.f \
+  $(AMR_LIB_PATH)/step2.f \
+  $(AMR_LIB_PATH)/flux2.f \
+  $(AMR_LIB_PATH)/limiter.f \
+  $(AMR_LIB_PATH)/philim.f \
+  $(AMR_LIB_PATH)/cstore.f \
+  $(AMR_LIB_PATH)/saveqc.f \
+  $(AMR_LIB_PATH)/valout.f \
+  $(AMR_LIB_PATH)/check.f \
+  $(AMR_LIB_PATH)/restrt.f \
+  $(AMR_LIB_PATH)/setgauges.f \
+  $(AMR_LIB_PATH)/dumpgauge.f \
+  $(AMR_LIB_PATH)/quick_sort1.f \
+  $(AMR_LIB_PATH)/opendatafile.f \
+  $(AMR_LIB_PATH)/restrt_alloc.f90 \
+  $(AMR_LIB_PATH)/resize_alloc.f90 \
+# $(AMR_LIB_PATH)/resize_alloc_static.f90 \
+
+# Add AMR_LIB_PATH to list of library paths
+LIB_PATHS = $(AMR_LIB_PATH)
 
 #-------------------------------------------------------------------
 # Include Makefile containing standard definitions and make options:
