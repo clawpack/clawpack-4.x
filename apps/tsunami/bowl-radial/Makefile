@@ -13,33 +13,30 @@ CLAWMAKE = $(CLAW)/util/Makefile.common
 # ----------------------------------
 
 CLAW_PKG = geoclaw                  # Clawpack package to use
-CLAW_EXE = xgeoclaw                 # Executable to create
-CLAW_setrun_file = setrun.py        # File containing function to make data
-CLAW_OUTDIR = _output               # Directory for output
-CLAW_setplot_file = setplot.py      # File containing function to set plots
-CLAW_PLOTDIR = _plots               # Directory for plots
+EXECUTABLE = xgeoclaw                 # Executable to create
+SETRUN_FILE = setrun.py        # File containing function to make data
+OUT_DIR = _output               # Directory for output
+SETPLOT_FILE = setplot.py      # File containing function to set plots
+PLOT_DIR = _plots               # Directory for plots
 
 # Environment variable FC should be set to fortran compiler, e.g. gfortran
 FC ?= gfortran   # default if not set as environment variable
 # Add any desired compiler flags such as -g here:
-FFLAGS ?=  -O2 
-
+FFLAGS ?=  -O2
 # If you want to include NetCDF output add these flags
 # FFLAGS ?=-I/usr/include  -lnetcdf -lnetcdff
-
 
 # ---------------------------------
 # List of sources for this program:
 # ---------------------------------
 
 # Clawpack libraries to be used:
-CLAW_LIB = $(CLAW)/amrclaw/2d/lib
-GEOLIB = $(CLAW)/geoclaw/2d/lib
+AMR_LIB = $(CLAW)/amrclaw/2d/lib
+GEO_LIB = $(CLAW)/geoclaw/2d/lib
 
-# Add any paths needed to search for .mod files or include files.
-# Note that the current directory is searched first and then the following
-# list in order, and the first found instance of the required file is used.
-CLAW_INCLUDE_PATH = -I$(GEOLIB) -I$(CLAW_LIB) 
+# This will be the search path order for source files, make sure this
+# is in the correct order!
+LIB_PATHS = $(GEO_LIB) $(AMR_LIB)
 
 # List all modules in either local or library directories.
 # List them in the order they must be compiled, remembering that if
@@ -47,123 +44,123 @@ CLAW_INCLUDE_PATH = -I$(GEOLIB) -I$(CLAW_LIB)
 # It is suggested that module names be of the form fname_module.f90
 # but this is not required.
 
-CLAW_MODULES = \
-  $(CLAW_LIB)/init_alloc.f90 \
-  $(GEOLIB)/geoclaw_mod.f90 \
-  $(GEOLIB)/topo_mod.f90 \
-  $(GEOLIB)/dtopo_mod.f90 \
+MODULES = \
+  $(AMR_LIB)/mem_storage.f90 \
+  $(GEO_LIB)/geoclaw_module.f90 \
+  $(GEO_LIB)/topo_module.f90 \
+  $(GEO_LIB)/dtopo_module.f90 \
 
 # Source files (other than modules):
 
-CLAW_SOURCES = \
-  $(GEOLIB)/setprob_geo.f \
-  $(GEOLIB)/qinit_geo.f \
-  $(GEOLIB)/readqinit_geo.f \
-  $(GEOLIB)/movetopo_geo.f \
-  $(GEOLIB)/cellgridintegrate_geo.f \
-  $(GEOLIB)/topointegral_geo.f \
-  $(GEOLIB)/bilinearintegral_geo.f \
-  $(GEOLIB)/stepgrid_geo.f \
-  $(GEOLIB)/fgridinterp_geo.f \
-  $(GEOLIB)/fgridout_geo.f \
-  $(GEOLIB)/rpn2ez_geo.f \
-  $(GEOLIB)/riemannsolvers_geo.f \
-  $(GEOLIB)/rpt2_geo.f \
-  $(GEOLIB)/src2_geo.f \
-  $(GEOLIB)/src1d_geo.f \
-  $(GEOLIB)/step2_geo.f \
-  $(GEOLIB)/flux2fw_geo.f \
-  $(GEOLIB)/qad_geo.f \
-  $(GEOLIB)/valout_geo.f \
-  $(GEOLIB)/filval_geo.f \
-  $(GEOLIB)/filpatch_geo.f \
-  $(GEOLIB)/bc2amr_geo.f \
-  $(GEOLIB)/update_geo.f \
-  $(GEOLIB)/amr2ez_geo.f \
-  $(GEOLIB)/setaux_geo.f \
-  $(GEOLIB)/setqinit_geo.f \
-  $(GEOLIB)/setregions_geo.f \
-  $(GEOLIB)/setgauges_geo.f \
-  $(GEOLIB)/setfixedgrids_geo.f \
-  $(GEOLIB)/b4step2_geo.f \
-  $(GEOLIB)/flag2refine_geo.f  \
-  $(GEOLIB)/allowflag_geo.f  \
-  $(GEOLIB)/dumpgauge_geo.f \
-  $(GEOLIB)/upbnd_geo.f  \
-  $(GEOLIB)/tick_geo.f \
-  $(GEOLIB)/setgrd_geo.f \
-  $(GEOLIB)/gfixup_geo.f \
-  $(GEOLIB)/ginit_geo.f \
-  $(GEOLIB)/getmaxspeed_geo.f \
-  $(CLAW_LIB)/prefilp.f \
-  $(CLAW_LIB)/quick_sort1.f \
-  $(CLAW_LIB)/advanc.f \
-  $(CLAW_LIB)/estdt.f \
-  $(CLAW_LIB)/bound.f \
-  $(CLAW_LIB)/check4nans.f \
-  $(CLAW_LIB)/spest.f  \
-  $(CLAW_LIB)/igetsp.f \
-  $(CLAW_LIB)/reclam.f \
-  $(CLAW_LIB)/birect.f \
-  $(CLAW_LIB)/cleanup.f \
-  $(CLAW_LIB)/colate.f \
-  $(CLAW_LIB)/errest.f \
-  $(CLAW_LIB)/bufnst.f \
-  $(CLAW_LIB)/errf1.f \
-  $(CLAW_LIB)/fixcapaq.f \
-  $(CLAW_LIB)/flglvl.f \
-  $(CLAW_LIB)/fluxad.f \
-  $(CLAW_LIB)/fluxsv.f \
-  $(CLAW_LIB)/grdfit.f \
-  $(CLAW_LIB)/intfil.f \
-  $(CLAW_LIB)/moment.f \
-  $(CLAW_LIB)/nestck.f \
-  $(CLAW_LIB)/prepc.f \
-  $(CLAW_LIB)/prepf.f \
-  $(CLAW_LIB)/projec.f \
-  $(CLAW_LIB)/signs.f \
-  $(CLAW_LIB)/findcut.f \
-  $(CLAW_LIB)/smartbis.f \
-  $(CLAW_LIB)/putnod.f \
-  $(CLAW_LIB)/putsp.f \
-  $(CLAW_LIB)/regrid.f \
-  $(CLAW_LIB)/setuse.f \
-  $(CLAW_LIB)/stst1.f \
-  $(CLAW_LIB)/trimbd.f \
-  $(CLAW_LIB)/nodget.f \
-  $(CLAW_LIB)/basic.f \
-  $(CLAW_LIB)/outval.f \
-  $(CLAW_LIB)/copysol.f \
-  $(CLAW_LIB)/outvar.f \
-  $(CLAW_LIB)/outmsh.f \
-  $(CLAW_LIB)/outtre.f \
-  $(CLAW_LIB)/domain.f  \
-  $(CLAW_LIB)/cellave.f \
-  $(CLAW_LIB)/fdisc.f \
-  $(CLAW_LIB)/fss.f \
-  $(CLAW_LIB)/zeroin.f \
-  $(CLAW_LIB)/setflags.f \
-  $(CLAW_LIB)/shiftset.f \
-  $(CLAW_LIB)/conck.f \
-  $(CLAW_LIB)/domshrink.f \
-  $(CLAW_LIB)/domprep.f \
-  $(CLAW_LIB)/domup.f \
-  $(CLAW_LIB)/domcopy.f \
-  $(CLAW_LIB)/coarsen.f \
-  $(CLAW_LIB)/auxcoarsen.f \
-  $(CLAW_LIB)/intcopy.f \
-  $(CLAW_LIB)/preintcopy.f \
-  $(CLAW_LIB)/icall.f \
-  $(CLAW_LIB)/preicall.f \
-  $(CLAW_LIB)/inlinelimiter.f \
-  $(CLAW_LIB)/cstore.f \
-  $(CLAW_LIB)/saveqc.f \
-  $(CLAW_LIB)/check.f \
-  $(CLAW_LIB)/restrt.f \
-  $(CLAW_LIB)/opendatafile.f \
-  $(CLAW_LIB)/restrt_alloc.f90 \
-  $(CLAW_LIB)/resize_alloc.f90 \
-# $(CLAW_LIB)/resize_alloc_static.f90 \
+SOURCES = \
+  $(GEO_LIB)/setprob_geo.f \
+  $(GEO_LIB)/qinit_geo.f \
+  $(GEO_LIB)/readqinit_geo.f \
+  $(GEO_LIB)/movetopo_geo.f \
+  $(GEO_LIB)/cellgridintegrate_geo.f \
+  $(GEO_LIB)/topointegral_geo.f \
+  $(GEO_LIB)/bilinearintegral_geo.f \
+  $(GEO_LIB)/stepgrid_geo.f \
+  $(GEO_LIB)/fgridinterp_geo.f \
+  $(GEO_LIB)/fgridout_geo.f \
+  $(GEO_LIB)/rpn2ez_geo.f \
+  $(GEO_LIB)/riemannsolvers_geo.f \
+  $(GEO_LIB)/rpt2_geo.f \
+  $(GEO_LIB)/src2_geo.f \
+  $(GEO_LIB)/src1d_geo.f \
+  $(GEO_LIB)/step2_geo.f \
+  $(GEO_LIB)/flux2fw_geo.f \
+  $(GEO_LIB)/qad_geo.f \
+  $(GEO_LIB)/valout_geo.f \
+  $(GEO_LIB)/filval_geo.f \
+  $(GEO_LIB)/filpatch_geo.f \
+  $(GEO_LIB)/bc2amr_geo.f \
+  $(GEO_LIB)/update_geo.f \
+  $(GEO_LIB)/amr2ez_geo.f \
+  $(GEO_LIB)/setaux_geo.f \
+  $(GEO_LIB)/setqinit_geo.f \
+  $(GEO_LIB)/setregions_geo.f \
+  $(GEO_LIB)/setgauges_geo.f \
+  $(GEO_LIB)/setfixedgrids_geo.f \
+  $(GEO_LIB)/b4step2_geo.f \
+  $(GEO_LIB)/flag2refine_geo.f  \
+  $(GEO_LIB)/allowflag_geo.f  \
+  $(GEO_LIB)/dumpgauge_geo.f \
+  $(GEO_LIB)/upbnd_geo.f  \
+  $(GEO_LIB)/tick_geo.f \
+  $(GEO_LIB)/setgrd_geo.f \
+  $(GEO_LIB)/gfixup_geo.f \
+  $(GEO_LIB)/ginit_geo.f \
+  $(GEO_LIB)/getmaxspeed_geo.f \
+  $(AMR_LIB)/prefilp.f \
+  $(AMR_LIB)/quick_sort1.f \
+  $(AMR_LIB)/advanc.f \
+  $(AMR_LIB)/estdt.f \
+  $(AMR_LIB)/bound.f \
+  $(AMR_LIB)/check4nans.f \
+  $(AMR_LIB)/spest.f  \
+  $(AMR_LIB)/igetsp.f \
+  $(AMR_LIB)/reclam.f \
+  $(AMR_LIB)/birect.f \
+  $(AMR_LIB)/cleanup.f \
+  $(AMR_LIB)/colate.f \
+  $(AMR_LIB)/errest.f \
+  $(AMR_LIB)/bufnst.f \
+  $(AMR_LIB)/errf1.f \
+  $(AMR_LIB)/fixcapaq.f \
+  $(AMR_LIB)/flglvl.f \
+  $(AMR_LIB)/fluxad.f \
+  $(AMR_LIB)/fluxsv.f \
+  $(AMR_LIB)/grdfit.f \
+  $(AMR_LIB)/intfil.f \
+  $(AMR_LIB)/moment.f \
+  $(AMR_LIB)/nestck.f \
+  $(AMR_LIB)/prepc.f \
+  $(AMR_LIB)/prepf.f \
+  $(AMR_LIB)/projec.f \
+  $(AMR_LIB)/signs.f \
+  $(AMR_LIB)/findcut.f \
+  $(AMR_LIB)/smartbis.f \
+  $(AMR_LIB)/putnod.f \
+  $(AMR_LIB)/putsp.f \
+  $(AMR_LIB)/regrid.f \
+  $(AMR_LIB)/setuse.f \
+  $(AMR_LIB)/stst1.f \
+  $(AMR_LIB)/trimbd.f \
+  $(AMR_LIB)/nodget.f \
+  $(AMR_LIB)/basic.f \
+  $(AMR_LIB)/outval.f \
+  $(AMR_LIB)/copysol.f \
+  $(AMR_LIB)/outvar.f \
+  $(AMR_LIB)/outmsh.f \
+  $(AMR_LIB)/outtre.f \
+  $(AMR_LIB)/domain.f  \
+  $(AMR_LIB)/cellave.f \
+  $(AMR_LIB)/fdisc.f \
+  $(AMR_LIB)/fss.f \
+  $(AMR_LIB)/zeroin.f \
+  $(AMR_LIB)/setflags.f \
+  $(AMR_LIB)/shiftset.f \
+  $(AMR_LIB)/conck.f \
+  $(AMR_LIB)/domshrink.f \
+  $(AMR_LIB)/domprep.f \
+  $(AMR_LIB)/domup.f \
+  $(AMR_LIB)/domcopy.f \
+  $(AMR_LIB)/coarsen.f \
+  $(AMR_LIB)/auxcoarsen.f \
+  $(AMR_LIB)/intcopy.f \
+  $(AMR_LIB)/preintcopy.f \
+  $(AMR_LIB)/icall.f \
+  $(AMR_LIB)/preicall.f \
+  $(AMR_LIB)/inlinelimiter.f \
+  $(AMR_LIB)/cstore.f \
+  $(AMR_LIB)/saveqc.f \
+  $(AMR_LIB)/check.f \
+  $(AMR_LIB)/restrt.f \
+  $(AMR_LIB)/opendatafile.f \
+  $(AMR_LIB)/restrt_alloc.f90 \
+  $(AMR_LIB)/resize_alloc.f90 \
+# $(AMR_LIB)/resize_alloc_static.f90 \
 
 
 
