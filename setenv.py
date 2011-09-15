@@ -20,6 +20,7 @@ import sys
 
 clawdir = os.path.abspath('.')   
 CLAW = clawdir
+CLAW_DIR=clawdir
 
 print " "
 print "------------------------------------------------------------"
@@ -81,6 +82,7 @@ print "      $CLAW = ",clawdir
 
 setenvcsh = open("setenv.csh","w")
 setenvcsh.write("setenv CLAW '%s'\n" % CLAW)
+setenvcsh.write("setenv CLAW_DIR '%s'\n" % CLAW_DIR)
 setenvcsh.write("setenv FC '%s'\n\n" % FC)
 setenvcsh.write("setenv MATLABPATH '%s'\n\n" % MATLABPATH)
 setenvcsh.write("setenv PYTHONPATH '%s'\n" % PYTHONPATH)
@@ -96,6 +98,7 @@ setenvcsh.close()
 
 setenvbash = open("setenv.bash","w")
 setenvbash.write("export CLAW='%s'\n" % CLAW)
+setenvbash.write("export CLAW_DIR='%s'\n" % CLAW_DIR)
 setenvbash.write("export FC='%s'\n\n" % FC)
 setenvbash.write("export MATLABPATH='%s'\n\n" % MATLABPATH)
 setenvbash.write("export PYTHONPATH='%s'\n" % PYTHONPATH)
