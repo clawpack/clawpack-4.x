@@ -125,9 +125,6 @@ endif
 #----------------------------------------------------------------------------
 # Executable:
 
-test:
-	@echo $(SOURCES)
-
 .objs:  $(MODULE_FILES) $(OBJECTS);
 
 # The order here is to again build the module files correctly

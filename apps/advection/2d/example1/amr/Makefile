@@ -23,14 +23,15 @@ FC ?= gfortran   # default if not set as environment variable
 # Add any desired compiler flags such as -g here:
 FFLAGS ?=  -O2 
 
-
-
 # ---------------------------------
 # List of sources for this program:
 # ---------------------------------
 
 # Clawpack library to be used:
-AMR_LIB_PATH = $(CLAW)/amrclaw/2d/lib
+AMR_LIB = $(CLAW)/amrclaw/2d/lib
+
+# Add AMR_LIB_PATH to list of library paths
+LIB_PATHS = $(AMR_LIB)
 
 # List all modules in either local or library directories.
 # List them in the order they must be compiled, remembering that if
@@ -136,9 +137,6 @@ SOURCES = \
   $(AMR_LIB_PATH)/restrt_alloc.f90 \
   $(AMR_LIB_PATH)/resize_alloc.f90 \
 # $(AMR_LIB_PATH)/resize_alloc_static.f90 \
-
-# Add AMR_LIB_PATH to list of library paths
-LIB_PATHS = $(AMR_LIB_PATH)
 
 #-------------------------------------------------------------------
 # Include Makefile containing standard definitions and make options:
