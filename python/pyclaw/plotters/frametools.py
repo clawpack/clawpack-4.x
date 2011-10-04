@@ -1538,6 +1538,8 @@ def call_setplot(setplot, plotdata, verbose=True):
         # Assume setplot specifies module containing setplot function.
         # Can now give path or relative path to module.
         # Strip off the .py if it is there:
+        if setplot[-3:] != ".py":
+            setplot = ".".join((setplot,"py"))
         setplot = os.path.abspath(setplot)
         if not os.path.exists(setplot):
             print "*** Error, cannot find specified setplot module:"
