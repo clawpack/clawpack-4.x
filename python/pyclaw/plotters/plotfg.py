@@ -245,7 +245,7 @@ class ClawPlotFGData(Data):
             axis('tight')
             axis('scaled')
             if self.save_png:
-                fname = 'FixedGrid%sFrame%sFig%s.png' \
+                fname = 'FixedGrid%sFrame%sfig%s.png' \
                     %  (str(self.fgno).zfill(2), str(frameno).zfill(4), figno)
                 savefig(fname)
                 print "Saved figure as ",fname
@@ -278,7 +278,7 @@ class ClawPlotFGData(Data):
             axis('tight')
             axis('scaled')
             if self.save_png:
-                fname = 'FixedGrid%sFrame%sFig%s.png' \
+                fname = 'FixedGrid%sFrame%sfig%s.png' \
                     %  (str(self.fgno).zfill(2), str(frameno).zfill(4), figno)
                 savefig(fname)
                 print "Saved figure as ",fname
