@@ -15,7 +15,6 @@ def fix_long_tick_labels(xlimits='auto',ylimits='auto',kwargs={}):
     """
 
     from pylab import figure, xticks, yticks, xlim, ylim
-    print '+++ xlimits, ylimits: ',xlimits, ylimits
     if xlimits != 'auto':
         xlim(xlimits)
     if ylimits != 'auto':

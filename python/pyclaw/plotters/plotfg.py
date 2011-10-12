@@ -55,6 +55,7 @@ class ClawPlotFGData(Data):
         self.add_attribute('save_png',False)
         self.add_attribute('solutions',{})
         self.add_attribute('grids',{})
+        self.add_attribute('combined_figure',True)
 
     def list_frames(self):
 
@@ -158,19 +159,25 @@ class ClawPlotFGData(Data):
         tmin = solution.t / 60.
         t_str = "%8.2f minutes" % tmin
     
-        figno = 150
-        figure(figno)
-        clf()
+        if self.combined_figure:
+            figno = 153
+            figure(figno, (14,8))
+            clf()
+            subplot(121)
+        else:
+            figno = 150
+            figure(figno)
+            clf()
         
         if ma.count(solution.surface) != 0:
             pcolormesh(grid.x,grid.y,solution.surface,cmap=self.water_cmap)
             clim(self.water_clim)
-            if self.water_add_colorbar: colorbar()
+            if self.water_add_colorbar: colorbar(shrink=0.5)
         
         if ma.count(solution.land) != 0:
             pcolormesh(grid.x,grid.y,solution.land,cmap=self.land_cmap)
             clim(self.land_clim)
-            if self.land_add_colorbar: colorbar()
+            if self.land_add_colorbar: colorbar(shrink=0.5)
         
         add_contours()
         
@@ -212,18 +219,22 @@ class ClawPlotFGData(Data):
 
         #---------------------------------------------------------------
 
+        if self.combined_figure:
+            subplot(122)
+
         if self.inundated_show:
             if solution.ncols < 7:
                 raise ValueError("*** Data does not include etamin/etamax")
     
-            figno = 151
-            figure(figno)
-            clf()
+            if not self.combined_figure:
+                figno = 151
+                figure(figno)
+                clf()
             
             if ma.count(inundated) != 0:
                 pcolormesh(grid.x,grid.y,inundated,cmap=self.inundated_cmap)
                 clim(self.inundated_clim)
-                if self.inundated_add_colorbar: colorbar()
+                if self.inundated_add_colorbar: colorbar(shrink=0.5)
             add_contours()
             # Add red contour of maximum eta
             #contour(xcenter,ycenter,etamax2,[drytol],colors='r',linewidths=2)
@@ -234,7 +245,7 @@ class ClawPlotFGData(Data):
             axis('tight')
             axis('scaled')
             if self.save_png:
-                fname = 'FixedGrid%sFrame%sFig%s.png' \
+                fname = 'FixedGrid%sFrame%sfig%s.png' \
                     %  (str(self.fgno).zfill(2), str(frameno).zfill(4), figno)
                 savefig(fname)
                 print "Saved figure as ",fname
@@ -245,25 +256,29 @@ class ClawPlotFGData(Data):
             if solution.ncols < 7:
                 raise ValueError("*** Data does not include etamin/etamax")
     
-            figno = 152
-            figure(figno)
-            clf()
+            if not self.combined_figure:
+                figno = 152
+                figure(figno)
+                clf()
             
             if ma.count(exposed) != 0:
                 pcolormesh(grid.x,grid.y,exposed,cmap=self.seafloor_cmap)
                 clim(self.seafloor_clim)
-                if self.exposed_add_colorbar: colorbar()
+                if self.seafloor_add_colorbar: colorbar(shrink=0.5)
             add_contours()
             # Add brown contour of minimum eta
             #contour(xcenter,ycenter,etamin-B,[exposed_tol],colors=([.9,.8,.2],),linewidths=2)
-            title("Exposed seabed for t <= %s" % t_str)
+            if self.combined_figure:
+                title("Eta min/max t <= %s" % t_str)
+            else:
+                title("Exposed seabed for t <= %s" % t_str)
             xlim((grid.xlow, grid.xhi))
             ylim((grid.ylow, grid.yhi,))
             fix_long_tick_labels()        
             axis('tight')
             axis('scaled')
             if self.save_png:
-                fname = 'FixedGrid%sFrame%sFig%s.png' \
+                fname = 'FixedGrid%sFrame%sfig%s.png' \
                     %  (str(self.fgno).zfill(2), str(frameno).zfill(4), figno)
                 savefig(fname)
                 print "Saved figure as ",fname
