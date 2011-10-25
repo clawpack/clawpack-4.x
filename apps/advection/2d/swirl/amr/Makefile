@@ -21,12 +21,20 @@ CLAW_PLOTDIR = _plots               # Directory for plots
 
 # Environment variable FC should be set to fortran compiler, e.g. gfortran
 FC ?= gfortran   # default if not set as environment variable
-# Add any desired compiler flags such as -g here:
+# Pick the type of threading to be compiled with, either of
+#   GRID_THREADING - Parallelize at the loop over the grids
+#   SWEEP_THREADING - Parallelize at the sweeps over rows in a grid
 TYPE_OF_THREADING = GRID_THREADING
+# Setup the appropriate flags, unfortunately these are compiler dependent
+ifeq ($(FC),gfortran)
+	PPFLAGS = -cpp -fopenmp
+else ifeq ($(FC),ifort)
+	PPFLAGS = -fpp -openmp
+endif
 ifdef FFLAGS
-	FFLAGS += -fopenmp -cpp -D$(TYPE_OF_THREADING)
+	FFLAGS += $(PPFLAGS) -D$(TYPE_OF_THREADING)
 else
-	FFLAGS = -fopenmp -cpp -D$(TYPE_OF_THREADING)
+	FFLAGS = $(PPFLAGS) -D$(TYPE_OF_THREADING)
 endif
 
 # ---------------------------------
