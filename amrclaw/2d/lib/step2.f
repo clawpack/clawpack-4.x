@@ -44,7 +44,7 @@ c
       common /comxyt/ dtcom,dxcom,dycom,tcom,icom,jcom
 c
 c     # store mesh parameters that may be needed in Riemann solver but not
-c     # passed in...
+c     # passed in...  These should be reliable in parallel
       dxcom = dx
       dycom = dy
       dtcom = dt
@@ -74,27 +74,28 @@ c
       dtdx = dt/dx
       dtdy = dt/dy
 c
-      do 10 j=1-mbc,my+mbc
-         do 10 i=1-mbc,mx+mbc
-            do 10 m=1,meqn
-               fm(m,i,j) = 0.d0
-               fp(m,i,j) = 0.d0
-               gm(m,i,j) = 0.d0
-               gp(m,i,j) = 0.d0
-   10          continue
+
+      fm = 0.d0
+      fp = 0.d0
+      gm = 0.d0
+      gp = 0.d0
 c
       if (mcapa.eq.0) then
 c        # no capa array:
-         do 5 i=1-mbc,maxm+mbc
-            dtdx1d(i) = dtdx
-            dtdy1d(i) = dtdy
-    5       continue
-         endif
+         dtdx1d = dtdx
+         dtdy1d = dtdy
+      endif
 c
 c
 c     # perform x-sweeps
 c     ==================
 c
+#ifdef SWEEP_THREADING
+c$OMP PARALLEL DO PRIVATE(j,q1d,aux1,aux2,aux3,work,faddm,faddp,gaddm,
+c$OMP&                    gaddp,dtdx1d,dtdy1d),
+c$OMP&            SHARED(qold,aux),
+c$OMP&            DEFAULT(none)
+#endif
       do 50 j = 0,my+1
          if (my.eq.1 .and. j.ne.1) go to 50  !# for 1d AMR
 c
@@ -145,6 +146,9 @@ c
                gp(m,i,j+1) = gp(m,i,j+1) + gaddp(m,i,2)
    25          continue
    50    continue
+#ifdef SWEEP_THREADING
+c$OMP END PARALLEL DO
+#endif
 c
 c
 c
@@ -153,7 +157,13 @@ c     ==================
 c
 c
       if (my.eq.1) go to 101   !# for 1d AMR
-
+      
+#ifdef SWEEP_THREADING
+c$OMP PARALLEL DO PRIVATE(i,q1d,aux1,aux2,aux3,work,faddm,faddp,gaddm,
+c$OMP&                    gaddp,dtdy1d),
+c$OMP&            SHARED(qold,aux),
+c$OMP&            DEFAULT(none)
+#endif
       do 100 i = 0, mx+1
 c
 c        # copy data along a slice into 1d arrays:
@@ -180,7 +190,8 @@ c
 c
 c        # Store the value of i along this slice in the common block
 c        # comxyt in case it is needed in the Riemann solver (for
-c        # variable coefficient problems)
+c        # variable coefficient problems), this should not be used when using
+c        # threaded versions of this code
          icom = i  
 c                  
 c        # compute modifications fadd and gadd to fluxes along this slice:
@@ -205,6 +216,9 @@ c
                fp(m,i+1,j) = fp(m,i+1,j) + gaddp(m,j,2)
    75          continue
   100    continue
+#ifdef SWEEP_THREADING
+c$OMP END PARALLEL DO
+#endif
 c
   101 continue
 c
