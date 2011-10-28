@@ -25,16 +25,21 @@ FC ?= gfortran   # default if not set as environment variable
 #   GRID_THREADING - Parallelize at the loop over the grids
 #   SWEEP_THREADING - Parallelize at the sweeps over rows in a grid
 TYPE_OF_THREADING = GRID_THREADING
+ifdef TYPE_OF_THREADING
+	THREAD_FLAGS = $(patsubst %,-D%,$(TYPE_OF_THREADING))
+endif
+	
 # Setup the appropriate flags, unfortunately these are compiler dependent
 ifeq ($(FC),gfortran)
 	PPFLAGS = -cpp -fopenmp
 else ifeq ($(FC),ifort)
 	PPFLAGS = -fpp -openmp
 endif
-ifdef FFLAGS
-	FFLAGS += $(PPFLAGS) -D$(TYPE_OF_THREADING)
-else
-	FFLAGS = $(PPFLAGS) -D$(TYPE_OF_THREADING)
+# This checks to see if we are being recursively called, if we are then we do
+# not need to set FFLAGS again
+ifeq ($(MAKELEVEL),0)
+	FFLAGS += $(PPFLAGS) $(THREAD_FLAGS)
+	LFLAGS ?= $(FFLAGS)
 endif
 
 # ---------------------------------
@@ -144,8 +149,14 @@ CLAW_LIBSOURCES = \
   $(CLAW_LIB)/opendatafile.f \
   $(CLAW_LIB)/init_alloc.f90 \
   $(CLAW_LIB)/restrt_alloc.f90 \
-  $(CLAW_LIB)/resize_alloc_static.f90 \
-# $(CLAW_LIB)/resize_alloc.f90 \
+  $(CLAW_LIB)/resize_alloc.f90
+# $(CLAW_LIB)/resize_alloc_static.f90 \
+
+
+test:
+	@echo "THREAD_FLAGS=" $(THREAD_FLAGS)
+	@echo "PPFLAGS=" $(PPFLAGS)
+	@echo "FFLAGS=" $(FFLAGS)
 
 #-------------------------------------------------------------------
 # Include Makefile containing standard definitions and make options:
