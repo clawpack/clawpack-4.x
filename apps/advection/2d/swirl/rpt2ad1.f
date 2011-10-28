@@ -9,21 +9,21 @@ c     =====================================================
 c
 c     # Riemann solver in the transverse direction for the advection equation.
 c
-      dimension     ql(1-mbc:maxm+mbc, meqn)
-      dimension     qr(1-mbc:maxm+mbc, meqn)
-      dimension   asdq(1-mbc:maxm+mbc, meqn)
-      dimension bmasdq(1-mbc:maxm+mbc, meqn)
-      dimension bpasdq(1-mbc:maxm+mbc, meqn)
-      dimension   aux1(1-mbc:maxm+mbc, 2)
-      dimension   aux2(1-mbc:maxm+mbc, 2)
-      dimension   aux3(1-mbc:maxm+mbc, 2)
+      dimension     ql(meqn,1-mbc:maxm+mbc)
+      dimension     qr(meqn,1-mbc:maxm+mbc)
+      dimension   asdq(meqn,1-mbc:maxm+mbc)
+      dimension bmasdq(meqn,1-mbc:maxm+mbc)
+      dimension bpasdq(meqn,1-mbc:maxm+mbc)
+      dimension   aux1(2,1-mbc:maxm+mbc)
+      dimension   aux2(2,1-mbc:maxm+mbc)
+      dimension   aux3(2,1-mbc:maxm+mbc)
 c
 c
       kv = 3-ixy  !#  = 1 if ixy=2  or  = 2 if ixy=1
       do 10 i=2-mbc,mx+mbc
          i1 = i-2+imp    !#  =  i-1 for amdq,  i for apdq
-         bmasdq(i,1) = dmin1(aux2(i1,kv), 0.d0) * asdq(i,1)
-         bpasdq(i,1) = dmax1(aux3(i1,kv), 0.d0) * asdq(i,1)
+         bmasdq(1,i) = dmin1(aux2(kv,i1), 0.d0) * asdq(1,i)
+         bpasdq(1,i) = dmax1(aux3(kv,i1), 0.d0) * asdq(1,i)
    10    continue
 c
       return
