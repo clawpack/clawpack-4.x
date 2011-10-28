@@ -37,25 +37,28 @@ c
 c
       implicit double precision (a-h,o-z)
 c
-      dimension wave(1-mbc:maxm+mbc, meqn, mwaves)
+c     We have to hardcode this as it is not passed in 
+      integer, parameter :: maux = 2
+
+      dimension wave(meqn,1-mbc:maxm+mbc, mwaves)
       dimension    s(1-mbc:maxm+mbc, mwaves)
-      dimension   ql(1-mbc:maxm+mbc, meqn)
-      dimension   qr(1-mbc:maxm+mbc, meqn)
-      dimension apdq(1-mbc:maxm+mbc, meqn)
-      dimension amdq(1-mbc:maxm+mbc, meqn)
-      dimension auxl(1-mbc:maxm+mbc, *)
-      dimension auxr(1-mbc:maxm+mbc, *)
+      dimension   ql(meqn,1-mbc:maxm+mbc)
+      dimension   qr(meqn,1-mbc:maxm+mbc)
+      dimension apdq(meqn,1-mbc:maxm+mbc) 
+      dimension amdq(meqn,1-mbc:maxm+mbc)
+      dimension auxl(maux,1-mbc:maxm+mbc)
+      dimension auxr(maux,1-mbc:maxm+mbc)
 c
 c
 c     # Set wave, speed, and flux differences:
 c     ------------------------------------------
 c
       do 30 i = 2-mbc, mx+mbc
-         wave(i,1,1) = ql(i,1) - qr(i-1,1)
-         s(i,1) = auxl(i,ixy)
+         wave(1,i,1) = ql(1,i) - qr(1,i-1)
+         s(i,1) = auxl(ixy,i)
 c        # The flux difference df = s*wave  all goes in the downwind direction:
-         amdq(i,1) = dmin1(auxl(i,ixy), 0.d0) * wave(i,1,1)
-         apdq(i,1) = dmax1(auxl(i,ixy), 0.d0) * wave(i,1,1)
+         amdq(1,i) = dmin1(auxl(ixy,i), 0.d0) * wave(1,i,1)
+         apdq(1,i) = dmax1(auxl(ixy,i), 0.d0) * wave(1,i,1)
    30    continue
 c
       return

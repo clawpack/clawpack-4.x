@@ -10,8 +10,8 @@ c     # make velocity time dependent, reversing flow.
 c
 c     
       implicit double precision (a-h,o-z)
-      dimension q(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, meqn)
-      dimension aux(1-mbc:maxmx+mbc,1-mbc:maxmy+mbc, maux)
+      dimension q(meqn,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
+      dimension aux(maux,1-mbc:maxmx+mbc,1-mbc:maxmy+mbc)
       common /comvt/ tperiod,pi2
 c
       if (tperiod .eq. 0.d0) then
@@ -29,12 +29,12 @@ c           # coordinates of lower left corner of grid cell:
             yll = ylower + (j-1)*dy
 
 c           # difference stream function psi to get normal velocities:
-            aux(i,j,1) = -(psi(xll, yll+dy) - psi(xll,yll)) / dy
-            aux(i,j,2) =  (psi(xll+dx, yll) - psi(xll,yll)) / dx
+            aux(1,i,j) = -(psi(xll, yll+dy) - psi(xll,yll)) / dy
+            aux(2,i,j) =  (psi(xll+dx, yll) - psi(xll,yll)) / dx
 c
 c           # multiply by time-factor:
-            aux(i,j,1) = vt * aux(i,j,1)
-            aux(i,j,2) = vt * aux(i,j,2)
+            aux(1,i,j) = vt * aux(1,i,j)
+            aux(2,i,j) = vt * aux(2,i,j)
   100        continue
   200     continue
        return
