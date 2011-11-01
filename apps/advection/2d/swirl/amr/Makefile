@@ -152,16 +152,14 @@ CLAW_LIBSOURCES = \
   $(CLAW_LIB)/resize_alloc.f90
 # $(CLAW_LIB)/resize_alloc_static.f90 \
 
+#-------------------------------------------------------------------
+# Include Makefile containing standard definitions and make options:
+include $(CLAWMAKE)
 
 test:
 	@echo "THREAD_FLAGS=" $(THREAD_FLAGS)
 	@echo "PPFLAGS=" $(PPFLAGS)
 	@echo "FFLAGS=" $(FFLAGS)
-
-#-------------------------------------------------------------------
-# Include Makefile containing standard definitions and make options:
-include $(CLAWMAKE)
-
 
 ### DO NOT remove this line - make depends on it ###
     
