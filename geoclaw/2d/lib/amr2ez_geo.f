@@ -311,8 +311,21 @@ c     1 = left, 2 = right 3 = bottom 4 = top boundary
 	   do i=1,nout
 	      tout(i) = t0 + i*(tfinal-t0)/float(nout)
 	      enddo
-           endif
-
+       endif
+      if (outstyle.eq.2) then
+       if (tout(1).le.t0) then
+          write(6,*) "*** Error: First tout value must be > t0"
+          write(6,*) "*** tout(1) = ",tout(1)
+          stop
+          endif
+	   do i=2,nout
+	      if (tout(i).le.tout(i-1)) then
+             write(6,*) "*** Error: tout values must be increasing"
+             write(6,*) "*** tout(i) <= tout(i-1) for i = ",i
+             stop
+             endif
+	      enddo
+       endif
 
 c     restart and checkpointing
       read(inunit,*) rest
