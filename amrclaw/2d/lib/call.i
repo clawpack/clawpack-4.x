@@ -50,7 +50,9 @@ c :::::::  for flagging points
        parameter  (maxgr = 5000)
        parameter  (maxlv = 10)
        parameter  (maxcl = 500)
-       parameter  (max1d = 60)
+c      The max1d parameter should be changed if using OpenMP grid based 
+c      looping, usually set to max1d = 60
+       parameter  (max1d = 600)
        parameter  (maxvar = 10)
        parameter  (maxaux = 20)
        parameter  (maxout = 5000)
