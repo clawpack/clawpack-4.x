@@ -263,7 +263,8 @@ c                same level goes again. check for ok time step
  106             if ((possk(level)-dtnew(level))/dtnew(level)
      .                .gt. .05)  then
                     write(6,*)" ***adjusting timestep for level ",level
-                 write(6,*)"   old ntogo dt ",ntogo(level),possk(level)
+                    write(6,*)"   old ntogo dt ",ntogo(level),
+     .                         possk(level)
 c                   adjust time steps for this and finer levels
                     ntogo(level) = ntogo(level) + 1
                     possk(level) = (tlevel(level-1)-tlevel(level))/
@@ -275,6 +276,14 @@ c                   adjust time steps for this and finer levels
                  write(6,*)"   new ntogo dt ",ntogo(level),possk(level)
                     go to 106
                  endif
+                 if (ntogo(level) .gt. 100) then
+                     write(6,*) "**** Too many dt reductions ****"
+                     write(6,*) "**** Stopping calculation   ****"
+                     write(6,*) "Writing checkpoint file ..."
+                     call check(ncycle,time,nvar,naux)
+                     stop
+                 endif
+
                  go to 60
               else
                  level = level - 1

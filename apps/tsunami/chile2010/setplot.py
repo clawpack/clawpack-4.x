@@ -130,7 +130,7 @@ def setplot(plotdata):
         t = current_data.t
         #legend(('surface','topography'),loc='lower left')
         plot(t, 0*t, 'k')
-        n = floor(t.max()/3600.) + 2
+        n = int(floor(t.max()/3600.) + 2)
         xticks([3600*i for i in range(n)])
 
     plotaxes.afteraxes = add_zeroline

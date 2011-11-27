@@ -74,10 +74,21 @@ c     # solution on the fixed grid at the two nearest computational times
         t0=fgrid1(mvarsfg,ifg,jfg)
         tf=fgrid2(mvarsfg,ifg,jfg)
         tau=(toutfg-t0)/(tf-t0)
+        do iv=1,mvarsfg-1
+            if (dabs(fgrid1(iv,ifg,jfg)) .lt. 1d-90) 
+     &               fgrid1(iv,ifg,jfg) = 0.d0
+            if (dabs(fgrid2(iv,ifg,jfg)) .lt. 1d-90) 
+     &               fgrid2(iv,ifg,jfg) = 0.d0
+            enddo
        if (icolumns.eq.mvarsfg-1) then 
         write(90,109) ((1.d0 - tau)*fgrid1(iv,ifg,jfg)
      &            +tau*fgrid2(iv,ifg,jfg), iv=1,mvarsfg-1)
        else
+        if (dabs(fgrid3(indetamin,ifg,jfg)) .lt. 1d-90)
+     &           fgrid3(indetamin,ifg,jfg) = 0.d0
+        if (dabs(fgrid3(indetamax,ifg,jfg)) .lt. 1d-90)
+     &           fgrid3(indetamax,ifg,jfg) = 0.d0
+           
         write(90,109) ((1.d0 - tau)*fgrid1(iv,ifg,jfg)
      &            +tau*fgrid2(iv,ifg,jfg), iv=1,mvarsfg-1),
      &            fgrid3(indetamin,ifg,jfg),fgrid3(indetamax,ifg,jfg)

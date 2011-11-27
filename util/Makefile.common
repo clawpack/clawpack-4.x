@@ -196,6 +196,8 @@ new:
 	-rm -f  $(CLAW_LIBOBJECTS)
 	$(MAKE) .exe
 
+regression_test: .output
+	$(PYTHON) $(CLAW)/python/pyclaw/regression_test.py $(CLAW_OUTDIR)
 
 #----------------------------------------------------------------------------
 
@@ -209,6 +211,7 @@ help:
 	@echo '   "make plots"    to produce plots with no dependency checking'
 	@echo '   "make .htmls"   to produce html versions of files'
 	@echo '   "make .program" to produce single program file'
+	@echo '   "make regression_test"     to compare against archived results'
 	@echo '   "make new"      to remove all objs and then make .exe'
 	@echo '   "make clean"    to clean up compilation and html files'
 	@echo '   "make clobber"  to also clean up output and plot files'

@@ -100,7 +100,7 @@ c         ## straightforward linear interp
 !$OMP CRITICAL (gaugeio)
         write(OUTGAUGEUNIT,100)igauge(i),level,tgrid,(var(j),j=1,3),eta
 !$OMP END CRITICAL (gaugeio)
-100     format(2i5,15e15.7)
+100     format(i8,i5,15e15.7)
 
  10     continue
  

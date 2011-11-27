@@ -591,9 +591,9 @@ def griddatasubset (X,Y,Z,xlow=-1.e6,xhi=1.e6,ylow=-1.e6,yhi=1.0e6):
     xind=np.where((X[0,:]>=xlow)&(X[0,:]<=xhi))[0]
     yind=np.where((Y[:,0]<=yhi)&(Y[:,0]>=ylow))[0]
 
-    Xsub= X[ix_(yind,xind)]
-    Ysub= Y[ix_(yind,xind)]
-    Zsub= Z[ix_(yind,xind)]
+    Xsub= X[np.ix_(yind,xind)]
+    Ysub= Y[np.ix_(yind,xind)]
+    Zsub= Z[np.ix_(yind,xind)]
 
     return Xsub,Ysub,Zsub
     #end griddatasubset ==========================================================================
@@ -719,9 +719,9 @@ def topofilesubset (inputfile,outputfile,topotypein=2,topotypeout=2,xlow=-1.e6,x
         theadout={}
         ncolsout= int((xupperout-xlowout)/cellsize + 1)
         nrowsout= int((yupperout-ylowout)/cellsize + 1)
-        j=ceil((xlowout-xll)/cellsize + 1)
+        j=np.ceil((xlowout-xll)/cellsize + 1)
         xllout=xll + (j-1)*cellsize
-        i=ceil((ylowout-yll)/cellsize + 1)
+        i=np.ceil((ylowout-yll)/cellsize + 1)
         yllout = yll + (i-1)*cellsize
 
         theadout["xll"]=xllout
@@ -898,7 +898,6 @@ def swapheader (inputfile,outputfile):
 
     return
     #=========================================================================================
-
 
 
 

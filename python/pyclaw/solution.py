@@ -1142,7 +1142,7 @@ class Solution(object):
                         exec("%s = kargs['%s']" % (k,k))
                     else:
                         exec('%s = v' % k)
-                print format
+                # print format
                 self.read(frame,path,format,file_prefix,read_aux,options)
             elif isinstance(arg[0],Data):
                 data = arg[0] 

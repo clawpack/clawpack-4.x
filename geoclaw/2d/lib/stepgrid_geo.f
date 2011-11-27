@@ -53,6 +53,8 @@ c     # be included in the Riemann solver, for example, if t is explicitly
 c     # needed there.
 
       tcom = time
+      
+      level = node(nestlevel,mptr)
 
       if (dump) then
          write(*,*)" dumping grid ",mptr
@@ -143,7 +145,14 @@ c         #saving solution, variables and tc0 at every grid point
          endif
 
 c        # set maxima or minima if this is a new coarse step
-         if (tc0.ge.tcfmax) then
+c        if (tc0.ge.tcfmax) then
+
+c        # RJL: rewrote to set min/max every time a grid at level 1
+c        # is about to be taken.  The previous code failed if there was more than one grid
+c        # at level 1.   Note that all grids are up to date at start of step on level 1.
+c        # New feature added at end of this routine to check more frequently if
+c        # levelcheck > 0.
+         if (level .eq. 1) then
          if (ioutsurfacemax(ng)+ioutarrivaltimes(ng).gt.0) then
            i0=i0fg2(ng)
          call fgridinterp(fgridoften(i0),xlowfg(ng),ylowfg(ng),
@@ -256,6 +265,26 @@ c        # check for arrival times
      &    tc0,mfgridvars2(ng),q,nvar,mx,my,mbc,dx,dy,nvar,xlowmbc,
      &    ylowmbc,maux,aux,ioutarrivaltimes(ng),ioutsurfacemax(ng),1)
          endif
+         
+c        # RJL: Modified 8/20/11 
+c        # If levelcheck > 0 then update max/mins at end of step on this grid.
+c        # Note that if there are finer grids then fgridoften will not have been updated
+c        # properly yet by those grids.  This modification allows checking max/min more
+c        # frequently than the original code (equivalent to levelcheck==0) when you know
+c        # what level is most relevant for this fixed grid.  Note also that if there are no
+c        # grids at levelcheck overlapping a portion of the fixed grid then the max/min values 
+c        # will be updated only at start of next level 1 step.
+ 
+         levelcheck = 0 
+         if (level .eq. levelcheck) then
+         if (ioutsurfacemax(ng)+ioutarrivaltimes(ng).gt.0) then
+           i0=i0fg2(ng)
+         call fgridinterp(fgridoften(i0),xlowfg(ng),ylowfg(ng),
+     &    xhifg(ng),yhifg(ng),dxfg(ng),dyfg(ng),mxfg(ng),myfg(ng),
+     &    tc0,mfgridvars2(ng),q,nvar,mx,my,mbc,dx,dy,nvar,xlowmbc,
+     &    ylowmbc,maux,aux,ioutarrivaltimes(ng),ioutsurfacemax(ng),2)
+          endif
+          endif
 
 
       endif

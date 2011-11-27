@@ -150,7 +150,7 @@ c        ###  make the file names and open output files
                  surface = alloc(iadd(1,i,j)) + alloc(iaddaux(1,i,j))
                  grid(4,i-nghost,j-nghost) = surface
                else
-                 grid(ivar,i-nghost,j-nghost)=alloc(iadd(ivar,i,j))  
+                 grid(ivar,i-nghost,j-nghost)=alloc(iadd(ivar,i,j)) 
                endif
             enddo
          enddo
