@@ -207,6 +207,7 @@ class TopoPlotData(object):
         self.topotype = 3
         self.neg_cmap = None
         self.pos_cmap = None
+        self.cmap = None
         self.cmax = 100.
         self.cmin = -4000.
         self.climits = None
@@ -254,6 +255,7 @@ def plot_topo_file(topoplotdata):
     gridedges_show = topoplotdata.gridedges_show
     neg_cmap = topoplotdata.neg_cmap
     pos_cmap = topoplotdata.pos_cmap
+    cmap = topoplotdata.cmap
     print_fname = topoplotdata.print_fname
 
 
@@ -263,6 +265,12 @@ def plot_topo_file(topoplotdata):
     if pos_cmap is None:
         pos_cmap = colormaps.make_colormap({    0:[.5,.7,0],
                                               cmax:[.2,.5,.2]})
+    if cmap is None:
+        cmap = colormaps.make_colormap({-1:[0.3,0.2,0.1],
+                                           -0.00001:[0.95,0.9,0.7],
+                                           0.00001:[.5,.7,0],
+                                           1:[.2,.5,.2]})
+        #cmap = colormaps.make_colormap({-1:[0,0,1],0:[1,1,1],1:[1,0,0]})
 
     if abs(topotype) == 1:
 
@@ -329,6 +337,9 @@ def plot_topo_file(topoplotdata):
             pylab.imshow(pylab.flipud(topo), extent=xylimits, \
                     cmap=cmap, interpolation='nearest', \
                     norm=color_norm)
+            #pylab.clim([cmin,cmax])
+            if addcolorbar:
+                pylab.colorbar()
     else:
         neg_topo = ma.masked_where(topo>0., topo)
         all_masked = (ma.count(neg_topo) == 0)
