@@ -98,8 +98,9 @@ c     # solution on the fixed grid at the two nearest computational times
 
       close(unit=90)
 
- 111  format(' FGRIDOUT: Fixed Grid  ', i2, '  output at time =', e18.8)
-      write(*,111) ng, toutfg
+ 111  format(' FGRIDOUT: Fixed Grid  ', i2, '  frame ',i2,
+     &       ' at time =', e18.8)
+      write(*,111) ng, ioutfg, toutfg
 
 c==================== Output for arrival times============
       if (ioutflag.eq.1) then
