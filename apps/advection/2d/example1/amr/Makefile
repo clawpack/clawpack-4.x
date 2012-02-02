@@ -22,7 +22,9 @@ CLAW_PLOTDIR = _plots               # Directory for plots
 # Environment variable FC should be set to fortran compiler, e.g. gfortran
 FC ?= gfortran   # default if not set as environment variable
 # Add any desired compiler flags such as -g here:
-FFLAGS = 
+#FFLAGS ?=  -fopenmp -W -Wall -fbounds-check -pedantic-errors -std=f2003 -ffpe-trap=zero,overflow,invalid -g
+FFLAGS ?=  -fopenmp -fbounds-check -W -ffpe-trap=zero,overflow,invalid -g
+
 
 
 # ---------------------------------
@@ -132,8 +134,8 @@ CLAW_LIBSOURCES = \
   $(CLAW_LIB)/opendatafile.f \
   $(CLAW_LIB)/init_alloc.f90 \
   $(CLAW_LIB)/restrt_alloc.f90 \
-  $(CLAW_LIB)/resize_alloc_static.f90 \
-# $(CLAW_LIB)/resize_alloc.f90 \
+  $(CLAW_LIB)/resize_alloc.f90 \
+# $(CLAW_LIB)/resize_alloc_static.f90 \
 
 #-------------------------------------------------------------------
 # Include Makefile containing standard definitions and make options:

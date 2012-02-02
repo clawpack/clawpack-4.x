@@ -44,7 +44,7 @@ c
      1          ibuff,mstart,ndfree,lfine,iorder,mxnest,
      2          intratx,intraty,kratio,iregsz,jregsz,
      2          iregst,jregst,iregend,jregend, 
-     3          kcheck,nsteps,
+     3          numgrids,kcheck,nsteps,
      3          time,matlabu
       write(chkunit) evol,rvol,rvoll,lentot,tmass0,cflmax
 c

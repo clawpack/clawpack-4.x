@@ -8,6 +8,18 @@ c
       include  "call.i"
 
       logical    vtime
+      integer omp_get_thread_num, omp_get_max_threads
+      integer mythread/0/, maxthreads/1/
+      integer listgrids(numgrids(level))
+
+c     maxgr is maximum number of grids  many things are
+c     dimensioned at, so this is overall. only 1d array
+c     though so should suffice. problem is
+c     not being able to dimension at maxthreads
+
+      integer locfp_save(maxgr)
+      integer locgp_save(maxgr)
+
 
 c
 c  ::::::::::::::; ADVANC :::::::::::::::::::::::::::::::::::::::::::
@@ -17,12 +29,24 @@ c                  advancing the solution on the grid
 c                  adjusting fluxes for flux conservation step later
 c :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c
-      mptr = lstart(level)
       hx   = hxposs(level)
       hy   = hyposs(level)
       delt = possk(level)
+c     this is linear alg.
+      call prepgrids(listgrids,numgrids(level),level)
+c     maxthreads initialized to 1 above in case no openmp
+!$    maxthreads = omp_get_max_threads()
 
- 3    continue
+!$OMP PARALLEL DO PRIVATE(j,locnew, locaux, mptr,nx,ny,mitot
+!$OMP&                    ,mjtot,time),
+!$OMP&            SHARED(level,nvar,naux,alloc,intrat,delt,
+!$OMP&                   nghost,node,rnode,numgrids,listgrids),
+!$OMP&            SCHEDULE (dynamic,1)
+ccccccc!$OMP&            DEFAULT(none),
+      do  j = 1, numgrids(level)
+c          mget is n^2 alg.
+c          mptr   = mget(j,level)
+          mptr = listgrids(j)
           nx     = node(ndihi,mptr) - node(ndilo,mptr) + 1
           ny     = node(ndjhi,mptr) - node(ndjlo,mptr) + 1
           mitot  = nx + 2*nghost
@@ -34,8 +58,9 @@ c
           call bound(time,nvar,nghost,alloc(locnew),mitot,mjtot,mptr,
      1               alloc(locaux),naux)
 
-        mptr = node(levelptr, mptr)
-        if (mptr .ne. 0) go to 3
+        end do
+!$OMP END PARALLEL DO
+
 c
 c save coarse level values if there is a finer level for wave fixup
       if (level+1 .le. mxnest) then
@@ -46,8 +71,38 @@ c save coarse level values if there is a finer level for wave fixup
 c
       dtlevnew = rinfinity
       cfl_level = 0.d0    !# to keep track of max cfl seen on each level
-      mptr  = lstart(level)
- 5    continue
+c 
+c each grid needs to get extra storage for integration serially (for now at least) in case
+c dynamic memory moves the alloc array during expansion.  so get it once and for all for
+c biggest chunk it may need. That uses max1d on a side, which for parallel apps.
+c is generally much smaller than serial, though this could be a waste.
+c remember that max1d includes ghost cells
+c
+c if necessary can have each thread use max of grids it owns, but then
+c cant use dynamic grid assignments.
+c
+c next loop will get enough storage, it wont be dimensioned as called for
+c grids smaller than max1d on a side.
+      do j = 1, maxthreads
+        
+        locfp_save(j) = igetsp(2*max1d*max1d*nvar)
+        locgp_save(j) = igetsp(2*max1d*max1d*nvar)
+
+      end do
+
+!$OMP PARALLEL DO PRIVATE(j,locold, locnew, mptr,nx,ny,mitot,mjtot)  
+!$OMP&            PRIVATE(locfp, locfm, locgp,locgm,ntot,xlow,ylow)
+!$OMP&            PRIVATE(locaux,lenbc,locsvf,locsvq,locx1d,i)
+!$OMP&            PRIVATE(dtnew,time,mythread)
+!$OMP&            SHARED(rvol,rvoll,level,nvar,mxnest,alloc,intrat,delt)
+!$OMP&            SHARED(nghost,intratx,intraty,hx,hy,naux,listsp)
+!$OMP&            SHARED(node,rnode,dtlevnew,numgrids,listgrids)
+!$OMP&            SHARED(locfp_save,locgp_save)
+!$OMP&            SCHEDULE (DYNAMIC,1)
+!$OMP&            DEFAULT(none)
+      do  j = 1, numgrids(level)
+c          mptr   = mget(j,level)
+          mptr = listgrids(j)
           locold = node(store2, mptr)
           locnew = node(store1, mptr)
           nx     = node(ndihi,mptr) - node(ndilo,mptr) + 1
@@ -56,11 +111,25 @@ c
 c
           mitot  = nx + 2*nghost
           mjtot  = ny + 2*nghost
+
 c         ::: get scratch storage for fluxes and slopes
-          locfp = igetsp(mitot*mjtot*nvar)
-          locfm = igetsp(mitot*mjtot*nvar)
-          locgp = igetsp(mitot*mjtot*nvar)
-          locgm = igetsp(mitot*mjtot*nvar)
+!--          locfp = igetsp(mitot*mjtot*nvar)
+!--          locfm = igetsp(mitot*mjtot*nvar)
+!--          locgp = igetsp(mitot*mjtot*nvar)
+!--          locgm = igetsp(mitot*mjtot*nvar)
+c
+c next way so dont call igetsp so much, less parallel bottleneck in critical section
+!--           locfp = igetsp(2*mitot*mjtot*nvar)
+!--           locfm = locfp + mitot*mjtot*nvar
+!--           locgp = igetsp(2*mitot*mjtot*nvar)
+!--           locgm = locgp + mitot*mjtot*nvar
+c next way for dynamic memory enlargement safety
+!$         mythread = omp_get_thread_num()
+           locfp = locfp_save(mythread+1)
+           locfm = locfp + mitot*mjtot*nvar
+           locgp = locgp_save(mythread+1)
+           locgm = locgp + mitot*mjtot*nvar
+
 c
 c  copy old soln. values into  next time step's soln. values
 c  since integrator will overwrite it. only for grids not at
@@ -76,8 +145,13 @@ cdir$ ivdep
 c
       xlow = rnode(cornxlo,mptr) - nghost*hx
       ylow = rnode(cornylo,mptr) - nghost*hy
+
+!$OMP CRITICAL(rv)
       rvol = rvol + nx * ny
       rvoll(level) = rvoll(level) + nx * ny
+!$OMP END CRITICAL(rv)
+
+
       locaux = node(storeaux,mptr)
 c
       if (node(ffluxptr,mptr) .ne. 0) then
@@ -100,6 +174,8 @@ c        # need to use gauges.i. the only time advanc is
 c        # called that isn't "real" is in the initial setting
 c        # up of grids (setgrd), but source grids are 0 there so
 c        # nothing will be output.
+
+c    should change the way  dumpguage does io - right now is critical section
            call dumpgauge(alloc(locnew),alloc(locaux),xlow,ylow,
      .                    nvar,mitot,mjtot,mptr)
 
@@ -125,16 +201,77 @@ c
      5               nghost,delt,hx,hy)
       endif
 c
-          call reclam(locfp, mitot*mjtot*nvar)
-          call reclam(locfm, mitot*mjtot*nvar)
-          call reclam(locgp, mitot*mjtot*nvar)
-          call reclam(locgm, mitot*mjtot*nvar)
-c
+!--          call reclam(locfp, mitot*mjtot*nvar)
+!--          call reclam(locfm, mitot*mjtot*nvar)
+!--          call reclam(locgp, mitot*mjtot*nvar)
+!--          call reclam(locgm, mitot*mjtot*nvar)
+c         next way to reclaim was to minimize calls to
+c         reclam, due to critical section and openmp
+!--          call reclam(locfp, 2*mitot*mjtot*nvar)
+!--          call reclam(locgp, 2*mitot*mjtot*nvar)
+
+!$OMP CRITICAL (newdt)
           dtlevnew = dmin1(dtlevnew,dtnew)
+!$OMP END CRITICAL (newdt)    
 c
           rnode(timemult,mptr)  = rnode(timemult,mptr)+delt
-          mptr            = node(levelptr, mptr)
-          if (mptr .ne. 0) go to 5
+      end do
+!$OMP END PARALLEL DO
 c
+c     debug statement:
+c     write(*,*)" from advanc: level ",level," dtlevnew ",dtlevnew
+
+c new way to reclaim for safety with dynamic memory and openmp
+      do j = 1, maxthreads
+        call reclam(locfp_save(j),2*max1d*max1d*nvar)
+        call reclam(locgp_save(j),2*max1d*max1d*nvar)
+      end do      
+c
+      return
+      end
+c
+c -------------------------------------------------------------
+c
+      integer function mget(j,level)
+
+      implicit double precision (a-h,o-z)
+      include "call.i"
+      integer this_j
+
+      mptr = lstart(level)
+      this_j = 1
+
+      do while (this_j < j)
+        mptr = node(levelptr, mptr)
+        this_j = this_j + 1
+        if (this_j > numgrids(level)) then
+           write(*,*)" *** ERROR: exceeded number of grids in mget *** "
+           stop
+        endif
+      end do
+      mget = mptr
+
+      return
+      end
+c
+c -------------------------------------------------------------
+c
+       subroutine prepgrids(listgrids,num, level)
+
+       implicit double precision (a-h,o-z)
+       include "call.i"
+       integer listgrids(num)
+
+       mptr = lstart(level)
+       do j = 1, num
+          listgrids(j) = mptr
+          mptr = node(levelptr, mptr)
+       end do
+
+      if (mptr .ne. 0) then
+         write(*,*)" Error in routine setting up grid array "
+         stop
+      endif
+
       return
       end

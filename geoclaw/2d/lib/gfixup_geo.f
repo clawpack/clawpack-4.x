@@ -189,8 +189,8 @@ c
             kratio(level-1) = ceiling(dtc/dtf)
             possk(level)    = possk(level-1)/kratio(level-1)
         endif
-        write(6,*)" setting ref. ratio in time for level ",level," to ",
-     .            kratio(level-1)
+c       write(6,*)" setting ref. ratio in time for level ",level," to ",
+c    .            kratio(level-1)
       end do
 
  99   return
