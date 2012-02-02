@@ -26,3 +26,4 @@ The original pdf version can be found at
    Some things have changed in Clawpack 4.4!
    See :ref:`new_in_claw44`
 
+To convert old applications to the new form, see :ref:`convert`.
