@@ -25,6 +25,7 @@ Overview and Getting Started:
    convert
    trouble
    vm
+   aws
 
 Documentation and Examples:
 
@@ -52,6 +53,7 @@ Fortran and Python codes:
    setrun
    mapc2p
    amrclaw/index
+   ascii_output_format
    
 Plotting:
 

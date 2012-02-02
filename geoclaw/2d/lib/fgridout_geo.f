@@ -74,10 +74,20 @@ c     # solution on the fixed grid at the two nearest computational times
         t0=fgrid1(ifg,jfg,mvarsfg)
         tf=fgrid2(ifg,jfg,mvarsfg)
         tau=(toutfg-t0)/(tf-t0)
+        do iv=1,mvarsfg-1
+            if (dabs(fgrid1(ifg,jfg,iv)) .lt. 1d-90) 
+     &               fgrid1(ifg,jfg,iv) = 0.d0
+            if (dabs(fgrid2(ifg,jfg,iv)) .lt. 1d-90) 
+     &               fgrid2(ifg,jfg,iv) = 0.d0
+            enddo
        if (icolumns.eq.mvarsfg-1) then 
         write(90,109) ((1.d0 - tau)*fgrid1(ifg,jfg,iv)
      &            +tau*fgrid2(ifg,jfg,iv), iv=1,mvarsfg-1)
        else
+        if (dabs(fgrid3(ifg,jfg,indetamin)) .lt. 1d-90)
+     &           fgrid3(ifg,jfg,indetamin) = 0.d0
+        if (dabs(fgrid3(ifg,jfg,indetamax)) .lt. 1d-90)
+     &           fgrid3(ifg,jfg,indetamax) = 0.d0
         write(90,109) ((1.d0 - tau)*fgrid1(ifg,jfg,iv)
      &            +tau*fgrid2(ifg,jfg,iv), iv=1,mvarsfg-1),
      &            fgrid3(ifg,jfg,indetamin),fgrid3(ifg,jfg,indetamax)
@@ -88,8 +98,9 @@ c     # solution on the fixed grid at the two nearest computational times
 
       close(unit=90)
 
- 111  format(' FGRIDOUT: Fixed Grid  ', i2, '  output at time =', e18.8)
-      write(*,111) ng, toutfg
+ 111  format(' FGRIDOUT: Fixed Grid  ', i2, '  frame ',i2,
+     &       ' at time =', e18.8)
+      write(*,111) ng, ioutfg, toutfg
 
 c==================== Output for arrival times============
       if (ioutflag.eq.1) then

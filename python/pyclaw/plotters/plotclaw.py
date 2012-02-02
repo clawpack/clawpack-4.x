@@ -18,7 +18,14 @@ will call the plotclaw function from this module.
 """
 
 import sys, os
+
+# Use the Agg backend for plotting -- this doesn't require opening windows
+# when plotting remotely.
+
+import matplotlib
+matplotlib.use('Agg')
 import pylab
+
 
 if sys.platform in ['win32','cygwin']:
     pypath = 'C:/cygwin' + os.environ['CLAW'] + '/python'

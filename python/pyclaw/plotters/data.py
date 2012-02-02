@@ -271,6 +271,8 @@ class ClawPlotData(Data):
 
 	self.plotfigure_dict.clear()
 	self._fignames = []
+        self.otherfigure_dict.clear()
+        self._otherfignames = []
 	self._fignos = []
 	self._next_FIG = 1000
 
@@ -376,8 +378,20 @@ class ClawPlotData(Data):
             gauges = {}
 
         print '    Reading gauge data from ',fname
+        
+        def stars2num(s):
+            """
+            Converter to us in case gauge number was too long and
+            Fortran printed stars instead of the number.
+            """
+            if s[0]=='*':
+                gaugeno = 99999
+            else:
+                gaugeno = int(s)
+            return gaugeno
+
         try:
-            gdata = np.loadtxt(fname)
+            gdata = np.loadtxt(fname,converters={0:stars2num})
         except:
             try:
                 print "*** Warning: incomplete last line, computation may "
@@ -385,7 +399,7 @@ class ClawPlotData(Data):
                 gdata_lines = open(fname,'r').read()
                 gdata_end = gdata_lines.rfind('\n',-200,-1)
                 gdata_file = StringIO(gdata_lines[:gdata_end+1])
-                gdata = np.loadtxt(gdata_file)
+                gdata = np.loadtxt(gdata_file,converters={0:stars2num})
             except:
                 print "*** Problem reading file ",fname
                 #print "*** Possibly an incomplete last line if computation is still in progress"
@@ -590,7 +604,7 @@ class ClawPlotData(Data):
         return q
 
 
-    def new_otherfigure(self, name=None, fname=None):
+    def new_otherfigure(self, name=None):
         """
         Create a new figure for Clawpack plots.  
         For figures not repeated each frame.
@@ -599,10 +613,7 @@ class ClawPlotData(Data):
             print '*** Warning, figure named %s has already been created' % name
 
         if name is None:
-            if fname is None:
-                raise Exception("Need to provide name in new_otherfigure")
-            else:
-                name = fname
+            raise Exception("Need to provide name in new_otherfigure")
         if name in self._otherfignames:
             print "*** Error in new_otherfigure: Figure name already used... ",name
             raise Exception("Figure name already used")

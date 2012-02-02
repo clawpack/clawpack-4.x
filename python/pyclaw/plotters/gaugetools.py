@@ -457,7 +457,7 @@ def plot_gauge_locations(plotdata, gaugenos='all', \
 
     from pylab import figure, plot, clf, title, text
 
-    datadir = plotdata.rundir  # this should contain setgauges.data
+    datadir = plotdata.outdir  # this should contain setgauges.data
 
     try:
         setgauges = read_setgauges(datadir)

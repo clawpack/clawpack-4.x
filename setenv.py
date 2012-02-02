@@ -37,14 +37,7 @@ if FC in ['f77','g77']:
     FC = 'gfortran'
 
 clawpythondir = os.path.join(clawdir,'python')
-try:
-    PYTHONPATH = os.environ['PYTHONPATH']
-except:
-    PYTHONPATH = clawpythondir
-
-if clawpythondir not in PYTHONPATH:
-    PYTHONPATH = clawpythondir +":"+ PYTHONPATH
-
+PYTHONPATH = ":".join((clawpythondir,"${PYTHONPATH}"))
 
 try:
     IPYTHONDIR = os.environ['IPYTHONDIR']
@@ -105,12 +98,12 @@ setenvbash = open("setenv.bash","w")
 setenvbash.write("export CLAW='%s'\n" % CLAW)
 setenvbash.write("export FC='%s'\n\n" % FC)
 setenvbash.write("export MATLABPATH='%s'\n\n" % MATLABPATH)
-setenvbash.write("export PYTHONPATH='%s'\n" % PYTHONPATH)
+setenvbash.write('export PYTHONPATH="%s"\n' % PYTHONPATH)
 setenvbash.write("export IPYTHONDIR='%s'\n" % IPYTHONDIR)
 setenvbash.write('if [ -z "${%s}" ]; then\n' % (dylib_string))
-setenvbash.write('    %s="%s"\n' % (dylib_string,dylib_path))
+setenvbash.write('    export %s="%s"\n' % (dylib_string,dylib_path))
 setenvbash.write('else\n')
-setenvbash.write('    %s="%s:${%s}"\n' % (dylib_string,dylib_path,dylib_string))
+setenvbash.write('    export %s="%s:${%s}"\n' % (dylib_string,dylib_path,dylib_string))
 setenvbash.write('fi\n')
 setenvbash.write("alias ipyclaw='ipython -profile claw' \n")
 setenvbash.write("alias clawserver='xterm -e python $CLAW/python/startserver.py &' \n")
