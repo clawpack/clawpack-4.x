@@ -199,7 +199,7 @@ contains
         double precision, parameter :: topo_missing = -150.d0
         logical, parameter :: maketype2 = .false.
         integer :: i,j,num_points,missing,status,topo_start
-        double precision :: no_data_value,x,y,z
+        double precision :: no_data_value,x,y,z, topoi
 
         print *, ' '
         print *, 'Reading topography file  ', fname
@@ -215,7 +215,16 @@ contains
                 status = 0
                 do while (status == 0)
                     i = i + 1
-                    read(iunit,fmt=*,iostat=status) x,y,topo(i)
+                    read(iunit,fmt=*,iostat=status) x,y,topoi
+                    if ((i .gt. mx*my) .and. (status == 0)) then
+                        write(6,*) '*** Error: i > mx*my = ',mx*my
+                        write(6,*) '*** i, mx, my: ',i,mx,my
+                        write(6,*) '*** status = ',status
+                        stop
+                        endif
+                    if (status == 0) then
+                        topo(i) = topoi
+                        endif
                 enddo
 
             ! ================================================================
