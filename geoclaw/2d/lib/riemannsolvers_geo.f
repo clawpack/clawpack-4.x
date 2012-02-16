@@ -90,6 +90,7 @@ c     !determine the middle entropy corrector wave------------------------
       endif
 
       do mw=1,mwaves
+         if (dabs(lambda(mw)) .lt. 1.d-30) lambda(mw) = 0.d0
          r(1,mw)=1.d0
          r(2,mw)=lambda(mw)
          r(3,mw)=(lambda(mw))**2
