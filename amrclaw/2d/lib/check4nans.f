@@ -22,8 +22,8 @@ c             # true if q(i,j,m) = NAN
 	      write(*,*) 'At ichecknan = ',ichecknan
               write(*,*) '   mx,my,t:',mx,my,t
               write(*,*) '   i,j,m:',i,j,m
-              write(*,*) '   q(i,j,m) = ',q(i,j,m)
-	      stop
+              write(*,*) '   q(i,j,:) = ',(q(i,j,me), me=1,meqn)
+              stop
               endif
             enddo
           enddo
