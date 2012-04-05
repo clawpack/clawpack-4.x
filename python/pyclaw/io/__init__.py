@@ -45,11 +45,3 @@ try:
 except(ImportError):
     logging.debug("No netcdf3 support found.")
 
-# Check for petsc4py support
-try:
-    import petsc
-    from petsc import read_petsc, write_petsc
-    __all__ += ['read_petsc','write_petsc']
-except(ImportError):
-    logging.debug("No petsc support found.")
- 
