@@ -55,6 +55,7 @@ Fortran and Python codes:
    mapc2p
    amrclaw/index
    ascii_output_format
+   netcdf
    
 Plotting:
 

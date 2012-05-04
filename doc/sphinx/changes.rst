@@ -27,7 +27,9 @@ New in Clawpack 4.6.2 (not yet released)
 * OpenMP capability added to amrclaw and geoclaw.  See :ref:`openmp`
   for details.
 
-* Bug fixed in netcdf output for GeoClaw.
+* Bug fixed in NetCDF output for GeoClaw.
+
+* NetCDF documentation now exists, see :ref:`netcdf`.
 
 * Improved "fixed grid" output in GeoClaw. This allows specification of a
   fixed grid for output that is independent of what AMR grids are currently
