@@ -17,6 +17,7 @@ Overview and Getting Started:
    about
    changes
    installing
+   github
 
 .. toctree::
    :maxdepth: 1
@@ -74,6 +75,7 @@ Advanced features:
 .. toctree::
    :maxdepth: 1
    
+   openmp
    gauges
 
 Extensions to the standard Clawpack codes:

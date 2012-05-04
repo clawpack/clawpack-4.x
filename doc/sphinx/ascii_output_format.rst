@@ -1,8 +1,9 @@
 
 .. _ascii_output_format:
 
+=============================
 Format of ASCII output files
-----------------------------
+=============================
 
 At each output time, two files are created:
 
