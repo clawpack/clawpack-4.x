@@ -60,7 +60,7 @@ Downloading Clawpack
 
 First download the tar file from the Clawpack download page:
 
-  *  `<http://www.clawpack.org/clawdownload>`_
+  *  `<http://www.clawpack.org/download>`_
 
 This file will be of the form clawpack-N.tar.gz  where N is the 
 version number.

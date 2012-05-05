@@ -10,7 +10,7 @@ For most users, the best way to view the documentation is
 
 This should be up to date with the current revision in the 
 `download directory
-<http://www.clawpack.org/clawdownload>`_.
+<http://www.clawpack.org/download>`_.
 
 The source files that create this documentation are included in the
 distribution in `$CLAW/doc/sphinx <claw/doc/sphinx>`_.  
