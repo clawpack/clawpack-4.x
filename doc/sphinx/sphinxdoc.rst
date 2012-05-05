@@ -6,11 +6,11 @@ Compiling the Sphinx documentation locally
 ******************************************
 
 For most users, the best way to view the documentation is 
-`online <http://kingkong.amath.washington.edu/clawpack/www/users>`_.
+`online <http://www.clawpack.org/users>`_.
 
 This should be up to date with the current revision in the 
 `download directory
-<http://kingkong.amath.washington.edu/clawpack/www/clawdownload>`_.
+<http://www.clawpack.org/clawdownload>`_.
 
 The source files that create this documentation are included in the
 distribution in `$CLAW/doc/sphinx <claw/doc/sphinx>`_.  

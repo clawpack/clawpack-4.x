@@ -79,6 +79,11 @@ to run.
 
 .. _new_in_claw46:
 
+.. warning::  Links below to Trac or the Subversion repository on kingking
+   no longer work.  That server died and the backup's have not been reinstalled
+   eslewhere since development has now moved to `<https://github.com/clawpack>`_.
+
+
 New in Clawpack 4.6.0
 ==========================
 

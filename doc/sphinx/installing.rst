@@ -57,13 +57,10 @@ Another alternative is to run Clawpack on the Cloud, see :ref:`aws`.
 Downloading Clawpack
 --------------------
 
-For instructions on using the version of Clawpack in the Subversion repository instead of
-the tar file described below, see the `Clawpack wiki
-<http://kingkong.amath.washington.edu/trac/clawpack>`_ 
 
 First download the tar file from the Clawpack download page:
 
-  *  `<http://kingkong.amath.washington.edu/clawpack/clawdownload>`_
+  *  `<http://www.clawpack.org/clawdownload>`_
 
 This file will be of the form clawpack-N.tar.gz  where N is the 
 version number.
@@ -98,7 +95,7 @@ if you use `csh`.  If you don't know what shell you are using, try both and see 
 doesn't give errors, you won't hurt anything.
 
 If you don't know about Unix shells, see these `class notes 
-<http://kingkong.amath.washington.edu/uwamath583/sphinx/notes/html/shells.html>`_, for an
+<http://faculty.washington.edu/rjl/uwamath583s11/sphinx/notes/html/shells.html>`_, for an
 introduction and other links.
 
 
@@ -108,7 +105,7 @@ file (which is executed automatically in each new shell you create).
 
 In particular, the commands found in these files set the following
 `environment variables
-<http://kingkong.amath.washington.edu/uwamath583/sphinx/notes/html/vars.html>`_
+<http://faculty.washington.edu/rjl/uwamath583s11/sphinx/notes/html/vars.html>`_
 
  * `CLAW` is set to the path to the main directory of the Clawpack files.  
  * `PYTHONPATH` is a list of paths that should include $CLAW/python. 
