@@ -1,6 +1,6 @@
       subroutine setprob
       implicit double precision (a-h,o-z)
-      character*12 fname
+      character*25 fname
       common /cqinit/ A1,beta1,x1,y1, A2,beta2,x2,y2
       common /cgrid/ igrid
 c
