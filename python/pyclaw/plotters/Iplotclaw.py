@@ -12,6 +12,7 @@ For options during looping type:
 
 import cmd, os, sys, string
 
+print "For Iplotclaw help: execute 'Iplotclaw?'"
 
 if not sys.modules.has_key('matplotlib'):
     try:
@@ -65,6 +66,7 @@ class Iplotclaw(cmd.Cmd):
       If .output does not exist, outdir defaults to '.', the current directory.
     Other arguments of Iplotclaw rarely need to be changed:
        completekey='tab', stdin=None, stdout=None
+
     """
     from pyclaw.plotters import frametools, data
 
