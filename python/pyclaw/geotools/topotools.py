@@ -406,7 +406,8 @@ def topoheaderread (inputfile, closefile=True):
     keylist=topoheader.keys()
 
     keymap = {'ncols':'ncols','nrows':'nrows','xll':'xll','yll':'yll','cellsize':'cellsize','nodata_value':'nodata_value', \
-    'xllcenter':'xll','yllcenter':'yll','xllcorner':'xll','yllcorner':'yll'}
+    'xllcenter':'xll','yllcenter':'yll','xllcorner':'xll','yllcorner':'yll',
+    'xlower':'xll','ylower':'yll'}
 
     fid=open(inputfile,'r')
     keyleft=len(keylist)

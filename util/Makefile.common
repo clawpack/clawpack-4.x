@@ -60,6 +60,7 @@ CLAW_INCLUDE ?=
 CLAW_LIB ?= $(CURDIR)/
 CLAW_OVERWRITE ?= True
 CLAW_RESTART ?= False
+IGEOLIB ?=
 
 
 #----------------------------------------------------------------------------
@@ -67,8 +68,8 @@ CLAW_RESTART ?= False
 # how to make .o files from .f files:
 .SUFFIXES:
 .SUFFIXES: .f90 .f .mod .o
-%.o : %.f90 $(CLAW_INCLUDE) ; $(FC) -c -I$(CLAW_LIB) $< -o $@ $(FFLAGS)
-%.o : %.f $(CLAW_INCLUDE) ; $(FC) -c -I$(CLAW_LIB) $< -o $@ $(FFLAGS) 
+%.o : %.f90 $(CLAW_INCLUDE) ; $(FC) -c -I$(CLAW_LIB) $(IGEOLIB) $< -o $@ $(FFLAGS)
+%.o : %.f $(CLAW_INCLUDE) ; $(FC) -c -I$(CLAW_LIB) $(IGEOLIB) $< -o $@ $(FFLAGS) 
 
 # make list of .o files required from the sources above:
 CLAW_OBJECTS = $(subst .f,.o, $(subst .f90,.o, $(CLAW_SOURCES)))

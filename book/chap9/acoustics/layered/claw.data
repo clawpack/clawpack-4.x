@@ -11,10 +11,10 @@
 1                         =: outstyle     (style of specifying output times)
 100.0                     =: tfinal       (final time)
 
-0.80000000000000004       =: dt_initial   (initial time step dt)
-9.9999999999999997e+98    =: dt_max       (max allowable dt)
+0.8                       =: dt_initial   (initial time step dt)
+1e+99                     =: dt_max       (max allowable dt)
 1.0                       =: cfl_max      (max allowable Courant number)
-0.80000000000000004       =: cfl_desired  (desired Courant number)
+0.8                       =: cfl_desired  (desired Courant number)
 2000                      =: max_steps    (max time steps per call to claw)
 
 1                         =: dt_variable  (1 for variable dt, 0 for fixed)

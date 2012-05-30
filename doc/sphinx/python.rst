@@ -90,7 +90,7 @@ Some useful links to get started learning Python:
    * `NumPy for Matlab users <http://www.scipy.org/NumPy_for_Matlab_Users>`_
    * `SciPy Reference Guide <http://docs.scipy.org/doc/scipy/reference/>`_
    * `Matplotlib gallery <http://matplotlib.sourceforge.net/gallery.html>`_
-   * `LeVeque's class notes <http://kingkong.amath.washington.edu/uwamath583/sphinx/notes/html/python.html>`_ 
+   * `LeVeque's class notes <http://faculty.washington.edu/rjl/uwamath583s11/sphinx/notes/html/python.html>`_ 
    * `Langtangen's book <http://folk.uio.no/hpl/scripting/>`_ and
      `Introductory slides <http://heim.ifi.uio.no/~hpl/scripting/all-nosplit/>`_
 

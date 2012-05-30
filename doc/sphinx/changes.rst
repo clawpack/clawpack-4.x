@@ -4,6 +4,10 @@
 Recent changes
 ==========================
 
+Clawpack is moving to Github and the use of Git for further development
+work, rather than Subversion.   For more details see :ref:`github`.
+
+
 .. _planned_for_50:
 
 Planned changes for Clawpack 5.0
@@ -11,27 +15,52 @@ Planned changes for Clawpack 5.0
 
 Substantial changes are planned for Clawpack 5.0.  
 
-One major change is that Clawpack is moving to Github and the use of Git
-rather than Subversion for the repository.
-
 See `<https://github.com/clawpack/doc/wiki>`_ for more about this, and about
 plans for other changes.
 
-Clawpack documentation pages will eventually move to
-`<http://clawpack.github.com/>`_.
 
 .. _new_in_claw4_6_2:
 
 New in Clawpack 4.6.2 (not yet released)
 ========================================
 
-* OpenMP capability added to amrclaw and geoclaw.  Need to document!
+* OpenMP capability added to amrclaw and geoclaw.  See :ref:`openmp`
+  for details.
 
-* Bug fixed in netcdf output for GeoClaw.
+* Bug fixed in NetCDF output for GeoClaw.
 
-* Improved fixed grid output in GeoClaw, still needs to be documented!
+* NetCDF documentation now exists, see :ref:`netcdf`.
+
+* Improved "fixed grid" output in GeoClaw. This allows specification of a
+  fixed grid for output that is independent of what AMR grids are currently
+  in use.  The best available data is interpolated to each fixed grid point
+  at each specified output time.  
 
 * Added `$CLAW/python/pyclaw/plotters/plotfg.py` to plot fixed grid output.
+  This is not well documented.  However, a new version of the fixed grid
+  routines is in the works and documentation will be provided for those
+  in the next release (?).
+
+* Improved `$CLAW/python/pyclaw/plotters/frametools.py` import setplot more
+  robustly and give a more informative method if there's a bug in setplot.py
+
+* Fixed Makefile.common and Makefiles in `$CLAW/apps/tsunami/*` to find the
+  `*.mod` files in `$CLAW/geoclaw/2d/lib` properly.
+
+* Documentation added on how to use the Clawpack AMI on Amazon Web Services,
+  see :ref:`aws`.
+
+* Documentation added on how to set up a GeoClaw run for tsunami modeling,
+  see :ref:`quick_tsunami`.
+
+Known bugs
+----------
+
+* Conservation is no longer maintained in some examples with periodic boundary
+  conditions.  In `$CLAW/apps/advection/2d/example/amr` and
+  `$CLAW/apps/burgers/2d/pwconst/amr` mass is conserved to `1e-4` with the
+  parameters as set in `setrun.py`, but used to
+  be conserved to roughly `1e-14`.  This needs to be debugged.
 
 .. _new_in_claw4_6_1:
 
@@ -58,6 +87,11 @@ to run.
    has been improved.
 
 .. _new_in_claw46:
+
+.. warning::  Links below to Trac or the Subversion repository on kingking
+   no longer work.  That server died and the backup's have not been reinstalled
+   eslewhere since development has now moved to `<https://github.com/clawpack>`_.
+
 
 New in Clawpack 4.6.0
 ==========================

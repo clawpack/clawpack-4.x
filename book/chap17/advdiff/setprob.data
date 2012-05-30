@@ -5,4 +5,4 @@
 ########################################################
 
 1.0                       =: u            advection velocity
-0.029999999999999999      =: dcoef        diffusion coefficient
+0.03                      =: dcoef        diffusion coefficient

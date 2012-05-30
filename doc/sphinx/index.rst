@@ -17,6 +17,7 @@ Overview and Getting Started:
    about
    changes
    installing
+   github
 
 .. toctree::
    :maxdepth: 1
@@ -54,6 +55,7 @@ Fortran and Python codes:
    mapc2p
    amrclaw/index
    ascii_output_format
+   netcdf
    
 Plotting:
 
@@ -74,6 +76,7 @@ Advanced features:
 .. toctree::
    :maxdepth: 1
    
+   openmp
    gauges
 
 Extensions to the standard Clawpack codes:

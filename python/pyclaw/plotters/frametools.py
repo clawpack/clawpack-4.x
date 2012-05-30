@@ -758,7 +758,7 @@ def plotitem2(framesoln, plotitem, current_data, gridno):
 
     if pp_plot_type == '2d_pcolor':
 
-        pcolor_cmd = "pobj = pylab.pcolormesh(X_edge, Y_edge, var, \
+        pcolor_cmd = "pobj = pylab.pcolor(X_edge, Y_edge, var, \
                         cmap=pp_pcolor_cmap"
 
         if pp_gridlines_show:
@@ -823,10 +823,10 @@ def plotitem2(framesoln, plotitem, current_data, gridno):
 
 
         if pp_gridlines_show:
-            pobj = pylab.pcolormesh(X_edge, Y_edge, pylab.zeros(var.shape), \
+            pobj = pylab.pcolor(X_edge, Y_edge, pylab.zeros(var.shape), \
                     cmap=pp_grid_bgcolormap, edgecolors=pp_gridlines_color)
         elif pp_grid_bgcolor is not 'w': 
-            pobj = pylab.pcolormesh(X_edge, Y_edge, pylab.zeros(var.shape), \
+            pobj = pylab.pcolor(X_edge, Y_edge, pylab.zeros(var.shape), \
                     cmap=pp_grid_bgcolormap, edgecolors='None')
         pylab.hold(True)
 
@@ -854,11 +854,11 @@ def plotitem2(framesoln, plotitem, current_data, gridno):
     elif pp_plot_type == '2d_grid':
         # plot only the grids, no data:
         if pp_gridlines_show:
-            pobj = pylab.pcolormesh(X_edge, Y_edge, pylab.zeros(var.shape), \
+            pobj = pylab.pcolor(X_edge, Y_edge, pylab.zeros(var.shape), \
                     cmap=pp_grid_bgcolormap, edgecolors=pp_gridlines_color,\
                     shading='faceted')
         else: 
-            pobj = pylab.pcolormesh(X_edge, Y_edge, pylab.zeros(var.shape), \
+            pobj = pylab.pcolor(X_edge, Y_edge, pylab.zeros(var.shape), \
                     cmap=pp_grid_bgcolormap, shading='flat')
 
 
@@ -867,7 +867,7 @@ def plotitem2(framesoln, plotitem, current_data, gridno):
         (vx,vy) = pylab.gradient(var)
         vs = pylab.sqrt(vx**2 + vy**2)
 
-        pcolor_cmd = "pobj = pylab.pcolormesh(X_edge, Y_edge, vs, \
+        pcolor_cmd = "pobj = pylab.pcolor(X_edge, Y_edge, vs, \
                         cmap=pp_schlieren_cmap"
 
         if pp_gridlines_show:

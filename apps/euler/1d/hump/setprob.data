@@ -4,4 +4,4 @@
 ###    and then "make .data"                        ####
 ########################################################
 
-1.3999999999999999        =: gamma        gamma for ideal gas
+1.4                       =: gamma        gamma for ideal gas

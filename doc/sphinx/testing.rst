@@ -14,7 +14,7 @@ the examples in the `$CLAW/apps <claw/apps>`_ and `$CLAW/book <claw/book>`_
 directories, make plots of the results, and a create a
 gallery of thumbnails that should look like those in the 
 `online Applications Galleries
-<http://kingkong.amath.washington.edu/clawpack/users/apps.html>`_
+<http://www.clawpack.org/users/apps.html>`_
 
 Creating the gallery
 --------------------
