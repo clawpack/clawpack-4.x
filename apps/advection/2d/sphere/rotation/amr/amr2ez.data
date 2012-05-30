@@ -16,9 +16,9 @@
 2.5                       =: tfinal       (final time)
 
 0.001                     =: dt_initial   (initial time step dt)
-9.9999999999999997e+98    =: dt_max       (max allowable dt)
+1e+99                     =: dt_max       (max allowable dt)
 1.0                       =: cfl_max      (max allowable Courant number)
-0.90000000000000002       =: cfl_desired  (desired Courant number)
+0.9                       =: cfl_desired  (desired Courant number)
 1000                      =: max_steps    (max time steps per call to claw)
 
 1                         =: dt_variable  (1 for variable dt, 0 for fixed)
@@ -52,10 +52,10 @@ F                         =: restart      (1 to restart from a past run)
 1000                      =: checkpt_iousr (how often to checkpoint)
 
 -1.0                      =: tol          (tolerance for Richardson extrap)
-0.050000000000000003      =: tolsp        (tolerance used in flag2refine)
+0.05                      =: tolsp        (tolerance used in flag2refine)
 2                         =: kcheck       (how often to regrid)
 3                         =: ibuff        (buffer zone around flagged pts)
-0.69999999999999996       =: cutoff       (efficiency cutoff for grid gen.)
+0.7                       =: cutoff       (efficiency cutoff for grid gen.)
 
 F                         =: PRINT        (print to fort.amr)
 F                         =: NCAR         (obsolete!)

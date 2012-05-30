@@ -4,4 +4,4 @@
 ###    and then "make .data"                        ####
 ########################################################
 
-0.78539999999999999       =: theta        angle relative to x-axis
+0.7854                    =: theta        angle relative to x-axis
