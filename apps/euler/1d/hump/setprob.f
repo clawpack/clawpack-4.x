@@ -1,6 +1,6 @@
       subroutine setprob
       implicit double precision (a-h,o-z)
-      character*12 fname
+      character*25 fname
       common /param/ gamma, gamma1
 c
 c     # Set gamma and gamma1 = gamma-1 for Euler equations

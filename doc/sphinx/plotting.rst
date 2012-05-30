@@ -106,19 +106,24 @@ Interactive plotting with ``Iplotclaw``
 =======================================
 
 For interactive plotting we suggest using `IPython
-<http://ipython.scipy.org/moin/>`_, which is a nicer shell
+<http://ipython.org>`_, which is a nicer shell
 than the pure python shell, with things like command completion and history.
-See the `Quick IPython Tutorial
-<http://ipython.scipy.org/doc/manual/html/interactive/tutorial.html>`_
+See the `IPython Documentation
+<http://ipython.org/documentation.html>`_ for more information and
+:ref:`ipython_config` for information on configuring it to use with Clawpack.
 
+Note that to use interactive plotting must give the `--pylab` flag in
+order for plotting to work properly, and that this automatically imports
+numpy and matplotlib commands into your namespace, so you can use, for
+example, `linspace` or `pcolor` without further imports.
 
 Here's an example::
 
-    $  ipython
+    $ ipython --pylab
+
     In [1]: from pyclaw.plotters.Iplotclaw import Iplotclaw
     In [2]: ip = Iplotclaw() 
     In [3]: ip.plotloop()
-    New start
     Executing setplot ... 
 
     Interactive plotclaw with ndim = 1 ... 
@@ -137,11 +142,27 @@ information.  Most commonly used are n for next frame, p for previous frame
 and j to jump to a different frame.  Hitting return at the prompt repeats
 the previous command.
 
+By default `Iplotclaw` attempts to determine the directory where output can
+be found by examining the file `.output` that is automatically created by
+the `make .output` command.  If not found, the default is to look in the
+current directory.  Instead you can provide an argument `outdir` to specify
+the directory for output.  
+
+By default `Iplotclaw` attempts to execute a `setplot` function from a file
+`setplot.py`.  Instead you can provide an argument `setplot` to specify the
+file name.
+
+Example::
+
+    In [2]: ip = Iplotclaw(setplot='setplot_special.py', outdir='_output2')
+
+
 You can restart the plotloop later by doing::
 
     In [4]: ip.plotloop()
 
-    Interactive plotclaw with ndim = 1 ... 
+    Interactive plotting for Clawpack output...
+    Plotting data from outdir =  _output
     Type ? at PLOTCLAW prompt for list of commands
 
 	Start at which frame [default=1] ? 
@@ -208,9 +229,9 @@ For example::
     quitting...
 
     >>> pd = ip.plotdata
-    >>> cd = ip.current_data
+    >>> current_data = ip.current_data
 
-The *cd* object contains the :ref:`current_data` used for the most recent
+The *current_data* object contains the :ref:`current_data` used for the most recent
 plot, while *pd* is the :ref:`ClawPlotData` object that
 gives access to all the plotting parameters currently being used as well as
 to methods such as *getframe* for retrieving other frames of data from this
@@ -226,25 +247,67 @@ from, you could do, for example::
     PLOTCLAW > rr             # to redraw current frame number but with new data
 
 
-.. _ipyclaw:
+.. _ipython_config:
 
-ipyclaw
-=======
+IPython configuration
+=====================
 
-If you use $CLAW/setenv.py to set up your environment,
-then an alias ipyclaw = 'ipython -profile claw'
-will be defined (or you can type the above command at the unix prompt).
-This
-automatically loads the function Iplotclaw and some other useful modules.
-You can reconfigure this in `$CLAW/python/ipythondir/ipythonrc-claw <claw/python/ipythondir/ipythonrc-claw>`_ if you
-wish to have other commands executed automatically every time you start
-ipython.  If you use this, then the example above is simplified to::
+The IPython configuration system changed substantially in IPython
+Version 0.11 and Clawpack no longer contains the configuration files
+that used to be found in `$CLAW/python/ipythondir`.
 
-    $  ipyclaw
-    In [1]: ip = Iplotclaw()    
-    In [2]: ip.plotloop()
-    ...
+See the `documentation <http://ipython.org/documentation.html>`_ 
+for the version of IPython you are using. 
 
+The instructions below are for recent versions.
+See `IPython Configuration Overview
+<http://ipython.org/ipython-doc/dev/config/index.html>`_  and
+`Configuring IPython
+<http://ipython.org/ipython-doc/dev/config/ipython.html#configuring-ipython>`_
+for more complete details.
+
+It is suggested that you create a directory `.ipython` in your home
+directory if you do not already have one, and set the `IPYTHONDIR`
+environment variable to point here, e.g. in bash::
+
+    $ export IPYTHONDIR=$HOME/.ipython
+
+If you haven't created a default profile in the past you might want to do
+so::
+
+    $ ipython profile create 
+
+Then create an IPython configuration for Clawpack via the command::
+
+    $ ipython profile create clawpack
+
+There will now be a directory `$HOME/.ipython/profile_clawpack`
+containing a file `ipython_config.py` with the default configuration.
+Replace this file with the version in `$CLAW/python/ipython_config.py`.
+This doesn't do anything fancy, but does execute the command ::
+
+    from pyclaw.plotters.Iplotclaw import Iplotclaw
+
+whenever you start IPython with this configuration, saving you one line of
+typing.  You can of course modify this profile to add anything else you
+wish, as described in the IPython documentation.
+
+Now you can start IPython via::
+
+    $ ipython --pylab --profile=clawpack
+
+to use this profile.  
+
+You might want to define an alias in your `.bashrc` file for the above
+invocation, e.g. ::
+
+    alias ipyclaw='ipython --pylab --profile=clawpack'
+
+so then you can just do::
+
+    $ ipyclaw
+
+to start IPython.
 
 
 .. _printframes:

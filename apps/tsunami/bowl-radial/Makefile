@@ -38,6 +38,7 @@ CLAW_SOURCES = \
 # Clawpack libraries to be used:
 CLAW_LIB = $(CLAW)/amrclaw/2d/lib
 GEOLIB = $(CLAW)/geoclaw/2d/lib
+IGEOLIB = -I$(GEOLIB)
 
 CLAW_LIBSOURCES = \
   $(GEOLIB)/geoclaw_mod.f90 \

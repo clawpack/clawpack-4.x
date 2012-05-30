@@ -224,6 +224,7 @@ def setrun(claw_pkg='amrclaw'):
 
     clawdata.auxtype = []
 
+    clawdata.verbosity_regrid = 1
 
     clawdata.tol = -1.0     # negative ==> don't use Richardson estimator
     clawdata.tolsp = 0.05   # used in default flag2refine subroutine

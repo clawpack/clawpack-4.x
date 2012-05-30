@@ -1,6 +1,6 @@
       subroutine setprob
       implicit double precision (a-h,o-z)
-      character*12 fname
+      character*25 fname
 
       common /cparam/ rho,bulk,cc,zz   
       common /cqinit/ beta

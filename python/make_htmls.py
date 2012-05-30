@@ -11,7 +11,7 @@ set remove_first to True below.
 
 import os,sys,glob
 
-remove_first = False   # to force remaking of htmls
+remove_first = True    # to force remaking of htmls
                        # only set to True if you're sure
 
 def make_htmls(rootdir):

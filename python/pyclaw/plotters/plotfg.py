@@ -344,7 +344,7 @@ if __name__ == "__main__":
     # if executed at the Unix command line....
     import sys
     args = sys.argv[1:]   # any command line arguments
-    fg = ClawFGData()
+    fg = ClawPlotFGData()
     if len(args) > 0:
         fg.fgno = args[0]
     if len(args) > 1:

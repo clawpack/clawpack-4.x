@@ -15,7 +15,7 @@ except:
     raise ImportError()
 
 
-def make_all(rootdir, cleanup=True):
+def make_all(rootdir, cleanup=False):
 
     if rootdir==[]:   
         # if called from command line with no argument
@@ -137,6 +137,7 @@ def make_all(rootdir, cleanup=True):
     ferr.close()
     print 'For all output see ', fname_output
     print 'For all errors see ', fname_errors
+    print "You might want to run rm_output.py to remove all output files."
 
 
 def run_make_all(ferr):
