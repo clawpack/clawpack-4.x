@@ -116,7 +116,7 @@ Fixing networking issues
 
 Assuming your computer is connected to the internet, you should also be able to
 access the internet from the VM.  This is necessary if you want to update
-Clawpack using Subversion, or to transfer your results from the VM to the host
+Clawpack using Git, or to transfer your results from the VM to the host
 computer (or elsewhere) using sftp.
 
 When a Linux VM is moved to a new computer, it sometimes doesn't
@@ -147,8 +147,8 @@ publication for example, where we recommend that you cite the version of
 Clawpack used to obtain them.
 
 Of course you are also welcome to install newer versions of Clawpack in a VM
-for your own use if you choose to.  The Subversion trunk can also be
-used if desired, since svn is installed.
+for your own use if you choose to.  Git is also installed if you want to
+clone the most recent version from Github, see :ref:`github`.
 
 Using Clawpack on the VM
 ------------------------

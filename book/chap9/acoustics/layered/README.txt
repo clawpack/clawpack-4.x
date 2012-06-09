@@ -2,15 +2,13 @@
 
 begin_html [use: jsMath] [use: doc/doc.css]
 <!--   For a more readable version of this file, execute
-                  unix>  make htmls
+                  unix>  make .htmls
        in this directory and then point your browser to README.html
      --------------------------------------------------------------  -->
 
 <h2>
 CLAWPACK Sample Code
 </h2>
-
-Add a description here!
 
 
 Acoustic waves propagating in a layered medium, as shown in Figures 9.8 and 9.9.
@@ -104,13 +102,13 @@ in, followed by comments that are ignored by the Fortran code but
 may be used by Pythons scripts.
 
 Some parameters that you might want to modify are described in the
-[http://kingkong.amath.washington.edu/clawpack/users documentation].
+[http://www.clawpack.org/users documentation].
 
 <dt> [code: setprob.data]
 <dd> This file contains the advection velocity $u$ and various other
 parameters used in setting the initial conditions.
 Values in this file are read  in by the
-subroutine [code: setprob.f95].
+subroutine [code: setprob.f].
 
 
 </dl>

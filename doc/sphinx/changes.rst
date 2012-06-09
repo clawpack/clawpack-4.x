@@ -21,7 +21,7 @@ plans for other changes.
 
 .. _new_in_claw4_6_2:
 
-New in Clawpack 4.6.2 (not yet released)
+New in Clawpack 4.6.2 
 ========================================
 
 * OpenMP capability added to amrclaw and geoclaw.  See :ref:`openmp`

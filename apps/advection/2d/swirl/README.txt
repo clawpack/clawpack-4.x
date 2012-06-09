@@ -3,7 +3,7 @@ begin_html [use: jsMath]  [use: doc/doc.css]
 
 <!----------------------------------------------------------------      
      For a more readable version of this file, execute
-                  unix>  make htmls
+                  unix>  make .htmls
      in this directory and then point your browser to README.html
 --------------------------------------------------------------------->
 
@@ -125,7 +125,7 @@ in, followed by comments that are ignored by the Fortran code but
 used by the Python read or write methods of class clawtools.ClawData.
 
 Some parameters that you might want to modify are described in the
-[http://kingkong.amath.washington.edu/clawpack/users documentation].
+[http://www.clawpack.org/users documentation].
 
 
 <p>

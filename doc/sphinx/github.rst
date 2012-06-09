@@ -4,8 +4,8 @@
 Development on Github
 ==========================
 
-Clawpack is moving to Github and the use of Git for further development
-work, rather than Subversion.   
+Clawpack development is done using `Git <http://git-scm.com/>` for version
+control.
 
 There is an overarching Clawpack "Organization" on Github located at
 `<https://github.com/clawpack>`_.  
@@ -28,7 +28,4 @@ piece of Clawpack: classic, amrclaw, geoclaw, visclaw, util, etc.
 
 See `<https://github.com/clawpack/doc/wiki>`_ for more about this, and about
 plans for other changes.
-
-Clawpack documentation pages will eventually move to
-`<http://clawpack.github.com/>`_.
 

@@ -1,6 +1,6 @@
 begin_html  [use: doc/doc.css] [use:jsMath]
 <!--   For a more readable version of this file, execute
-                  unix>  make htmls
+                  unix>  make .htmls
        in this directory and then point your browser to README.html 
      --------------------------------------------------------------  -->
 

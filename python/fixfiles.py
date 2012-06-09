@@ -11,8 +11,8 @@ import os,sys,glob
 rootdir = '..'
 targetfiles = ['README.txt']
 
-oldpat = "www.clawpack.org/doc.html"
-newpat = "http://kingkong.amath.washington.edu/clawpack/users"
+oldpat = "http://kingkong.amath.washington.edu/clawpack/users"
+newpat = "http://www.clawpack.org/users"
 
 for (dirpath, subdirs, files) in os.walk(rootdir):
     currentdir = os.path.abspath(os.getcwd())

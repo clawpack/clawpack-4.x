@@ -1,6 +1,6 @@
 begin_html  [use: doc/doc.css] [use:jsMath]
 <!--   For a more readable version of this file, execute
-                  unix>  make htmls
+                  unix>  make .htmls
        in this directory and then point your browser to README.html 
      --------------------------------------------------------------  -->
 
@@ -15,7 +15,7 @@ In this code, $x$ and $y$ are in meters (iccordsys=1 in [code:setrun.py]).
 
 Refinement is allowed only in the upper right quadrant, using the regions
 specified in [code:setrun.py], see 
-[http://kingkong.amath.washington.edu/clawpack/users/regions.html].
+[http://www.clawpack.org/users/regions.html].
 
 Gauges are placed near the shore along the x-axis and along the diagonal.
 Ideally these gauges would show identical results.
