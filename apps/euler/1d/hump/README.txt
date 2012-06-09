@@ -2,7 +2,7 @@
 
 begin_html [use: jsMath] [use: doc/doc.css]
 <!--   For a more readable version of this file, execute
-                  unix>  make htmls
+                  unix>  make .htmls
        in this directory and then point your browser to README.html
      --------------------------------------------------------------  -->
 
@@ -75,7 +75,7 @@ Python files
 specifies what run-time parameters will be used.
 
 Some parameters that you might want to modify are described in the
-[http://kingkong.amath.washington.edu/clawpack/users documentation].
+[http://www.clawpack.org/users documentation].
 
 <dt>[code: setplot.py]
 <dd> This file contains a function that
@@ -86,7 +86,7 @@ sets various plotting parameters.
 <dd> Specifies parameters for reference solution. You might want to increase
 mx.
 
-See the [http://kingkong.amath.washington.edu/clawpack/users documentation].
+See the [http://www.clawpack.org/users documentation].
 </dl>
 
 

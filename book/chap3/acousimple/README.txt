@@ -1,6 +1,6 @@
 begin_html  [use: doc/doc.css] [use: jsMath]
 <!--   For a more readable version of this file, execute
-                  unix>  make htmls
+                  unix>  make .htmls
        in this directory and then point your browser to README.html -->
 
 <h2>
@@ -89,7 +89,7 @@ be used.  "python setrun.py" creates data files *.data needed by the
 Fortran codes.
 <p>
 Some parameters that you might want to modify are described in the
-[http://kingkong.amath.washington.edu/clawpack/users documentation].
+[http://www.clawpack.org/users documentation].
 
 <dt>[code: setplot.py]
 <dd> This file contains a function that
