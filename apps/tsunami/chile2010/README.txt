@@ -1,6 +1,6 @@
 begin_html  [use: doc/doc.css]
 <!--   For a more readable version of this file, execute
-                  unix>  make htmls
+                  unix>  make .htmls
        in this directory and then point your browser to README.html 
      --------------------------------------------------------------  -->
 
@@ -134,7 +134,7 @@ All of this can be done with:
 }}}
 
 For more documentation, see
-[http://kingkong.amath.washington.edu/clawpack/users].
+[http://www.clawpack.org/users].
 
 end_html
 

@@ -37,22 +37,4 @@ intact) using the *cp -r* command, e.g. ::
  
 for example.  
 
-.. _newapp_svn:
-
-Subversion users
-----------------
-
-If you are using the svn version of Clawpack **do
-not use cp -r** as in the example above.
-The reason is that it will copy the subversion
-subdirectory .svn as well and svn will get very confused if you later want
-to put your new directory under version control.
-
-The better way to copy a directory under svn to a new place is by using::
-
-    $ svn export $CLAW/apps/advection/1d/example1  path-to-newdir
-
-This exports everything that is under version control to the new directory.
-Files that were not under version control (e.g. output files if you ran the
-program there) will not be exported.
 

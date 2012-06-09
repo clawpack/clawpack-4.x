@@ -1,6 +1,6 @@
 begin_html [use: jsMath] [use: doc/doc.css]
 <!--   For a more readable version of this file, execute
-                  unix>  make htmls
+                  unix>  make .htmls
        in this directory and then point your browser to README.html 
      --------------------------------------------------------------  -->
 
@@ -107,7 +107,7 @@ may be used by Pythons scripts.
 
 
 Some parameters that you might want to modify are described in the
-[http://kingkong.amath.washington.edu/clawpack/users documentation].
+[http://www.clawpack.org/users documentation].
 
 
 <dt> [code: setprob.data]
