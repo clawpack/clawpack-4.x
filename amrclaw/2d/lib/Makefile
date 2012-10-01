@@ -117,7 +117,7 @@ CLAW_SOURCES = \
   $(CLAW_LIB)/check_hdf.f \
   $(CLAW_LIB)/restrt_hdf.f \
   $(CLAW_LIB)/valout_hdf.f \
-  $(CLAW_LIB)/valout_nc.f \
+  #$(CLAW_LIB)/valout_nc.f \
   $(CLAW_LIB)/opendatafile.f \
   $(CLAW_LIB)/dumpgauge.f \
   $(CLAW_LIB)/setgauges.f \
