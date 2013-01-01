@@ -3,7 +3,7 @@
 
 echo Will rsync with clawpack@homer...
 chmod -R og+rX users example-*
-rsync -avz --delete users/ \
+rsync -avz users/ \
   clawpack@homer.u.washington.edu:public_html/users-4.6.3
   #clawpack@homer.u.washington.edu:public_html/users-4.x
 rsync -avz example-acoustics-1d \

@@ -27,6 +27,9 @@ Often for generic tsunami modeling, the constant value :math:`n=0.025` is used.
 An enhancement of GeoClaw planned for the future is to allow
 spatially-varying Manning coefficient.
 
+The friction term is only applied in regions where the depth is below a
+threshold specified by *frictiondepth* (see :ref:`setrun_geoclaw`).
+
 .. warning:: Changing the Manning coefficient can have a significant effect
    on the extent of inundation and runup.  If GeoClaw (or any other code) is
    used for estimating real-world hazards, users should think carefully
