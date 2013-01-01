@@ -1,6 +1,7 @@
 """
 Create topo files needed for this example:
     etopo10min170W60W65S25N.asc        download from GeoClaw topo repository
+    etopo1min78W68W40S30S.asc
     Chile2010_USGS.tt3                 create using Okada model from
     
 """
@@ -14,6 +15,8 @@ def gettopo():
     """
     remote_directory = 'http://www.clawpack.org/geoclaw/topo/etopo'
     topo_fname = 'etopo10min170W60W65S25N.asc'
+    topotools.get_topo(topo_fname, remote_directory)
+    topo_fname = 'etopo1min78W68W40S30S.asc'
     topotools.get_topo(topo_fname, remote_directory)
 
     
