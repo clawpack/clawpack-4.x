@@ -9,7 +9,8 @@ GeoClaw
 .. warning:: As with all of Clawpack, this code is provided as a research
    and teaching tool with no guarantee of suitability for any particular
    purpose, and no liability on the part of the authors.  See the
-   :ref:`license` for more details.
+   :ref:`license` for more details and :ref:`geohints` for tips on
+   exercising appropriate care in using the code.
 
 
 **See also:**
@@ -17,10 +18,14 @@ GeoClaw
 .. toctree::
    :maxdepth: 1
    
+   geohints
    topo
    setrun_geoclaw
    plotting_geoclaw
    quick_tsunami
+   okada
+   manning
+   tsunamidata
 
 Overview
 --------
