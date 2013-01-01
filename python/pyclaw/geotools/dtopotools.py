@@ -124,7 +124,7 @@ def read_subfault_model(fname, columns, units=None, \
     if 1:
         mu = 4.e11  # Rigidity (shear modulus)  might not be right.
         Mo = 0.1*mu*total_slip  # 0.1 factor to convert to Nm
-        Mw = 2./3. * (log10(Mo) - 9.1)
+        Mw = 2./3. * (np.log10(Mo) - 9.1)
         print "With rigidity mu = %6.1e, moment magnitude is Mw = %5.2f" % (mu,Mw)
     return subfaults
     
