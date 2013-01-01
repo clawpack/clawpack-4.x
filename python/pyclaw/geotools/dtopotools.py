@@ -120,12 +120,12 @@ def read_subfault_model(fname, columns, units=None, \
         #print "Subfault slip*length*width = ",subfault_slip
         #import pdb; pdb.set_trace()
 
-    print "Total slip*length*width = ",total_slip
-    if 0:
-        for mu in [3e11, 4e11, 6e11]:
-            Mo = 0.1*mu*total_slip  # 0.1 factor to convert to Nm
-            Mw = 2./3. * (log10(Mo) - 9.1)
-            print "With mu = %6.1e, moment magnitude is Mw = %5.2f" % (mu,Mw)
+    print "Total slip*length*width = ",total_slip, " m**3"
+    if 1:
+        mu = 4.e11  # Rigidity (shear modulus)  might not be right.
+        Mo = 0.1*mu*total_slip  # 0.1 factor to convert to Nm
+        Mw = 2./3. * (log10(Mo) - 9.1)
+        print "With rigidity mu = %6.1e, moment magnitude is Mw = %5.2f" % (mu,Mw)
     return subfaults
     
 
