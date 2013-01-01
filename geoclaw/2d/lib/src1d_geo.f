@@ -37,7 +37,8 @@ c            # apply friction source term only in shallower water
                 q1d(i,2)=0.d0
                 q1d(i,3)=0.d0
              else
-                gamma= dsqrt(hu**2 + hv**2)*(g*coeff**2)/(h**(7/3))
+                gamma= dsqrt(hu**2 + hv**2)*(g*coeff**2)
+     &                  / (h**(7.d0/3.d0))
                 dgamma=1.d0 + dt*gamma
                 q1d(i,2)= q1d(i,2)/dgamma
                 q1d(i,3)= q1d(i,3)/dgamma
