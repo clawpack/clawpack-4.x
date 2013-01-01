@@ -1,9 +1,4 @@
 
-# Library version of Makefile
-# ---------------------------
-
-# Only "make .objs" and "make .htmls" are useful in this directory.
-
 # Makefile for Clawpack code in this directory.
 # This version only sets the local files and frequently changed
 # options, and then includes the standard makefile pointed to by CLAWMAKE.
@@ -13,47 +8,97 @@ CLAWMAKE = $(CLAW)/util/Makefile.common
 #   make .help
 # at the unix prompt.
 
-# Note: This version uses dynamic memory allocation from f90 and so requires
-# an f90 compiler such as gfortran.
+
+# Adjust these variables if desired:
+# ----------------------------------
+
+CLAW_PKG = geoclaw                  # Clawpack package to use
+CLAW_EXE = xgeoclaw                 # Executable to create
+CLAW_setrun_file = setrun.py        # File containing function to make data
+CLAW_OUTDIR = _output               # Directory for output
+CLAW_setplot_file = setplot.py      # File containing function to set plots
+CLAW_PLOTDIR = _plots               # Directory for plots
 
 # Environment variable FC should be set to fortran compiler, e.g. gfortran
 FC ?= gfortran   # default if not set as environment variable
 # Add any desired compiler flags such as -g here:
-FFLAGS ?=  -O2 
+FFLAGS ?= -O2 
 
 
-CLAW_LIB = $(shell pwd)
+# ---------------------------------
+# List of sources for this program:
+# ---------------------------------
+
 
 CLAW_SOURCES = \
-  $(CLAW_LIB)/amr2ez.f \
-  $(CLAW_LIB)/bc2amr.f \
-  $(CLAW_LIB)/setaux.f \
-  $(CLAW_LIB)/setprob.f \
-  $(CLAW_LIB)/b4step2.f \
+
+# Clawpack libraries to be used:
+CLAW_LIB = $(CLAW)/amrclaw/2d/lib
+GEOLIB = $(CLAW)/geoclaw/2d/lib
+IGEOLIB = -I$(GEOLIB)
+
+CLAW_LIBSOURCES = \
+  $(GEOLIB)/geoclaw_mod.f90 \
+  $(GEOLIB)/topo_mod.f90 \
+  $(GEOLIB)/dtopo_mod.f90 \
+  $(GEOLIB)/setprob_geo.f \
+  $(GEOLIB)/qinit_geo.f \
+  $(GEOLIB)/readqinit_geo.f \
+  $(GEOLIB)/movetopo_geo.f \
+  $(GEOLIB)/cellgridintegrate_geo.f \
+  $(GEOLIB)/topointegral_geo.f \
+  $(GEOLIB)/bilinearintegral_geo.f \
+  $(GEOLIB)/stepgrid_geo.f \
+  $(GEOLIB)/fgridinterp_geo.f \
+  $(GEOLIB)/fgridout_geo.f \
+  $(GEOLIB)/rpn2ez_geo.f \
+  $(GEOLIB)/riemannsolvers_geo.f \
+  $(GEOLIB)/rpt2_geo.f \
+  $(GEOLIB)/src2_geo.f \
+  $(GEOLIB)/src1d_geo.f \
+  $(GEOLIB)/step2_geo.f \
+  $(GEOLIB)/flux2fw_geo.f \
+  $(GEOLIB)/qad_geo.f \
+  $(GEOLIB)/valout_geo.f \
+  $(GEOLIB)/filval_geo.f \
+  $(GEOLIB)/filpatch_geo.f \
+  $(GEOLIB)/bc2amr_geo.f \
+  $(GEOLIB)/update_geo.f \
+  $(GEOLIB)/amr2ez_geo.f \
+  $(GEOLIB)/setaux_geo.f \
+  $(GEOLIB)/setqinit_geo.f \
+  $(GEOLIB)/setregions_geo.f \
+  $(GEOLIB)/setgauges_geo.f \
+  $(GEOLIB)/setfixedgrids_geo.f \
+  $(GEOLIB)/b4step2_geo.f \
+  $(GEOLIB)/flag2refine_geo.f  \
+  $(GEOLIB)/allowflag_geo.f  \
+  $(GEOLIB)/dumpgauge_geo.f \
+  $(GEOLIB)/upbnd_geo.f  \
+  $(GEOLIB)/tick_geo.f \
+  $(GEOLIB)/setgrd_geo.f \
+  $(GEOLIB)/gfixup_geo.f \
+  $(GEOLIB)/ginit_geo.f \
+  $(GEOLIB)/getmaxspeed_geo.f \
+  $(CLAW_LIB)/prefilp.f \
+  $(CLAW_LIB)/quick_sort1.f \
   $(CLAW_LIB)/advanc.f \
-  $(CLAW_LIB)/bound.f \
-  $(CLAW_LIB)/stepgrid.f \
   $(CLAW_LIB)/estdt.f \
-  $(CLAW_LIB)/errest.f \
-  $(CLAW_LIB)/flag2refine.f  \
-  $(CLAW_LIB)/allowflag.f  \
+  $(CLAW_LIB)/bound.f \
+  $(CLAW_LIB)/check4nans.f \
   $(CLAW_LIB)/spest.f  \
   $(CLAW_LIB)/igetsp.f \
   $(CLAW_LIB)/reclam.f \
   $(CLAW_LIB)/birect.f \
   $(CLAW_LIB)/cleanup.f \
   $(CLAW_LIB)/colate.f \
+  $(CLAW_LIB)/errest.f \
   $(CLAW_LIB)/bufnst.f \
   $(CLAW_LIB)/errf1.f \
-  $(CLAW_LIB)/gfixup.f \
-  $(CLAW_LIB)/filval.f \
   $(CLAW_LIB)/fixcapaq.f \
-  $(CLAW_LIB)/filpatch.f \
-  $(CLAW_LIB)/prefilp.f \
   $(CLAW_LIB)/flglvl.f \
   $(CLAW_LIB)/fluxad.f \
   $(CLAW_LIB)/fluxsv.f \
-  $(CLAW_LIB)/ginit.f \
   $(CLAW_LIB)/grdfit.f \
   $(CLAW_LIB)/intfil.f \
   $(CLAW_LIB)/moment.f \
@@ -67,14 +112,10 @@ CLAW_SOURCES = \
   $(CLAW_LIB)/putnod.f \
   $(CLAW_LIB)/putsp.f \
   $(CLAW_LIB)/regrid.f \
-  $(CLAW_LIB)/setgrd.f \
   $(CLAW_LIB)/setuse.f \
   $(CLAW_LIB)/stst1.f \
-  $(CLAW_LIB)/tick.f \
   $(CLAW_LIB)/trimbd.f \
-  $(CLAW_LIB)/update.f \
   $(CLAW_LIB)/nodget.f \
-  $(CLAW_LIB)/upbnd.f  \
   $(CLAW_LIB)/basic.f \
   $(CLAW_LIB)/outval.f \
   $(CLAW_LIB)/copysol.f \
@@ -99,42 +140,23 @@ CLAW_SOURCES = \
   $(CLAW_LIB)/preintcopy.f \
   $(CLAW_LIB)/icall.f \
   $(CLAW_LIB)/preicall.f \
-  $(CLAW_LIB)/step2.f \
-  $(CLAW_LIB)/flux2.f \
-  $(CLAW_LIB)/flux2fw.f \
   $(CLAW_LIB)/inlinelimiter.f \
-  $(CLAW_LIB)/limiter.f \
-  $(CLAW_LIB)/philim.f \
   $(CLAW_LIB)/cstore.f \
-  $(CLAW_LIB)/qad.f \
-  $(CLAW_LIB)/src2.f \
-  $(CLAW_LIB)/src1d.f \
   $(CLAW_LIB)/saveqc.f \
   $(CLAW_LIB)/check.f \
   $(CLAW_LIB)/restrt.f \
-  $(CLAW_LIB)/valout.f \
-  $(CLAW_LIB)/check4nans.f \
-  $(CLAW_LIB)/check_hdf.f \
-  $(CLAW_LIB)/restrt_hdf.f \
-  $(CLAW_LIB)/valout_hdf.f \
-  #$(CLAW_LIB)/valout_nc.f \
   $(CLAW_LIB)/opendatafile.f \
-  $(CLAW_LIB)/dumpgauge.f \
-  $(CLAW_LIB)/setgauges.f \
-  $(CLAW_LIB)/quick_sort1.f \
-  $(CLAW_LIB)/rpn2from1d.f \
-  $(CLAW_LIB)/rpt2.f \
   $(CLAW_LIB)/init_alloc.f90 \
   $(CLAW_LIB)/restrt_alloc.f90 \
-  $(CLAW_LIB)/resize_alloc_static.f90 \
   $(CLAW_LIB)/resize_alloc.f90 \
+# $(CLAW_LIB)/resize_alloc_static.f90 \
 
-CLAW_COMMONS = \
-  $(CLAW_LIB)/call.i \
-  $(CLAW_LIB)/gauges.i \
-  $(CLAW_LIB)/regions.i
 
-default: .objs
+.PHONY: topo
+
+topo: .data
+	python maketopo.py
+
 
 #-------------------------------------------------------------------
 # Include Makefile containing standard definitions and make options:

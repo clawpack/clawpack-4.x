@@ -63,7 +63,7 @@ def setrun(claw_pkg='geoclaw'):
     clawdata.ndim = ndim
 
     # Lower and upper edge of computational domain:
-    clawdata.xlower = -120.
+    clawdata.xlower = -140.
     clawdata.xupper = -60.
 
     clawdata.ylower = -60.
@@ -71,7 +71,7 @@ def setrun(claw_pkg='geoclaw'):
 
 
     # Number of grid cells:
-    clawdata.mx = 30
+    clawdata.mx = 40
     clawdata.my = 30
 
 
@@ -109,8 +109,8 @@ def setrun(claw_pkg='geoclaw'):
 
     if clawdata.outstyle==1:
         # Output nout frames at equally spaced times up to tfinal:
-        clawdata.nout = 18
-        clawdata.tfinal = 32400.0
+        clawdata.nout = 22
+        clawdata.tfinal = 11*3600.
 
     elif clawdata.outstyle == 2:
         # Specify a list of output times.
@@ -212,15 +212,15 @@ def setrun(claw_pkg='geoclaw'):
 
 
     # max number of refinement levels:
-    mxnest = 3
+    mxnest = 5
 
     clawdata.mxnest = -mxnest   # negative ==> anisotropic refinement in x,y,t
 
     # List of refinement ratios at each level (length at least mxnest-1)
-    clawdata.inratx = [2,6]
-    clawdata.inraty = [2,6]
+    clawdata.inratx = [2,6,5,2]
+    clawdata.inraty = [2,6,5,2]
 
-    clawdata.inratt = [2,6]
+    clawdata.inratt = [2,6,5,2]
     # Instead of setting these ratios, set:
     # geodata.variable_dt_refinement_ratios = True
     # in setgeo.
@@ -278,7 +278,7 @@ def setgeo(rundata):
     geodata.drytolerance = 1.e-3
     geodata.wavetolerance = 1.e-1
     geodata.depthdeep = 1.e2
-    geodata.maxleveldeep = 3
+    geodata.maxleveldeep = 4
     geodata.ifriction = 1
     geodata.coeffmanning =.025
     geodata.frictiondepth = 200.
@@ -287,33 +287,39 @@ def setgeo(rundata):
     geodata.topofiles = []
     # for topography, append lines of the form
     #   [topotype, minlevel, maxlevel, t1, t2, fname]
-    geodata.topofiles.append([2, 1, 3, 0., 1.e10, \
-                              'etopo10min120W60W60S0S.asc'])
+    geodata.topofiles.append([3, 1, 3, 0., 1.e10, \
+                              'etopo10min170W60W65S25N.asc'])
+    geodata.topofiles.append([3, 5, 5, 0., 1800., \
+                              'etopo1min78W68W40S30S.asc'])
 
     # == setdtopo.data values ==
     geodata.dtopofiles = []
     # for moving topography, append lines of the form:  (<= 1 allowed for now!)
     #   [topotype, minlevel,maxlevel,fname]
-    geodata.dtopofiles.append([1,3,3,'usgs100227.tt1'])
+    geodata.dtopofiles.append([3,5,5,'Chile2010_USGS.tt3'])
 
     # == setqinit.data values ==
     geodata.iqinit = 0
     geodata.qinitfiles = []
     # for qinit perturbations, append lines of the form: (<= 1 allowed for now!)
     #   [minlev, maxlev, fname]
-    #geodata.qinitfiles.append([1, 1, 'hump.xyz'])
 
     # == setregions.data values ==
     geodata.regions = []
     # to specify regions of refinement append lines of the form
     #  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]
-    geodata.regions.append([3, 3, 0., 10000., -85,-72,-38,-25])
-    geodata.regions.append([3, 3, 8000., 26000., -90,-80,-30,-15])
+    geodata.regions.append([1, 2, 0., 1e10, -360,0,-90,90])
+    geodata.regions.append([1, 4, 0., 4.*3600., -100,-72,-38,-5])
+    geodata.regions.append([1, 4, 4.*3600, 1e10, -140,-90,-30,-5])
+    #geodata.regions.append([1, 3, 2.5*3600., 1e10, -90,-75,-35,-10])
+    #geodata.regions.append([1, 4, 0., 6.*3600., -88,-78,-27,-16])
 
     # == setgauges.data values ==
     geodata.gauges = []
     # for gauges append lines of the form  [gaugeno, x, y, t1, t2]
-    geodata.gauges.append([32412, -86.392, -17.975, 0., 1.e10])
+    geodata.gauges.append([32412, -86.392, -17.975, 9000., 1.e10])
+    geodata.gauges.append([51406, -125.027, -8.480, 28000., 1.e10])
+
 
 
     # == setfixedgrids.data values ==
