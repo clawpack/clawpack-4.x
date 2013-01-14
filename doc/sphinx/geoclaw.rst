@@ -24,6 +24,7 @@ GeoClaw
    plotting_geoclaw
    quick_tsunami
    okada
+   sealevel
    manning
    tsunamidata
 

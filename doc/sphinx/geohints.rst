@@ -12,8 +12,17 @@ purpose, and no liability on the part of the authors.  See the
 :ref:`license` for more details.
 
 The authors believe that GeoClaw can be used for some real-world modeling of
-geophysical hazards, and it is currently in use for tsunami hazard assessment
-by several research groups.  Version 4.6.1 of the code was approved in 2010 
+geophysical hazards, but it is the responsibility of the user to fully
+understand the model and its limitations and validate it for the intended
+purpose.
+
+.. _geohints_tsunami:
+
+Tsunami hazard modeling
+-----------------------
+
+GeoClaw is currently in use for tsunami hazard assessment
+by several research groups.  Version 4.6.1 of the code was approved in 2012 
 by the US National Tsunami Hazard
 Mitigation Program (`NHTMP <http://nthmp.tsunami.gov/>`_) for use in
 modeling work supported by the program, after an extensive benchmarking
@@ -37,10 +46,11 @@ It is impossible to encapsulate the knowledge needed to deal with all the
 inaccuracies and uncertainties of geohazard modeling in any piece of
 software or its documentation, and there is
 no replacement for extensively reading the
-literature and finding experts to work with.
+literature and working with domain experts.
 
 It is also important to understand the various parameters in GeoClaw and if
-necessary experiment with different settings.  See :ref:`setrun_geoclaw`.
+necessary experiment with different settings and perform sensitivity studies.  
+See :ref:`setrun_geoclaw`.
 
 Here are a few of the things that should be considered in any GeoClaw
 simulation:
@@ -71,5 +81,25 @@ simulation:
 * The empirical Manning formulation is used to model bottom friction, as
   described further at :ref:`manning`, where some limitations are discussed.
 
-* Extend this list....
+* For most tsunami simulations including the Coriolis terms in the momentum
+  equations makes little difference in the observed results and so these
+  terms are often turned off for efficiency (*icoriolis = 0*).
 
+* The geoclaw parameter *sealevel* determines the initial fluid depth
+  relative to the topography, as specified by the *topo* files.
+  It is important to know what 
+  `vertical datum <http://tidesandcurrents.noaa.gov/datum_options.html>`_
+  the topography is relative to.  Coastal bathymetry developed for tsunami
+  modeling is often relative to Mean High Water (MHW) at some point, in
+  which case setting *sealevel = 0.* corresponds to assuming the water level
+  being initially at MHW.  See :ref:`sealevel` for more information.
+
+* Tsunami modeling generally requires specifying a seafloor displacement in
+  order to initiate the tsunami, by specifying a *dtopo* file. This may be a
+  time-dependent displacement, as explained in :ref:`dtopo`.  However, it is
+  important to understand that any displacement of the seafloor causes the
+  entire water column above this point to be shifted upwards by the same
+  amount (since the depth *h* is held constant), and so is immediately
+  observed in the sea surface elevation.  In reality, displacement of the
+  seafloor leads to the propagation of acoustic waves that result in a
+  surface displacement

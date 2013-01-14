@@ -73,6 +73,17 @@ General geo parameters
    
    *icoordsys = 2* for latitude-longitude.
 
+.. attribute:: Rearth : float
+
+   radius of the earth in meters, e.g.  *Rearth = 6367.5e3*.
+
+.. attribute:: icoriolis : integer
+
+   *icoriolis = 1* to include Coriolis terms in momentum equations
+
+   *icoriolis = 0* to omit Coriolis terms (usually fine for tsunami modeling)
+   
+
 .. _setrun_tsunami:
 
 Tsunami parameters
@@ -110,12 +121,14 @@ problems  --- need to clarify this!).
 
 .. attribute:: ifriction : integer
 
-   Whether or not to include source terms for friction (1=yes, 0=no).
-   **Is this actually used??**
+   **This is not actually used in the code and will be deprecated.**
+   If *coeffmanning > 0* then friction terms will be applied, regardless
+   of the value of *ifriction*.
 
 .. attribute:: coeffmanning : float
 
    For friction source terms, the Manning coefficient.
+   See :ref:`manning`.
 
 .. attribute:: frictiondepth : float
 
@@ -173,9 +186,13 @@ bathymetry) data files in GeoClaw.
    where each element (currently at most 1 is allowed!)
    is itself a list of the form 
 
-     [minlevel, maxlevel, fname]
+     [dtopotype, minlevel, maxlevel, fname]
 
    with values
+
+     *dtopotype* : integer
+
+       1 or 3 depending on the format of the file (see :ref:`topo_dtopo`).
 
      *minlevel* : integer
 
@@ -189,7 +206,7 @@ bathymetry) data files in GeoClaw.
      
      *fname* : string
 
-       the name of the dtopo file.  See :ref:`topo` for information about
+       the name of the dtopo file.  See :ref:`topo_dtopo` for information about
        the format of data in this file.
 
 

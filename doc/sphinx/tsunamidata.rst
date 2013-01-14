@@ -62,7 +62,7 @@ For example, if you go to a station page such as
 <http://tidesandcurrents.noaa.gov/data_menu.shtml?stn=1617760%20Hilo,%20Hilo%20Bay,%20Kuhio%20Bay,%20HI&type=Historic%20Tide%20Data>`_,
 you will see a *Datums* link on the left menu that gives the difference
 between MLLW and other water levels such as MHW, which might be the
-reference level for the bathymetry.  (Make sure to switch from feet to
+reference level for the bathymetry.  (Be sure to switch from feet to
 meters!)  Sometimes you can also select the Datum to use when retrieving
 data.
 
