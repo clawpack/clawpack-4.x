@@ -15,6 +15,7 @@ description of `setrun.py` input scripts more generally.
 
 In addition, a number of other parameters should be set in the `setrun.py`
 file in any :ref:`geoclaw` application.
+See also the :ref:`geohints` for more about parameter choices.
 
 It is best to look at a specific example while reading this section, for
 example  :ref:`setrun_geoclaw_sample`.
@@ -71,7 +72,18 @@ General geo parameters
 
    *icoordsys = 1* for Cartesian x-y in meters, 
    
-   *icoordsys = 2* for latitude-longitude.
+   *icoordsys = 2* for latitude-longitude on the sphere.
+
+.. attribute:: Rearth : float
+
+   radius of the earth in meters, e.g.  *Rearth = 6367.5e3*.
+
+.. attribute:: icoriolis : integer
+
+   *icoriolis = 1* to include Coriolis terms in momentum equations
+
+   *icoriolis = 0* to omit Coriolis terms (usually fine for tsunami modeling)
+   
 
 .. _setrun_tsunami:
 
@@ -84,7 +96,8 @@ problems  --- need to clarify this!).
 
 .. attribute:: sealevel : float
 
-   sea level (often *sealevel = 0.*)
+   sea level (often *sealevel = 0.*)  
+   This is relative to the 0 vertical datum of the topography files used.
 
 .. attribute:: wavetolerance : float
 
@@ -110,17 +123,19 @@ problems  --- need to clarify this!).
 
 .. attribute:: ifriction : integer
 
-   Whether or not to include source terms for friction (1=yes, 0=no).
-   **Is this actually used??**
+   **This is not actually used in the code and will be deprecated.**
+   If *coeffmanning > 0* then friction terms will be applied, regardless
+   of the value of *ifriction*.
 
 .. attribute:: coeffmanning : float
 
    For friction source terms, the Manning coefficient.
+   See :ref:`manning`.
 
 .. attribute:: frictiondepth : float
 
    Friction source terms are only applied in water shallower than this,
-   since they have negligible effect in shallower water.
+   since they have negligible effect in deeper water.
 
 .. _setrun_topo:
 
@@ -173,9 +188,13 @@ bathymetry) data files in GeoClaw.
    where each element (currently at most 1 is allowed!)
    is itself a list of the form 
 
-     [minlevel, maxlevel, fname]
+     [dtopotype, minlevel, maxlevel, fname]
 
    with values
+
+     *dtopotype* : integer
+
+       1 or 3 depending on the format of the file (see :ref:`topo_dtopo`).
 
      *minlevel* : integer
 
@@ -189,7 +208,7 @@ bathymetry) data files in GeoClaw.
      
      *fname* : string
 
-       the name of the dtopo file.  See :ref:`topo` for information about
+       the name of the dtopo file.  See :ref:`topo_dtopo` for information about
        the format of data in this file.
 
 

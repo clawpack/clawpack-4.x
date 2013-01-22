@@ -14,7 +14,7 @@ Primarily to illustrate how set up topo and dtopo files.
 See [http://www.clawpack.org/users/topo.html] for more information.
 
 See [code: maketopo.py].  This downloads topography data from the 
-[http://kingkong.amath.washington.edu/topo/ GeoClaw topography database]
+[http://www.clawpack.org/geoclaw/topo/ GeoClaw topography database]
 that originally came from the
 NOAA National Geophysical Data Center (NGDC)
 using [http://www.ngdc.noaa.gov/mgg/gdas/gd_designagrid.html Design-a-grid].
@@ -23,8 +23,19 @@ using [http://www.ngdc.noaa.gov/mgg/gdas/gd_designagrid.html Design-a-grid].
 USGS site for earthquake data:
 [http://earthquake.usgs.gov/earthquakes/eqinthenews/2010/us2010tfan]
 
-One gauge is included at the location of DART Buoy 32412:
+This example uses the final earthquake model from:
+[http://earthquake.usgs.gov/earthquakes/eqinthenews/2010/us2010tfan/finite_fault.php Finite Fault model]
+Click on "SUBFAULT MODEL" to find the data stored here in 
+[link: Chile2010_USGS.txt].
+
+This is converted to Chile2010_USGS.tt3 by running 
+[code: maketopo.py] or by "make topo".
+This uses an improved version of the Okada model, new in 4.6.3.
+
+Two gauges are included at the locations of DART Buoy 32412 and 51406, see
 [http://www.ndbc.noaa.gov/station_page.php?station=32412]
+and
+[http://www.ndbc.noaa.gov/station_page.php?station=51406]
 
 To download other DART buoy data, see
 [http://www.ndbc.noaa.gov/dart.shtml]
@@ -42,9 +53,9 @@ Plots of results
 After running this code and creating plots via "make .plots", you should be
 able to view the plots in [link: _plots/_PlotIndex.html].
 
-The script [code: plot_dart.py] can be used plot a comparison of the gauge
-data with the DART Buoy 32412 data, resulting in a plot 
-<a href="dart.png">dart.png</a>.
+The gauge data will be plotted along with de-tided observations from the
+DART buoys, stored in files
+[link:32412_notide.txt] and [link:51406_notide.txt].
 
 <h4>
 Fortran files
@@ -82,14 +93,6 @@ specifies what run-time parameters will be used.
 specifies what plots will be done and
 sets various plotting parameters. 
 
-<dt>[code: setplot_imshow.py]
-<dd> Version of setplot illustrating how the '2d_imshow'
-plot type can be used in place of '2d_pcolor'.  This plots much faster.
-
-<dt>[code: plot_dart.py]
-<dd> This file contains a 
-script that can be used plot a comparison of the gauge
-data with the DART Buoy 32412 data.
 </dl>
 
 

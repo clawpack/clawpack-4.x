@@ -299,7 +299,7 @@ In GeoClaw there are some Python tools in
 `$CLAW/python/pyclaw/geotools/okada.py` for applying the Okada model and
 creating `dtopo` files from given source parameters.
 
-** These tools need to be cleaned up and better described. **
+.. seealso:: :ref:`okada` contains a better description.
 
 The `chile2010` example that we are starting with has a very simple fault
 model for the source, consisting of a single fault plane with one set of
@@ -339,7 +339,6 @@ The last 6 lines specify the grid where the seafloor displacement should be
 specified in the resulting `dtopo` file.  In this a 100 by 100 grid covering
 the region specified by the last four values.
 
-
 Currently a good source for the Tohoku event is  Preliminary Model III of
 the UCSB group, which can be found at
 `<http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/2011/03/0311_v3/Honshu.html>`_.
@@ -351,12 +350,16 @@ same format, e.g. the USGS model at
 
 The subfault model must be converted to sea floor deformation by applying
 the Okada model to each fault segment and adding together the deformation
-predicted by each.  This can be done using the module `subfault.py` which is
-not yet in GeoClaw but can be found `here <??>`_.
+predicted by each.  
 
-For example, the function `make_dz_honshu_ucsb3` defined in this module
-takes a subfault file named `honshu-ucsb3.txt` and produces a `dtopo` file
-named `honshu-ucsb3.tt1` (of topotype 1 as described at :ref:`topo`).
+.. seealso:: In 4.6.3 there is a new version okada2.py and tools in
+   dtopotools.py that give flexibility in specifying subfaults.
+
+
+.. comment:
+    For example, the function `make_dz_honshu_ucsb3` defined in this module
+    takes a subfault file named `honshu-ucsb3.txt` and produces a `dtopo` file
+    named `honshu-ucsb3.tt1` (of topotype 1 as described at :ref:`topo`).
 
 
 Specifying dtopo in `setrun.py`

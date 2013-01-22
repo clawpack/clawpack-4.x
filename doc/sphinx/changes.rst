@@ -19,6 +19,25 @@ See `<https://github.com/clawpack/doc/wiki>`_ for more about this, and about
 plans for other changes.
 
 
+.. _new_in_claw4_6_3:
+
+New in Clawpack 4.6.3 
+========================================
+
+* This release affects GeoClaw only.
+
+* The main reason for this release is to fix a bug found in GeoClaw, in the
+  implementation of the friction term.  For more details see :ref:`manning`.
+
+* A new version of the Okada model and a set of *dtopotools* have also been
+  included, see :ref:`okada`.
+
+* Other new documentation recently developed for GeoClaw has been
+  incorporated, see :ref:`geoclaw`.
+
+* An updated version of `$CLAW/apps/tsunami/chile2010` has been included as
+  `$CLAW/apps/tsunami/chile2010b`.
+
 .. _new_in_claw4_6_2:
 
 New in Clawpack 4.6.2 
