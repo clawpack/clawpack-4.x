@@ -32,17 +32,17 @@ parameters required is:
   clockwise from North.  Between 0 and 360.  The fault plane dips downward
   to the right when moving along the top edge in the strike direction.
 * *dip*, angle at which the plane dips downward from the top edge, a
-  positive angle between 0 and 90.
+  positive angle between 0 and 90 degrees.
 * *rake*, the angle in the fault plane in which the slip occurs,
   measured in degrees counterclockwise from the strike direction.
-* *slip*, the distance (typically in cm or m) the hanging block moves
+  Between -180 and 180.
+* *slip > 0*, the distance (typically in cm or m) the hanging block moves
   relative to the foot block, in the direction specified by the rake.
   The "hanging block" is the one above the dipping fault plane (or to the
-  right of the strike direction).  
+  right if you move in the strike direction).  
 
-Note that for a strike-slip earthquake, *rake = 0*.  For a subduction
-earthquake, the product of *rake* and *slip* is generally positive.
-
+Note that for a strike-slip earthquake, *rake* is near 0 or 180.  
+For a subduction earthquake, the rake is usually closer to 90 degrees.
 
 
 .. _okada_model:
@@ -71,8 +71,8 @@ parameter, the Poisson ratio, which is usually taken to be 0.25.
 The GeoClaw routine `$CLAW/python/pyclaw/geotools/okada2.py` available
 starting in Version 4.6.3, is an improved version of
 `$CLAW/python/pyclaw/geotools/okada.py` that allows specifying whether the
-latitude and longitude specified corresponds to the centroid or the top
-center of the fault plane (the original assumed top center).  
+latitude and longitude provided corresponds to the centroid, bottom center,
+or the top center of the fault plane (the original assumed top center).  
 The specification of other parameters has also been modified, see the
 documentation in that file.
 
@@ -81,18 +81,8 @@ The Python module `$CLAW/python/pyclaw/geotools/dtopotools.py` (new in
 into a *dtopofile* by applying the Okada model to each subfault and adding
 the results together (valid by linear superposition of the solutions to the
 linear elastic halfspace problems).
+These still need to be cleaned up and better documented, but an example of
+the usage can be found in the new application example
+`$CLAW/apps/tsunami/chile2010b`.
 
 
-.. _magnitude:
-
-Relation between slip and earthquake magnitude
-----------------------------------------------
-
-The integral of the slip over the fault geometry (summing the product of
-the length, width and abs(slip) over all subfaults) can be related to the
-seismic moment Mw of the earthquake.  Another elastic parameter, 
-the shear modulus (often called the *rigidity*), is also needed for this
-computation, and the rigidity may vary 
-between different geologic regions.  Often the value 4.e11 is used, when
-measured in dyne/cm**2.  The seismic moment Mo is then the product of this
-value and the total slip (when measured in cm**3) and has units of dyne-cm

@@ -15,6 +15,7 @@ description of `setrun.py` input scripts more generally.
 
 In addition, a number of other parameters should be set in the `setrun.py`
 file in any :ref:`geoclaw` application.
+See also the :ref:`geohints` for more about parameter choices.
 
 It is best to look at a specific example while reading this section, for
 example  :ref:`setrun_geoclaw_sample`.
@@ -71,7 +72,7 @@ General geo parameters
 
    *icoordsys = 1* for Cartesian x-y in meters, 
    
-   *icoordsys = 2* for latitude-longitude.
+   *icoordsys = 2* for latitude-longitude on the sphere.
 
 .. attribute:: Rearth : float
 
@@ -95,7 +96,8 @@ problems  --- need to clarify this!).
 
 .. attribute:: sealevel : float
 
-   sea level (often *sealevel = 0.*)
+   sea level (often *sealevel = 0.*)  
+   This is relative to the 0 vertical datum of the topography files used.
 
 .. attribute:: wavetolerance : float
 
@@ -133,7 +135,7 @@ problems  --- need to clarify this!).
 .. attribute:: frictiondepth : float
 
    Friction source terms are only applied in water shallower than this,
-   since they have negligible effect in shallower water.
+   since they have negligible effect in deeper water.
 
 .. _setrun_topo:
 

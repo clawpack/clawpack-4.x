@@ -79,7 +79,8 @@ simulation:
   required.
 
 * The empirical Manning formulation is used to model bottom friction, as
-  described further at :ref:`manning`, where some limitations are discussed.
+  described further in the section :ref:`manning`, where some limitations 
+  are discussed.
 
 * For most tsunami simulations including the Coriolis terms in the momentum
   equations makes little difference in the observed results and so these

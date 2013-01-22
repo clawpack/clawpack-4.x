@@ -311,6 +311,16 @@ def make_geoclaw():
     images = ('frame0006fig0', 'frame0012fig0', 'frame0018fig0', 'gauge32412fig300')
     gsec.new_item(appdir, plotdir, description, images)
     #----------------------------------------------
+    appdir = 'apps/tsunami/chile2010b'
+    description = """
+        Tsunami of 27 February 2010 off the coast of Chile, with a
+        comparison to DART buoy data. (Updated version.)
+        """
+    images = ('frame0004fig0', 'frame0013fig0', 'frame0021fig0', \
+            'gauge32412fig300', 'gauge51406fig300')
+
+    gsec.new_item(appdir, plotdir, description, images)
+    #----------------------------------------------
     gallery.create('gallery_geoclaw.html')
     return gallery
 
