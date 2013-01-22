@@ -154,20 +154,28 @@ Topography displacement files
 For tsunami generation a file *dtopo* is generally used to specify the
 displacement of the topography relative to that specified in the topo files.
 
-Currently only one format is allowed for this file: it must be similar to
-topo files with *topotype=1* as described above, except that each line
-starts with a *t* value for the time, so each line contains t,x,y,dz
+Currently two formats are supported for this file: 
 
-The x,y,dz values give the displacement dz at x,y at time t.  It is assumed
-that the grid is uniform and that the file contains mx*my*mt lines if mt
-different times are specified for an mx*my grid.  
+    **dtopotype=1:** 
 
-**To do:** it would be better to have a header as for *topotype=2,3* that also
-lists *dt* and then just list the *dz* values.
+    Similar to
+    topo files with *topotype=1* as described above, except that each line
+    starts with a *t* value for the time, so each line contains t,x,y,dz
 
-The Okada model can be used to generate *dtopo* files from fault parameters.
-See `$CLAW/apps/tsunami/chile2010/maketopo.py
-<claw/apps/tsunami/chile2010/maketopo.py.html>`_ for an example.
+    The x,y,dz values give the displacement dz at x,y at time t.  It is assumed
+    that the grid is uniform and that the file contains mx*my*mt lines if mt
+    different times are specified for an mx*my grid.  
+
+    **dtopotype=3:** 
+
+    Similar to
+    topo files with *topotype=3* as described above, but the header is
+    different, and contains lines specifying *mx, my, mt, xlower, ylower, t0,
+    dx, dy*, and *dt*.  These are followed by *mt* sets of *my* lines, 
+    each line containing *mx* values of *dz*.
+
+The Okada model can be used to generate *dtopo* files from fault parameters,
+as described in :ref:`okada`. 
 
 
 .. _qinit_file:

@@ -166,6 +166,14 @@ contains
         read(iunit,*) frictiondepth
         close(iunit)
 
+        if ((ifriction.eq.0) .and. (coeffmanning.gt.0.d0)) then
+                write(6,*) '*** Error:  positive coeffmanning means'
+                write(6,*) '***         friction is used even though'
+                write(6,*) '***         ifriction = 0  '
+                write(6,*) '*** Choose consistent values ****'
+                stop
+                endif
+
         write(GEO_PARM_UNIT,*) '   drytolerance:',drytolerance
         write(GEO_PARM_UNIT,*) '   wavetolerance:',wavetolerance
         write(GEO_PARM_UNIT,*) '   maxleveldeep:', maxleveldeep
